@@ -1,0 +1,23 @@
+export const TODO_STATUS = {
+    PENDING: 0,
+    DONE: 1,
+    TRASH_BIN: 2
+}
+
+export const TODO_PRIO = {
+    HIGH: 0,
+    NORMAL: 1,
+    LOW: 2
+}
+
+export const APP_CONST = {
+    STORAGE_KEYS: {
+        PREFIX: "TODO_COLLAPP_", // prefix for all stored strings of the app
+        USER: "USER_",
+        TODOS: "TODOS",
+        CATS: "CATEGORIES", // to retrieve a list of all categories
+        PROJECTS: "PROJECTS", // to retrieve a list of all projects
+        TEAM: "TEAM", // to retrieve a list of 
+        TRASH_BIN: "TRASH_BIN" // to retrieve the list of ids of recycled todos
+    }
+}

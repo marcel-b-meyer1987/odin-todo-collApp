@@ -1,0 +1,19 @@
+# todo-collApp
+todo-app which will be extended piece by piece
+
+# Features:
+
+- Sort by either categories(*) or projects(*) (to-dos may or may not have either or both - if they do not have one or both, these properties should be displayed as "Misc" or some such) or team member, OR customized via drag & drop
+- To-dos(*) should possibly be assigned to team members(*) of one or the other team(*)
+- Trash bin(*) for deleted items (adjustable timespan for keeping deleted items + option to empty bin at once)
+- To-dos should, among other things, have a checklist(*) consisting of more to-dos => this leading to the situation that each ToDo can (theoretically) be split up into a whole infinite "tree like" structure of tasks and sub-tasks. (Long term bonus feature: Warning from the app if a new sub-task seems to be redundant?)
+- dashboard / UI to display all 
+  - categories
+  - projects
+  - teams and
+  - to-dos (with filter and possibly pagination)
+  - diary feature for the user
+  - motivational summary ("look what you got done today!" etc.) or quotes ("the first step is the hardest")
+  - the "path" to each ToDo, e. g.:
+    - `{project}/{parent1}...{parentN}/{title}`, with each part of the path being clickable, so as to allow navigation to parent elements 
+
