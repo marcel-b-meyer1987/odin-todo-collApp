@@ -123,6 +123,6 @@ export default class ToDoApp {
 
         localStorage.setItem(key, JSON.stringify(this.projects));
         console.log(`Saved ${this.projects.length} projects under ${key}.`);
-    },
+    }
 
 }
