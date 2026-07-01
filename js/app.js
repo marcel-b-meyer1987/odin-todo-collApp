@@ -105,7 +105,7 @@ export default class ToDoApp {
 
         localStorage.setItem(key, JSON.stringify(this.todos));
         console.log(`Saved ${this.todos.length} todos under ${key}.`);
-    },
+    }
 
     saveAllCategories = () => {
         let key = APP_CONST.STORAGE_KEYS.PREFIX;

@@ -5,7 +5,12 @@
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./todo.js";
 import { Project } from "./project.js";
+import ToDoApp from "./app.js";
 
+export const app = new ToDoApp();
+
+
+/*
 export const app = (() => {
 
     const app = {
@@ -135,5 +140,7 @@ export const app = (() => {
     return app;
 
 })();
+
+*/
 
 console.log(app);
