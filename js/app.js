@@ -5,10 +5,10 @@ import { Project } from "./project.js";
 export default class ToDoApp {
 
     constructor() {
-        this.categories = [];
-        this.projects = [];
+        this.categories = this.loadAllCategories() || [];
+        this.projects = this.loadAllProjects() || [];
         this.teamMembers = [];
-        this.toDos = [];
+        this.toDos = this.loadAllToDos() || [];
     }
 
 
@@ -60,7 +60,7 @@ export default class ToDoApp {
             key += APP_CONST.STORAGE_KEYS.USER;
             key += APP_CONST.STORAGE_KEYS.CATS;
 
-        app.categories = JSON.parse(localStorage.getItem(key));
+        return JSON.parse(localStorage.getItem(key));
     }
 
     loadAllProjects = () => {

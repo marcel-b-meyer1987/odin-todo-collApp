@@ -44,14 +44,18 @@ export class ToDo {
 	static fromStorage(todoID) {
 
 		const data = localStorage.getItem(todoID);
+
+		// if todo id not found, return early with error
+		if (!data) return new Error(`ToDo with id ${todoID} not found.`);
+
 		console.log("Raw data:", data);
 		console.log("Parsed data:", JSON.parse(data));
 
 		try {
+			const id = data ? JSON.parse(data).id : null;
 			
 			// load todo with todoID from localStorage (later: IndexedDB)
-			const {	id,
-					title,
+			const {	title,
 					notes,
 					createdDate,
 					dueDate,
@@ -89,7 +93,7 @@ export class ToDo {
 		}
 		
 	}
-
+	
 }
 
 
