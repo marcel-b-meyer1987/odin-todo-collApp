@@ -3,18 +3,22 @@
     padding: 0;
     box-sizing: border-box;
 
-    /* CSS HSL */
+    /* Color Them 1 CSS HSL */
     --dark-khaki: hsla(50, 19%, 30%, 1);
     --vintage-lavender: hsla(307, 21%, 49%, 1);
     --muted-teal: hsla(152, 28%, 66%, 1);
     --baltic-blue: hsla(199, 91%, 27%, 1);
 
-    /* color themes */
+    /* Color Theme 2 */
+    --stone-brown: hsla(31, 12%, 37%, 1);
+    --ash-grey: hsla(160, 9%, 66%, 1);
+    --frosted-mint: hsla(118, 39%, 88%, 1);
+    --tech-blue: hsla(217, 57%, 42%, 1);
+    --ink-black: hsla(211, 100%, 6%, 1);
+
     --background-color: var(--dark-khaki);
     --font-color: white;
     --accent-color: hsla(152, 28%, 76%, 1);
-
-
 }
 
 body {
