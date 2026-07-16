@@ -1,5 +1,5 @@
 import { TODO_STATUS, TODO_PRIO } from "./const.js";
-import { Project } from "./project.js";
+import { Project } from "./Project.js";
 
 export class ToDo {
 	constructor({

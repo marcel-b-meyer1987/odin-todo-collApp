@@ -3,7 +3,7 @@
 
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./todo.js";
-import { Project } from "./project.js";
+import { Project } from "./Project.js";
 import { UI_Manager } from "./UI_Manager.js";
 
 export default class ToDoApp {

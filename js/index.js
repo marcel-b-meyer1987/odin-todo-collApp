@@ -4,8 +4,8 @@
 
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./todo.js";
-import { Project } from "./project.js";
-import ToDoApp from "./app.js";
+import { Project } from "./Project.js";
+import ToDoApp from "./App.js";
 
 export const app = new ToDoApp();
 

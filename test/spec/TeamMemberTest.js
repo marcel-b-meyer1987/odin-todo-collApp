@@ -1,0 +1,69 @@
+import { TeamMember } from "../../js/TeamMember.js";
+import { ToDo } from "../../js/todo.js";
+import { Project } from "../../js/Project.js";
+
+describe("TeamMember class test suite", () => {
+
+    // Setup
+    let user1;
+    
+    let toDo0;
+    let toDo1;
+
+    let category0;
+    let category1;
+
+    let project0;
+    let project1;
+
+    beforeAll(() => {
+        toDo0 = new ToDo({title: "Altes ToDo"});
+        toDo1 = new ToDo({title: "TÜV-Liste an Jürgen schicken"});
+        category0 = "Instandhaltung";
+        category1 = "Rückladungen";
+        project0 = new Project("Haustarif Stückgut");
+        project1 = new Project("Neues Project");
+        user1 = new TeamMember("Marcel");
+        user1.assignToDo(toDo0);
+        user1.addCategory(category0);
+        user1.addProject(project0);
+    })
+
+    // Tests
+    it("should instantiate an object of the TeamMember class", ()=> {
+        expect(user1 instanceof TeamMember).toBe(true);
+    })
+
+    it("should be able to assign new ToDos to the TeamMember", () => {
+        user1.assignToDo(toDo1);
+        expect(user1.toDos.indexOf(toDo1) >= 0).toBe(true);
+    })
+
+    it("should not assign the same ToDo more than once", () => {
+        expect(user1.assignToDo(toDo0)).toBe(1);
+    })
+
+    it("should be able to assign new categories to the Team Member", () => {
+        user1.addCategory(category1);
+        expect(user1.categories.indexOf(category1) >= 0).toBe(true);
+    })
+
+    it("should not assign the same category more than once", () => {
+        expect(user1.addCategory(category0)).toBe(1);
+    })
+
+    it("should be able to add new projects to the team member's project list", () => {
+        user1.addProject(project1);
+        expect(user1.projects.indexOf(project1) >= 0).toBe(true);
+    })
+
+    it("should not add the same project to the member's project list more than once", () => {
+        expect(user1.addProject(project0)).toBe(1);
+    })
+
+
+    // log Team Member class instance for inspection
+    afterAll(() => {
+        console.log(user1);
+    })
+});
