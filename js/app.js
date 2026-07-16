@@ -1,6 +1,10 @@
+
+// DIETER
+
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./todo.js";
 import { Project } from "./project.js";
+import { UI_Manager } from "./UI_Manager.js";
 
 export default class ToDoApp {
 
@@ -9,6 +13,7 @@ export default class ToDoApp {
         this.projects = this.loadAllProjects() || [];
         this.teamMembers = [];
         this.toDos = this.loadAllToDos() || [];
+        this.UI_Manager = new UI_Manager(this);
     }
 
 

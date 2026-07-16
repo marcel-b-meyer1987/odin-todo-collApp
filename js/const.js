@@ -21,3 +21,51 @@ export const APP_CONST = {
         TRASH_BIN: "TRASH_BIN" // to retrieve the list of ids of recycled todos
     }
 }
+
+export const UI_CONST = {
+    MENU_ITEMS: [
+        {
+            name: "categories",
+            disp_name: {
+                en: "Categories",
+                de: "Kategorien"
+            }
+        },
+        {
+            name: "projects",
+            disp_name: {
+                en: "Projects",
+                de: "Projekte"
+            }
+        },
+        {
+            name: "team",
+            disp_name: {
+                en: "Team",
+                de: "Team"
+            }
+        },
+        {
+            name: "settings",
+            disp_name: {
+                en: "Settings",
+                de: "Einstellungen"
+            }
+        },
+        {
+            name: "About",
+            disp_name: {
+                en: "About",
+                de: "About"
+            }
+        },
+        {
+            name: "doc",
+            disp_name: {
+                en: "Documentation",
+                de: "Dokumentation"
+            }
+        },
+        
+    ],
+}
