@@ -26,7 +26,7 @@ describe("TeamMember class test suite", () => {
         user1 = new TeamMember("Marcel");
         user1.assignToDo(toDo0);
         user1.addCategory(category0);
-        user1.addProject(project0);
+        user1.addToProject(project0);
     })
 
     // Tests
@@ -53,14 +53,33 @@ describe("TeamMember class test suite", () => {
     })
 
     it("should be able to add new projects to the team member's project list", () => {
-        user1.addProject(project1);
+        user1.addToProject(project1);
         expect(user1.projects.indexOf(project1) >= 0).toBe(true);
     })
 
     it("should not add the same project to the member's project list more than once", () => {
-        expect(user1.addProject(project0)).toBe(1);
+        expect(user1.addToProject(project0)).toBe(1);
     })
 
+    it("should unassign ToDos from the user", () => {
+        user1.assignToDo(toDo1);
+        user1.unassignToDo(toDo1);
+        expect(user1.toDos.indexOf(toDo1) < 0).toBe(true);
+    })
+
+    it("should be able to remove categories from the team member's list", () => {
+        const cat = "Test category";
+        user1.addCategory(cat);
+        user1.removeCategory(cat);
+        expect(user1.categories.indexOf(cat) < 0).toBe(true);
+    })
+
+    it("should be able to remove the user from a project", () => {
+        const proj = project1;
+        user1.addToProject(proj);
+        user1.removeFromProject(proj);
+        expect(user1.projects.indexOf(proj) < 0).toBe(true);
+    })
 
     // log Team Member class instance for inspection
     afterAll(() => {
