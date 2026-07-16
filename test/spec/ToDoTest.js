@@ -38,4 +38,8 @@ describe("ToDo class test suite", () => {
         expect(saved).toBeInstanceOf(ToDo);
     })
 
+    it("should be able to set a due date", () => {
+        expect(saved.setDeadline(Date.now())).toBe(0);
+    })
+
 });

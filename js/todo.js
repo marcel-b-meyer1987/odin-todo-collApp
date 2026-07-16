@@ -22,7 +22,7 @@ export class ToDo {
 		this.title = title || "New ToDo";
 		this.notes = notes || "";
 		this.createdDate = createdDate || Date.now();
-		this.dueDate = dueDate || Date.now();
+		this.dueDate = dueDate || undefined; // default = undefinde (no deadline at all)
 		this.parent = parentID || undefined;
 		this.checklist = checklist || [];
 		this.status = status || TODO_STATUS.PENDING;
@@ -94,6 +94,21 @@ export class ToDo {
 		
 	}
 	
+	setDeadline(newDate) {
+		// if deadline is still (or currently) undefined, assign it to a new Date object
+        if (! this.dueDate) this.dueDate = new Date();
+
+        // check if newDate < now 
+        // if YES: return early w/ exit code 1 (error)
+        // if NOT: set dueDate to newDate + return w/ exit code 0 (success)
+
+        if (newDate < Date.now()) {
+            return 1;
+        } else {
+            this.dueDate.setTime(newDate);
+            return 0;
+        }
+	}
 }
 
 

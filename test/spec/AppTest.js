@@ -3,7 +3,7 @@ import { app } from "../../js/index.js";
 import { ToDo } from "../../js/todo.js";
 import "../lib/jasmine-6.2.0/jasmine.js";
 
-describe("App", () => {
+describe("ToDoApp class test suite", () => {
 
     
     beforeAll(() => {
