@@ -1,5 +1,5 @@
 import { Project } from "../../js/Project.js";
-import { ToDo } from "../../js/todo.js";
+import { ToDo } from "../../js/ToDo.js";
 
 describe("Project class test suite", () => {
 

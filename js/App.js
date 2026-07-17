@@ -2,7 +2,7 @@
 // DIETER
 
 import { APP_CONST } from "./const.js";
-import { ToDo } from "./todo.js";
+import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { UI_Manager } from "./UI_Manager.js";
 

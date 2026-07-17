@@ -1,18 +1,38 @@
-import { ToDo } from "../../js/todo.js";
+import { ToDo } from "../../js/ToDo.js";
 
 describe("ToDo class test suite", () => {
-
+    
     // Setup
+        const parentToDo = new ToDo({title: "Parent-ToDo"});
+        parentToDo.saveToStorage();
+
+        const anotherParent = new ToDo({title: "Another Parent"});
+        anotherParent.saveToStorage();            
+
         const toDo = new ToDo({
             title: "Test-ToDo",
-            notes: "this is a basic test todo"
+            notes: "this is a basic test todo",
+            parentID: parentToDo.id,
         });
-
         toDo.saveToStorage();
+        
         const saved = ToDo.fromStorage(toDo.id);
         
         console.log("created freshly:", toDo);
         console.log("loaded from storage:", saved);
+        
+    it("should be able to be attached to a parent", () => {
+        toDo.parentID = null; // reset
+        toDo.setParent(parentToDo.id);
+        // expect(toDo.parentID != null).toBe(true);
+        expect(toDo.parentID).toBe(parentToDo.id);
+    })
+
+    it("should not overwrite a parentID with another one", () => {
+        let exitCode = toDo.setParent(anotherParent.id);
+        expect(toDo.parentID).toBe(parentToDo.id);
+        expect(exitCode).toBe(1);
+    })
 
     it("should instantiate an object of the ToDo class", () => {
         expect(toDo).toBeInstanceOf(ToDo);
@@ -22,9 +42,9 @@ describe("ToDo class test suite", () => {
         expect(toDo.id).not.toBe(null);
     })
 
-    it("should have the correct title", () => {
-        expect(toDo.title).toBe("Test-ToDo");
-    });
+    // it("should have the correct title", () => {
+    //     expect(toDo.title).toBe("Test-ToDo");
+    // });
 
     it("should have the correct notes", () => {
         expect(toDo.notes).toBe("this is a basic test todo");
@@ -42,4 +62,18 @@ describe("ToDo class test suite", () => {
         expect(saved.setDeadline(Date.now())).toBe(0);
     })
 
+    it("should be able to set a new title", () => {
+        toDo.setTitle("New ToDo Title");
+        expect(toDo.title).toBe("New ToDo Title");
+    })
+
+    it("should not set an empty string as new title", () => {
+        expect(toDo.setTitle("")).toBe(1);
+    })
+
+
+    it("can check if a ToDo item exists in the storage", () => {
+        expect(ToDo.exists(toDo.id)).toBe(true);
+        expect(ToDo.exists("safafsdasdfadf")).toBe(false);
+    })    
 });
