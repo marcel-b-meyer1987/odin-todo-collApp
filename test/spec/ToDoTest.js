@@ -75,16 +75,40 @@ describe("ToDo class test suite", () => {
         expect(ToDo.exists(toDo.id)).toBe(true);
         expect(ToDo.exists("safafsdasdfadf")).toBe(false);
     })
-
+    
+    it("can get its parent instance from storage", () => {
+        const parent = toDo.getParent();
+        expect(parent instanceof ToDo).toBe(true);
+        console.log(parent);
+    })    
+    
     it("can build a path object", ()=> {
-        const path = toDo.buildPathObject();
-        console.log(path);
-        expect(typeof path).toBe("Object");
-    })
-});
+        const grandpa = new ToDo({title: "Grandpa Task"});
+        const parent = new ToDo({title: "Parent Task"});
+        const child = new ToDo({title: "Child Task"});
 
-afterAll(() => {
-    window.localStorage.clear();
-})
+        // simulate connection via getParent():
+        spyOn(child, 'getParent').and.returnValue(parent);
+        spyOn(parent, 'getParent').and.returnValue(grandpa);
+        spyOn(grandpa, 'getParent').and.returnValue(null); // exit condition for while loop!
+    
+        const path = child.buildPathObject();
+
+        expect(path).toBeDefined;
+        expect(typeof path).toBe("object");
+
+        // check if the elements are in the right hierarchical order
+        expect(path.hierarchy.length).toBe(3);
+        expect(path.hierarchy[0]).toBe(grandpa);
+        expect(path.hierarchy[1]).toBe(parent);
+        expect(path.hierarchy[2]).toBe(child);
+    })
+    
+    
+    afterAll(() => {
+        window.localStorage.clear();
+    })
+
+});
 
 // DIETER

@@ -13,3 +13,25 @@ Features:
   - motivational summary ("look what you got done today!" etc.) or quotes ("the first step is the hardest")
   - the "path" to each ToDo, e. g.:
     - `{project}/{parent1}...{parentN}/{title}`, with each part of the path being clickable, so as to allow navigation to parent elements 
+
+
+currentToDo.getParent()
+                |
+                |
+                |
+          -------------
+          |           |
+        null        currentParent.getParent()
+                                |
+                                |
+                                |
+                          -------------
+                          |           |
+                        null        nextParent.getParent()
+
+
+
+              1     2     3     
+Parent        2     3     null
+Grandparent   3     null  null 
+REPEAT?       yes   yes   no

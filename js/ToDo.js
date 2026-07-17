@@ -56,14 +56,21 @@ export class ToDo {
 
 		const data = localStorage.getItem(todoID);
 
-		// if todo id not found, return early with error
-		if (!data) return new Error(`ToDo with id ${todoID} not found.`);
+		// if no ID was passed in, return null
+		if (!todoID) return null;
+
+		// if todo id not found, return early + print warning
+		if (!data) {
+			console.warn(`ToDo with id ${todoID} not found.`);
+			return null;
+		}
 
 		console.log("Raw data:", data);
 		console.log("Parsed data:", JSON.parse(data));
 
 		try {
-			const id = data ? JSON.parse(data).id : null;
+			const parsed = JSON.parse(data);
+			const id = parsed.id;
 			
 			// load todo with todoID from localStorage (later: IndexedDB)
 			const {	title,
@@ -79,7 +86,7 @@ export class ToDo {
 					prio,
 					customSortNo,
 					trashBinDate
-				} = JSON.parse(data);
+				} = parsed;
 
 			// create a new ToDo instance with the data from storage
 			return new ToDo({	id,
@@ -100,7 +107,7 @@ export class ToDo {
 		} 
 		catch(error) {
 			console.error(error);
-			return error;
+			return null;
 		}
 		
 	}
@@ -153,6 +160,11 @@ export class ToDo {
 		return 0;
 	}
 
+	getParent() {
+		// returns either null (if parentID invalid) or the parent ToDo O
+		return (ToDo.fromStorage(this.parentID));
+	}
+
 	detachFromParent() {
 		this.parentID = null;
 	}
@@ -176,19 +188,30 @@ export class ToDo {
 		// in order to replicate the hierarchy level in the array depth
 		
 		const hierarchy = [this]; // initialize array with current todo
-		let currentParent = ToDo.fromStorage(this.parentID);
-		while (currentParent != null) {
+		let currentParent = this.getParent();
+
+		// use a set to detect circular references
+		const visitedIDs = new Set([this.id]);
+
+		//THIS PART OF LOGIC CREATES FREEZE / CRASH => ENDLESS LOOP?
+		while (currentParent) {
+
+			// make sure the parent is not in the array already to precent circular reference
+			if (visitedIDs.has(currentParent.id)) {
+				console.error(`Circular reference detected for ToDo ID: ${currentParent.id}`);
+				break;
+			}
+			visitedIDs.add(currentParent.id);
+
 			hierarchy.unshift(currentParent);
-			currentParent = ToDo.fromStorage(currentParent.parentID);
+			currentParent = currentParent.getParent();
 		}
 		
-		// build path object from the components mentioned above
-		const path = {
-			categories: this.categories,
+		// build + return path object from the components above
+		return {
+			categories: this.categories || [],
 			hierarchy: hierarchy
 		};
-
-		return path;
 		
 	}
 }

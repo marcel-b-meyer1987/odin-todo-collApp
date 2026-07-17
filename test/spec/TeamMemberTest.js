@@ -1,5 +1,5 @@
 import { TeamMember } from "../../js/TeamMember.js";
-import { ToDo } from "../../js/todo.js";
+import { ToDo } from "../../js/ToDo.js";
 import { Project } from "../../js/Project.js";
 
 describe("TeamMember class test suite", () => {
@@ -85,4 +85,5 @@ describe("TeamMember class test suite", () => {
     afterAll(() => {
         console.log(user1);
     })
+
 });
