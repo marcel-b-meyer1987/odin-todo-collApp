@@ -26,7 +26,7 @@ export class ToDo {
 		this.checklist = checklist || [];
 		this.status = status || TODO_STATUS.PENDING;
 		this.project = project || null;
-		this.categories = categories || [];
+		this.categories = categories || ["Uncategorized"];
 		this.assignedTo  = assignedTo || undefined;
 		this.prio = prio || TODO_PRIO.NORMAL;
 		this.customSortNo = customSortNo || undefined;
@@ -156,6 +156,42 @@ export class ToDo {
 	detachFromParent() {
 		this.parentID = null;
 	}
+
+	buildPathObject() {
+		// the method returns an object which is used by the UI_Manager
+		// to build a display of the full path of any ToDo with the
+		// name of each parent ToDo in the path + the cagetory,
+		// while each element in the path should be clickable and 
+		// open the respective parent element (or category) when clicked
+		// for this purpose, the object consists of:
+		//
+		// path.category = the categori(es) of the current ToDo OR "Uncategorized"
+		// path.hierarchy = an array of the parents + the current ToDo as last element
+		//
+		// example: "/uncategorized/parent_1/.../parent_n/current_todo"
+		
+		// =============================================================
+		// loop over parents recursively from parent_1 to parent_n,
+		// add each parent to the front of the hierarchy array
+		// in order to replicate the hierarchy level in the array depth
+		
+		const hierarchy = [this]; // initialize array with current todo
+		let currentParent = ToDo.fromStorage(this.parentID);
+		while (currentParent != null) {
+			hierarchy.unshift(currentParent);
+			currentParent = ToDo.fromStorage(currentParent.parentID);
+		}
+		
+		// build path object from the components mentioned above
+		const path = {
+			categories: this.categories,
+			hierarchy: hierarchy
+		};
+
+		return path;
+		
+	}
 }
 
 
+ 

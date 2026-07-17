@@ -71,9 +71,20 @@ describe("ToDo class test suite", () => {
         expect(toDo.setTitle("")).toBe(1);
     })
 
-
     it("can check if a ToDo item exists in the storage", () => {
         expect(ToDo.exists(toDo.id)).toBe(true);
         expect(ToDo.exists("safafsdasdfadf")).toBe(false);
-    })    
+    })
+
+    it("can build a path object", ()=> {
+        const path = toDo.buildPathObject();
+        console.log(path);
+        expect(typeof path).toBe("Object");
+    })
 });
+
+afterAll(() => {
+    window.localStorage.clear();
+})
+
+// DIETER

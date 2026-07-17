@@ -9,7 +9,7 @@ import { UI_Manager } from "./UI_Manager.js";
 export default class ToDoApp {
 
     constructor() {
-        this.categories = this.loadAllCategories() || [];
+        this.categories = this.loadAllCategories() || ["Uncategorized"];
         this.projects = this.loadAllProjects() || [];
         this.teamMembers = [];
         this.toDos = this.loadAllToDos() || [];
@@ -21,8 +21,13 @@ export default class ToDoApp {
         this.todos.push(new ToDo(configObj));
     }
 
-    addCategor = (categoryObj) => {
-        this.categories.push(new categoryObj(categoryObj));
+    addCategor = (newCat) => {
+        // if newCat is an empty string, return with exit code 1 (error)
+        if (newCat.trim().length < 1) return 1;
+
+        // else add newCat to categories array and return 0 (success)
+        this.categories.push(newCat);
+        return 0;
     }
 
     addProject = (projName) => {

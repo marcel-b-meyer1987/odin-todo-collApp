@@ -1,6 +1,6 @@
 import { APP_CONST } from "../../js/const.js";
 import { app } from "../../js/index.js";
-import { ToDo } from "../../js/todo.js";
+import { ToDo } from "../../js/ToDo.js";
 import "../lib/jasmine-6.2.0/jasmine.js";
 
 describe("ToDoApp class test suite", () => {
