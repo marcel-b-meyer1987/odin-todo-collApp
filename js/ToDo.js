@@ -1,7 +1,12 @@
 import { TODO_STATUS, TODO_PRIO } from "./const.js";
 import { Project } from "./Project.js";
+import { DB_Handler } from "./DB_Handler.js";
 
 export class ToDo {
+
+	// cache for all todos used by the app
+	static #cache = new Map();
+
 	constructor({
 		id,
 		title,
@@ -32,12 +37,15 @@ export class ToDo {
 		this.customSortNo = customSortNo || undefined;
 		this.trashBinDate = trashBinDate || undefined; // needed to calculate the day that the Todo will be deleted from trash for good / default undefined means: not recycled 
 		this.parentID = parentID || null;
+		this.DB_Handler = 
+		
+		ToDo.#cache.set(this.id, this);
 	}
 	
 	saveToStorage() {
 
 		// save to localStorage (later: IndexedDB)
-		localStorage.setItem(`${this.id}`, JSON.stringify(this));
+		DB_Handler.saveItem(`${this.id}`, JSON.stringify(this));
 	}
 
 	static exists(todoID) {
@@ -52,12 +60,25 @@ export class ToDo {
 		} 
 	}
 
+	static isCached(todoID) {
+		return ToDo.#cache.has(todoID);
+	}
+
+	static clearCache() {
+		ToDo.#cache.clear();
+	}
+
 	static fromStorage(todoID) {
-
-		const data = localStorage.getItem(todoID);
-
+		
 		// if no ID was passed in, return null
 		if (!todoID) return null;
+
+		// if todo is already cached, retrieve from cache
+		if (ToDo.isCached(todoID)) return ToDo.#cache.get(todoID);
+
+		// if not cached, return from data layer
+		const data = DB_Handler.getItem(todoID);
+
 
 		// if todo id not found, return early + print warning
 		if (!data) {
