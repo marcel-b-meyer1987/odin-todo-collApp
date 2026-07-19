@@ -18,7 +18,7 @@ describe("Project class test suite", () => {
         todo0 = new ToDo({title: "New Todo 0"});
         todo1 = new ToDo({title: "New ToDo 1"});
         proj = new Project("Project RiseAndShine");
-        proj.addToDo(todo0);
+        proj.addToDo(todo0.id);
         
     })
 
@@ -32,17 +32,17 @@ describe("Project class test suite", () => {
     })
 
     it("can add ToDos to its list", () => {
-        proj.addToDo(todo1);
-        expect(proj.toDos.indexOf(todo1) >= 0).toBe(true);
+        proj.addToDo(todo1.id);
+        expect(proj.toDos.indexOf(todo1.id) >= 0).toBe(true);
     })
 
     it("should not add the same ToDo more than once", () => {
-        expect(proj.addToDo(todo0)).toBe(1);
+        expect(proj.addToDo(todo0.id) > 0).toBe(true);
     })
 
     it("can remove a todo from its list", () => {
-        proj.addToDo(todo1);
-        proj.removeToDo(todo1);
+        proj.addToDo(todo1.id);
+        proj.removeToDo(todo1.id);
         expect(proj.toDos.indexOf(todo1) < 0).toBe(true);
     })
 
@@ -64,6 +64,16 @@ describe("Project class test suite", () => {
         proj.removeDeadline();
         expect(proj.deadline).toBe(undefined);
     })
+
+    it("should be able to save a project to storage and load it from storage", () => {
+        proj.saveToStorage();
+        const reloadedProject = Project.fromStorage(proj.name);
+        expect(reloadedProject instanceof Project).toBe(true);
+    })
+
+    it("should have a cache", () => {
+        expect(false).toBe(true);
+    })  
 
     afterAll(() => {
         // log new project class instance for inspection

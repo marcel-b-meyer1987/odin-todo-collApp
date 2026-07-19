@@ -1,15 +1,53 @@
 
-// DIETER 
+import { DB_Handler } from "./DB_Handler.js";
 
 export class Project {
+
+    // cache for all Projects used by the app
+    static #cache = new Map();
     
-    constructor(projectName) {
-        this.name = projectName;
-        this.creationTimestamp = Date.now();
-        this.deadline = undefined; // default value = no deadline at all
-        this.toDos = [];
+    constructor(projectData) {
+
+        const { name, creationTimestamp, deadline, toDos } = projectData;
+        this.name = name;
+        this.creationTimestamp = creationTimestamp || Date.now();
+        this.deadline = deadline || undefined; // default value = no deadline at all
+        this.toDos = []; // array of strings holding the IDs of associated todos only
+
+        Project.#cache.set(this.name, this);
     }
 
+    saveToStorage() {
+        DB_Handler.saveItem(this.name, JSON.stringify(this));
+    }
+
+    static fromStorage(ProjectName) {
+        if (!ProjectName) return null;
+
+        // get instance from cache, if cached
+        if(Project.#cache.has(ProjectName)) return Project.#cache.get(ProjectName);
+
+        // if not cached, get it from storage
+        const data = DB_Handler.getItem(ProjectName);
+
+        // if data not available from storage, log error and return null -
+        if (!data) {
+            console.warn(`Project ${ProjectName} not found.`);
+            return null;
+        }
+        
+        // otherwise, return a new Project instance with the data from storage
+        try {
+            const parsed = JSON.parse(data);
+            return new Project(parsed);
+        }
+        catch(error) {
+            // if parsind of the data from storage fails, log error + return null
+            console.error(error);
+            return null;
+        }
+
+    }
 
     changeName(newName) {
 
@@ -23,25 +61,25 @@ export class Project {
         }
     }
 
-    addToDo(todo) {
+    addToDo(todoID) {
 
-        const index = this.toDos.indexOf(todo);
+        const index = this.toDos.indexOf(todoID);
         
         // if the ToDo is already in the list, return early with exit code 1 (error),
         // otherwise add it to the list and return 0 (success)
         if (index >= 0) {
             return 1;
         } else {
-            this.toDos.push(todo);
+            this.toDos.push(todoID);
             return 0;
         }
 
     }
 
-    removeToDo(todo) {
-        const index = this.toDos.indexOf(todo);
+    removeToDo(todoID) {
+        const index = this.toDos.indexOf(todoID);
 
-        // if the todo is not in the list, return early with exit code 1 (error),
+        // if the todoID is not in the list, return early with exit code 1 (error),
         // otherwise remove it from the list and return with exit code 0 (success)
         if (index < 0) return 1;
 
