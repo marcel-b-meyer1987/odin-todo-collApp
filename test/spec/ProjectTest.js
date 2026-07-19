@@ -56,7 +56,7 @@ describe("Project class test suite", () => {
 
     it("should be able to set its deadline as due date for its todos", () => {
         proj.setDeadline(Date.now(), true);
-        expect(proj.toDos[0].dueDate.getTime()).toEqual(proj.deadline.getTime());
+        expect(ToDo.fromStorage(proj.toDos[0]).dueDate.getTime()).toEqual(proj.deadline.getTime());
     })
 
     it("should be able to remove a deadline from a project altogether", () => {

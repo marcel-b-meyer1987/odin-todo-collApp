@@ -1,4 +1,5 @@
 
+import { ToDo } from "./ToDo.js";
 import { DB_Handler } from "./DB_Handler.js";
 
 export class Project {
@@ -106,7 +107,13 @@ export class Project {
 
             // if ToDos should be affected by the new deadline, set this here
             if (affectToDos) {
-                this.toDos.forEach(todo => todo.setDeadline(newDate));
+                // convert the array of todo IDs to an array of actual objects
+                // set the deadline on each object and save to storage
+                const todoObjects = this.toDos.map(todoID => ToDo.fromStorage(todoID));
+                todoObjects.forEach(todo => {
+                    todo.setDeadline(newDate);
+                    todo.saveToStorage();
+                });
             }
 
             return 0;
