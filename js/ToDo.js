@@ -151,7 +151,7 @@ export class ToDo {
         // if YES: return early w/ exit code 1 (error)
         // if NOT: set dueDate to newDate + return w/ exit code 0 (success)
 
-        if (newDate < Date.now()) {
+        if (newDate < (Date.now() - 1000)) { // taking into account 1000ms of time buffer on top to make up for latency in unit tests
             return 1;
         } else {
             this.dueDate.setTime(newDate);

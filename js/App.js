@@ -31,7 +31,7 @@ export default class ToDoApp {
     }
 
     addProject = (projName) => {
-        const newProj = new Project(projName);
+        const newProj = new Project({name: projName});
         this.projects.push(newProj);
         return newProj;
     }

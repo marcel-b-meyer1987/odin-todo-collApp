@@ -17,7 +17,7 @@ describe("Project class test suite", () => {
     beforeAll(() => {
         todo0 = new ToDo({title: "New Todo 0"});
         todo1 = new ToDo({title: "New ToDo 1"});
-        proj = new Project("Project RiseAndShine");
+        proj = new Project({name: "Project RiseAndShine"});
         proj.addToDo(todo0.id);
         
     })
@@ -68,11 +68,12 @@ describe("Project class test suite", () => {
     it("should be able to save a project to storage and load it from storage", () => {
         proj.saveToStorage();
         const reloadedProject = Project.fromStorage(proj.name);
+        console.log(reloadedProject);
         expect(reloadedProject instanceof Project).toBe(true);
     })
 
     it("should have a cache", () => {
-        expect(false).toBe(true);
+        expect(Project.#cache).not.toBe(null);
     })  
 
     afterAll(() => {
@@ -82,3 +83,5 @@ describe("Project class test suite", () => {
     })
 
 })
+
+// manual testing:

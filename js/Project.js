@@ -20,6 +20,8 @@ export class Project {
 
     saveToStorage() {
         DB_Handler.saveItem(this.name, JSON.stringify(this));
+        console.log("Stringified project:");
+        console.log(this.name, JSON.stringify(this));
     }
 
     static fromStorage(ProjectName) {
@@ -39,8 +41,11 @@ export class Project {
         
         // otherwise, return a new Project instance with the data from storage
         try {
+            console.log("Parsed data from loaded object: ", parsed);
             const parsed = JSON.parse(data);
-            return new Project(parsed);
+            const newProj = new Project(parsed);
+            console.log("Reloaded from Storage: ", newProj);
+            return newProj;
         }
         catch(error) {
             // if parsind of the data from storage fails, log error + return null
