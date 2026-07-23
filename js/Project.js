@@ -22,8 +22,9 @@ export class Project {
 
     saveToStorage() {
         DB_Handler.saveItem(this.name, JSON.stringify(this));
-        // console.log("Stringified project:");
-        // console.log(this.name, JSON.stringify(this));
+        
+        // update cache, too, to keep data consistent
+        Project.#cache.set(this.name, this);
     }
 
     static fromStorage(ProjectName) {
@@ -66,7 +67,11 @@ export class Project {
         // if the new name is no empty string, change it and return 0 (success)
         // otherwise, return 1 (error)
         if (newName.trim() != "") {
+            // remove old entry in cache to keep data consistent
+            Project.#cache.delete(this.name);
             this.name = newName.trim();
+
+            // save to storage (which also re-enters project into cache)
             this.saveToStorage();
             return 0;
         } else {

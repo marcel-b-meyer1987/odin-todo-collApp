@@ -45,13 +45,16 @@ export class ToDo {
 
 		// save to localStorage (later: IndexedDB)
 		DB_Handler.saveItem(`${this.id}`, JSON.stringify(this));
+
+		// update in cache, too, to keep data consistent
+		ToDo.#cache.set(this.id, this);
 	}
 
 	static exists(todoID) {
 		// check if todo exists in the data layer
 		// return true or false accordingly
 
-		if (! localStorage.getItem(todoID)) {
+		if (! DB_Handler.getItem(todoID)) {
 			return false;
 		}
 		else {
@@ -136,7 +139,7 @@ export class ToDo {
 		// check if newTitle is not an empty string
 		// if NOT - set newTitle + return 0 (success)
 		// if YES - return early with exit code 1 (error)
-		if (! newTitle.trim().length > 0) return 1;
+		if (! (newTitle.trim().length > 0)) return 1;
 
 		this.title = newTitle.trim();
 		this.saveToStorage();
@@ -218,7 +221,7 @@ export class ToDo {
 		const visitedIDs = new Set([this.id]);
 
 		//THIS PART OF LOGIC CREATES FREEZE / CRASH => ENDLESS LOOP?
-		while (currentParent) {
+		while (currentParent && currentParent.id) {
 
 			// make sure the parent is not in the array already to precent circular reference
 			if (visitedIDs.has(currentParent.id)) {
@@ -226,8 +229,11 @@ export class ToDo {
 				break;
 			}
 			visitedIDs.add(currentParent.id);
-
 			hierarchy.unshift(currentParent);
+
+			// if parentID is null or empty, break loop immediately
+			if (! currentParent.parentID) break;
+
 			currentParent = currentParent.getParent();
 		}
 		

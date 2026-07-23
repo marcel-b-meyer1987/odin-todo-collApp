@@ -42,10 +42,6 @@ describe("ToDo class test suite", () => {
         expect(toDo.id).not.toBe(null);
     })
 
-    // it("should have the correct title", () => {
-    //     expect(toDo.title).toBe("Test-ToDo");
-    // });
-
     it("should have the correct notes", () => {
         expect(toDo.notes).toBe("this is a basic test todo");
     });
@@ -83,25 +79,24 @@ describe("ToDo class test suite", () => {
     })    
     
     it("can build a path object", ()=> {
-        const grandpa = new ToDo({title: "Grandpa Task"});
-        const parent = new ToDo({title: "Parent Task"});
-        const child = new ToDo({title: "Child Task"});
+        // 1. Arrange
+        const parentTodo = new ToDo({ id: "parent-1", title: "Parent Task"});
+        const childTodo = new ToDo({ id: "child-1", title: "Child Task", parentID: "parent-1"});
 
-        // simulate connection via getParent():
-        spyOn(child, 'getParent').and.returnValue(parent);
-        spyOn(parent, 'getParent').and.returnValue(grandpa);
-        spyOn(grandpa, 'getParent').and.returnValue(null); // exit condition for while loop!
-    
-        const path = child.buildPathObject();
+        parentTodo.saveToStorage();
+        childTodo.saveToStorage();
 
-        expect(path).toBeDefined;
-        expect(typeof path).toBe("object");
+        // clear cache to force re-loading via getParent instead
+        ToDo.clearCache();
 
-        // check if the elements are in the right hierarchical order
-        expect(path.hierarchy.length).toBe(3);
-        expect(path.hierarchy[0]).toBe(grandpa);
-        expect(path.hierarchy[1]).toBe(parent);
-        expect(path.hierarchy[2]).toBe(child);
+        // 2. Act
+        const loadedChild = ToDo.fromStorage("child-1");
+        const pathObject = loadedChild.buildPathObject();
+
+        // 3. Assert
+        expect(pathObject.hierarchy.length).toBe(2);
+        expect(pathObject.hierarchy[0].id).toBe("parent-1");
+        expect(pathObject.hierarchy[1].id).toBe("child-1");
     })
     
     
