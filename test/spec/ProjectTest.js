@@ -132,7 +132,39 @@ describe("Project class test suite", () => {
         expect(savedTimestamp).toBe(new Date(targetDate).getTime());
     })
 
-    
+    it("should update and persist deadlines of associated todos if affected", () => {
+        // 1. Arrange
+        const projectName = "Interactions Project";
+        const projectToTest = new Project( { name: projectName});
+
+        // create test ToDo with known ID
+        const testToDoID = "todo-999";
+        projectToTest.addToDo(testToDoID);
+
+        // we simulate a ToDo in storage by adding it to the mockStorage object:
+        mockStorage[testToDoID] = JSON.stringify({
+            id: testToDoID,
+            title: "Integration Test ToDo",
+            dueDate: undefined // start out without deadline
+        });
+        ToDo.clearCache(); // clear cache to prevent loading of the unchanged object from cache
+
+        const futureDeadline = Date.now() + 500000;
+
+        // 2. Act
+        projectToTest.setDeadline(futureDeadline, true); // add deadline + set flag for affecting todos
+
+        // 3. Assert
+        const rawToDoFromStorage = mockStorage[testToDoID];
+        expect(rawToDoFromStorage).toBeDefined();
+
+        const parsedToDo = JSON.parse(rawToDoFromStorage);
+
+        // check if the deadline was persisted in storage
+        const savedToDoTimestamp = new Date(parsedToDo.dueDate).getTime();
+        expect(savedToDoTimestamp).toBe(new Date(futureDeadline).getTime());
+        
+    })
 
     afterAll(() => {
         // log new project class instance for inspection
