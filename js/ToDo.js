@@ -70,6 +70,12 @@ export class ToDo {
 		ToDo.#cache.clear();
 	}
 
+	static clearSingleCacheItem(todoID) {
+		if (!todoID) return 1; // error
+		ToDo.#cache.delete(todoID);
+		return 0; // success
+	}
+
 	static fromStorage(todoID) {
 		
 		// if no ID was passed in, return null

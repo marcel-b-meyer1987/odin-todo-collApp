@@ -26,4 +26,16 @@ export class DB_Handler {
             console.error(error);
         }
     }
+
+    static removeItem(id) {
+        // if no ID was passed, print error + return 1
+        if (!id) {
+            console.error("Error: DB_Handler.deleteItem() requires an item as 1st argument. Cannot get Item without ID.");
+            return 1;
+        }
+
+        // else, delete the item from storage and return 0 (success)
+        localStorage.removeItem(id);
+        return 0;
+    }
 }

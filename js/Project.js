@@ -58,8 +58,54 @@ export class Project {
 
     }
 
+    static delete(projectName, cascadeMode = false) {
+        // if no projectName provided, return early with error code
+        if (! projectName) return 1;
+
+        // get project to be deleted (from cache or storage)
+        const projectToDelete = Project.fromStorage(projectName)
+
+        if (!projectToDelete) {
+            console.warn(`Project ${projectName} not found for deletion.`);
+            return 1; // error: project with this name is not existing
+        }
+
+        // if cascadeMode is active, delete all associated ToDos first
+        // otherwise, reset project property of each todo to null
+        if (cascadeMode) {
+            if (projectToDelete && projectToDelete.toDos.length > 0) {
+                projectToDelete.toDos.forEach(todoID => {
+                    // remove ToDo from DB and cache
+                    DB_Handler.removeItem(todoID);
+                    ToDo.clearSingleCacheItem?.(todoID);
+                });
+            }
+        } else {
+            if (projectToDelete && projectToDelete.toDos.length > 0) {
+                projectToDelete.toDos.forEach(todoID => {
+                    // get each todo from cache (or storage),
+                    // reset project property to null + save changes
+                    const associatedTodo = ToDo.fromStorage(todoID);
+                    associatedTodo.project = null;
+                    associatedTodo.saveToStorage();
+                });
+            }
+        } 
+
+        // remove the project itself for from DB and cache
+        DB_Handler.removeItem(projectName);
+        Project.#cache.delete(projectName);
+        return 0; // success
+    }
+
     static clearCache() {
         Project.#cache.clear();
+    }
+
+    static clearSingleCacheItem(projectName) {
+        if (!projectName) return 1; // error
+        Project.#cache.delete(projectName);
+        return 0; // success
     }
 
     changeName(newName) {
