@@ -15,7 +15,7 @@ export class Project {
         this.name = name;
         this.creationTimestamp = creationTimestamp || Date.now();
         this.deadline = deadline || undefined; // default value = no deadline at all
-        this.toDos = []; // array of strings holding the IDs of associated todos only
+        this.toDos = toDos || []; // array of strings holding the IDs of associated todos only
 
         Project.#cache.set(this.name, this);
     }

@@ -132,6 +132,8 @@ describe("Project class test suite", () => {
         expect(savedTimestamp).toBe(new Date(targetDate).getTime());
     })
 
+    
+
     afterAll(() => {
         // log new project class instance for inspection
         console.log(proj);

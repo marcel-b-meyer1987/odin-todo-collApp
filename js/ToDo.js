@@ -37,7 +37,6 @@ export class ToDo {
 		this.customSortNo = customSortNo || undefined;
 		this.trashBinDate = trashBinDate || undefined; // needed to calculate the day that the Todo will be deleted from trash for good / default undefined means: not recycled 
 		this.parentID = parentID || null;
-		this.DB_Handler = 
 		
 		ToDo.#cache.set(this.id, this);
 	}
@@ -140,6 +139,7 @@ export class ToDo {
 		if (! newTitle.trim().length > 0) return 1;
 
 		this.title = newTitle.trim();
+		this.saveToStorage();
 		return 0;
 	}
 	
@@ -155,6 +155,7 @@ export class ToDo {
             return 1;
         } else {
             this.dueDate.setTime(newDate);
+			this.saveToStorage();
             return 0;
         }
 	}
@@ -178,6 +179,7 @@ export class ToDo {
 			
 		// if both OK, set parentID to parentID and return 0 (success)
 		this.parentID = parentID;
+		this.saveToStorage();
 		return 0;
 	}
 
@@ -188,6 +190,7 @@ export class ToDo {
 
 	detachFromParent() {
 		this.parentID = null;
+		this.saveToStorage();
 	}
 
 	buildPathObject() {
