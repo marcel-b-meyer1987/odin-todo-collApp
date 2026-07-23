@@ -1,11 +1,13 @@
 import { Project } from "../../js/Project.js";
 import { ToDo } from "../../js/ToDo.js";
+import { DB_Handler } from "../../js/DB_Handler.js"
 
 describe("Project class test suite", () => {
 
     let todo0;
     let todo1;
     let proj;
+    let mockStorage;
     const currentYear = new Date(Date.now()).getFullYear();
     const pastDate = new Date();
     pastDate.setFullYear(currentYear-1);
@@ -20,6 +22,17 @@ describe("Project class test suite", () => {
         proj = new Project({name: "Project RiseAndShine"});
         proj.addToDo(todo0.id);
         
+        // For mocking storage
+        mockStorage = {};
+        
+        spyOn(DB_Handler, "saveItem").and.callFake((key, value) => {
+            mockStorage[key] = String(value);
+        });
+
+        spyOn(DB_Handler, "getItem").and.callFake(key => {
+            return mockStorage[key] || null;
+        });
+
     })
 
     it("creates an instance of the Project class", () => {
@@ -43,7 +56,7 @@ describe("Project class test suite", () => {
     it("can remove a todo from its list", () => {
         proj.addToDo(todo1.id);
         proj.removeToDo(todo1.id);
-        expect(proj.toDos.indexOf(todo1) < 0).toBe(true);
+        expect(proj.toDos.indexOf(todo1.id) < 0).toBe(true);
     })
 
     it("should be able to set a deadline", () => {
@@ -72,9 +85,52 @@ describe("Project class test suite", () => {
         expect(reloadedProject instanceof Project).toBe(true);
     })
 
-    it("should have a cache", () => {
-        expect(Project.#cache).not.toBe(null);
-    })  
+    it("should persist name changes to storage", () => {
+        // 1. Arrange
+        const projectToTest = new Project({ name: "Persistence Test"});
+
+        // 2. Act
+        projectToTest.changeName("Successfully persisted Name");
+
+        Project.clearCache();
+
+        // 3. Assert
+        const reloaded = Project.fromStorage("Successfully persisted Name");
+        expect(reloaded).not.toBeNull();
+        expect(reloaded.name).toBe("Successfully persisted Name");
+    })
+
+    it("should persist added ToDo IDs to storage", () => {
+        // 1. Arrange
+        const projectToTest = new Project({ name: "Todo Persistence Project"});
+        const testTodoID = "todo-123-xyz";
+
+        // 2. Act
+        projectToTest.addToDo(testTodoID);
+        Project.clearCache(); // exclude cache for testing
+
+        // 3. Assert
+        const reloaded = Project.fromStorage("Todo Persistence Project");
+        expect(reloaded.toDos).toContain(testTodoID);
+    })
+
+    it("should persist new Deadlines to storage", () => {
+        // 1. Arrange
+        const projectToTest = new Project({ name: "Deadline Project"});
+        const targetDate = Date.now() + 100000; // some time in the future
+
+        // 2. Act
+        projectToTest.setDeadline(targetDate);
+        Project.clearCache();
+
+        // 3. Assert
+        const reloaded = Project.fromStorage("Deadline Project");
+
+        // important: Because JSON.parse() returns a date as string,
+        // it must be converted to a real date/timestamp for comparison
+        const savedTimestamp = new Date(reloaded.deadline).getTime();
+        expect(savedTimestamp).toBe(new Date(targetDate).getTime());
+    })
 
     afterAll(() => {
         // log new project class instance for inspection
@@ -84,4 +140,3 @@ describe("Project class test suite", () => {
 
 })
 
-// manual testing:

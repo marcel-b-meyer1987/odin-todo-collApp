@@ -21,7 +21,7 @@ export default class ToDoApp {
         this.todos.push(new ToDo(configObj));
     }
 
-    addCategor = (newCat) => {
+    addCategory = (newCat) => {
         // if newCat is an empty string, return with exit code 1 (error)
         if (newCat.trim().length < 1) return 1;
 

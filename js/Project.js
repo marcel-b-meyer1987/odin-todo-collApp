@@ -2,6 +2,8 @@
 import { ToDo } from "./ToDo.js";
 import { DB_Handler } from "./DB_Handler.js";
 
+// DIETER
+
 export class Project {
 
     // cache for all Projects used by the app
@@ -20,8 +22,8 @@ export class Project {
 
     saveToStorage() {
         DB_Handler.saveItem(this.name, JSON.stringify(this));
-        console.log("Stringified project:");
-        console.log(this.name, JSON.stringify(this));
+        // console.log("Stringified project:");
+        // console.log(this.name, JSON.stringify(this));
     }
 
     static fromStorage(ProjectName) {
@@ -41,18 +43,22 @@ export class Project {
         
         // otherwise, return a new Project instance with the data from storage
         try {
-            console.log("Parsed data from loaded object: ", parsed);
             const parsed = JSON.parse(data);
+            // console.log("Parsed data from loaded object: ", parsed);
             const newProj = new Project(parsed);
-            console.log("Reloaded from Storage: ", newProj);
+            // console.log("Reloaded from Storage: ", newProj);
             return newProj;
         }
         catch(error) {
-            // if parsind of the data from storage fails, log error + return null
+            // if parsing of the data from storage fails, log error + return null
             console.error(error);
             return null;
         }
 
+    }
+
+    static clearCache() {
+        Project.#cache.clear();
     }
 
     changeName(newName) {
@@ -60,7 +66,8 @@ export class Project {
         // if the new name is no empty string, change it and return 0 (success)
         // otherwise, return 1 (error)
         if (newName.trim() != "") {
-            this.name = newName;
+            this.name = newName.trim();
+            this.saveToStorage();
             return 0;
         } else {
             return 1;
@@ -77,6 +84,7 @@ export class Project {
             return 1;
         } else {
             this.toDos.push(todoID);
+            this.saveToStorage();
             return 0;
         }
 
@@ -90,6 +98,7 @@ export class Project {
         if (index < 0) return 1;
 
         this.toDos.splice(index, 1);
+        this.saveToStorage();
         return 0;
     }
 
@@ -106,9 +115,10 @@ export class Project {
         const now = Date.now();
 
         if (newDate < now) {
+            console.warn("Cannot set Deadline to the past.");
             return 1;
         } else {
-            this.deadline.setTime(newDate);
+            this.deadline = new Date(newDate);
 
             // if ToDos should be affected by the new deadline, set this here
             if (affectToDos) {
@@ -116,11 +126,14 @@ export class Project {
                 // set the deadline on each object and save to storage
                 const todoObjects = this.toDos.map(todoID => ToDo.fromStorage(todoID));
                 todoObjects.forEach(todo => {
-                    todo.setDeadline(newDate);
-                    todo.saveToStorage();
+                    if (todo) {
+                        todo.setDeadline(newDate);
+                        todo.saveToStorage();
+                    }
                 });
             }
 
+            this.saveToStorage();
             return 0;
         }
 
@@ -130,6 +143,7 @@ export class Project {
         // remove the deadline from the project altogether
         // by re-setting it to undefined
         this.deadline = undefined;
+        this.saveToStorage();
     }
 
 }

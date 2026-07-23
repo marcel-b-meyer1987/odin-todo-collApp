@@ -84,7 +84,8 @@ describe("ToDoApp class test suite", () => {
         app.saveAllProjects();
         app.projects = [];
         app.projects = app.loadAllProjects();
-
         expect(app.projects.length).toEqual(2);
+        
+        console.log(app.projects);
     })
 })
