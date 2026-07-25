@@ -19,8 +19,13 @@ export const APP_CONST = {
         PROJECTS: "PROJECTS", // to retrieve a list of all projects
         TEAM: "TEAM", // to retrieve a list of 
         TRASH_BIN: "TRASH_BIN" // to retrieve the list of ids of recycled todos
-    }
+    },
+
+    DEFAULT_SETTINGS: {
+        TRASH_BIN_DEFAULT_PRESERVE_DURATION: 30,
+    },
 }
+
 
 export const UI_CONST = {
     MENU_ITEMS: [

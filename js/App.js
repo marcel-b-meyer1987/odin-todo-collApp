@@ -4,6 +4,7 @@
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
+import { DB_Handler } from "./DB_Handler.js";
 import { UI_Manager } from "./UI_Manager.js";
 
 export default class ToDoApp {
@@ -48,21 +49,17 @@ export default class ToDoApp {
     }
 
     loadAllToDos = () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX; 
-            key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
-            key += APP_CONST.STORAGE_KEYS.TODOS;
+        // get a list of all ToDo IDs in the storage
+        const todoIDs = ToDo.getGlobalIndex();
 
-        const todoObjsArr = JSON.parse(localStorage.getItem(key));
+        // if no IDs in storage = no ToDos either => return empty array
+        if (todoIDs.length < 1) return [];
 
-        if (todoObjsArr === null) return []; // return early if nothing to load
+        // iterate over all IDs and load the ToDos from storage to the cache
+        const allTodos = [];
+        todoIDs.forEach(id => allTodos.push(ToDo.fromStorage(id)));
 
-        const toDoInstances = [];
-
-        for (let i = 0; i < todoObjsArr.length; i++) {
-            toDoInstances.push(ToDo.fromStorage(todoObjsArr[i].id));
-        }
-
-        return toDoInstances;
+        return allTodos;
     }
 
     loadAllCategories = () => {

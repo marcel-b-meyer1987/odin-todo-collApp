@@ -1,4 +1,4 @@
-import { TODO_STATUS, TODO_PRIO } from "./const.js";
+import { TODO_STATUS, TODO_PRIO, APP_CONST } from "./const.js";
 import { Project } from "./Project.js";
 import { DB_Handler } from "./DB_Handler.js";
 
@@ -39,6 +39,7 @@ export class ToDo {
 		this.parentID = parentID || null;
 		
 		ToDo.#cache.set(this.id, this);
+		ToDo.#addToGlobalIndex(this.id);
 		this.saveToStorage();
 	}
 	
@@ -138,12 +139,45 @@ export class ToDo {
 			ToDo.delete(child.id); // recursive method call for each child todo
 		})
 
+		// remove the todoID from the global index of todo IDs
+		ToDo.#removeFromGlobalIndex(todoID);
+
 		// finally, remove ToDo itself from storage + cache
 		DB_Handler.removeItem(todoID);
 		ToDo.clearSingleCacheItem(todoID);
 
 		return 0; // success
 
+	}
+
+	static getGlobalIndex() {
+		let key = APP_CONST.STORAGE_KEYS.PREFIX; 
+            key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
+            key += APP_CONST.STORAGE_KEYS.TODOS;
+        const data = DB_Handler.getItem(key);
+		return data ? JSON.parse(data) : [];
+	}
+
+	static #addToGlobalIndex(todoID) {
+		const index = ToDo.getGlobalIndex();
+		if (!index.includes(todoID)) {
+			index.push(todoID);
+			let key = APP_CONST.STORAGE_KEYS.PREFIX; 
+				key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
+				key += APP_CONST.STORAGE_KEYS.TODOS;
+			DB_Handler.saveItem(key, JSON.stringify(index));
+		}
+	}
+
+	static #removeFromGlobalIndex(todoID) {
+		let index = ToDo.getGlobalIndex();
+	
+		index = index.filter(id => id !== todoID);
+		let key = APP_CONST.STORAGE_KEYS.PREFIX; 
+			key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
+			key += APP_CONST.STORAGE_KEYS.TODOS;
+		DB_Handler.saveItem(key, JSON.stringify(index));
+	
 	}
 
 	setTitle(newTitle) {
@@ -254,6 +288,42 @@ export class ToDo {
 			hierarchy: hierarchy
 		};
 		
+	}
+
+	moveToTrash() {
+		// calculate deletion date: Now + default preserve duration in ms
+		const preserveDurationInMs = APP_CONST.DEFAULT_SETTINGS.TRASH_BIN_DEFAULT_PRESERVE_DURATION * 24 * 60 * 60 * 1000;
+		this.trashBinDate = Date.now() + preserveDurationInMs;
+
+		// change status of ToDo
+		this.status = TODO_STATUS.TRASH_BIN;
+
+		this.saveToStorage();
+	}
+
+	restoreFromTrash() {
+		// reset trashBinDate to undefined + status to normal
+		this.trashBinDate = undefined;
+		this.status = TODO_STATUS.PENDING;
+
+		this.saveToStorage();
+	}
+
+	static emptyTrash() {
+		const now = Date.now();
+		let deletedCount = 0;
+
+		// get all todos from the cache => may need to be refactored (what if the user just started the app and cache is empty?)
+		const allTodos = [...ToDo.#cache.values()];
+
+		allTodos.forEach(todo => {
+			if(todo.trashBinDate && todo.trashBinDate <= now) {
+				ToDo.delete(todo.id);
+				deletedCount++;
+			}
+		});
+
+		return deletedCount; // contrary to the rest of the codebase, deviating from 0 does not mean an error in this method
 	}
 }
 

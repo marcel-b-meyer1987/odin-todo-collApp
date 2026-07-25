@@ -132,6 +132,33 @@ describe("ToDo class test suite", () => {
 
     })
     
+    it("should move a ToDo to trash and delete it when emptyTrash() is called after expiration date ", () => {
+        // 1. Arrange: create 2 todos
+        const t1 = new ToDo({ id: "trash-1", title: "Expired ToDo" });
+        const t2 = new ToDo({ id: "trash-2", title: "Fresh ToDo" });
+
+        t1.moveToTrash();
+        t2.moveToTrash();
+
+        // manipulate the trashBinDate of t1 to the past
+        t1.trashBinDate = Date.now() - 5000;
+        t1.saveToStorage();
+
+        // 2. Act: empty trash bin
+        const deletedAmount = ToDo.emptyTrash();
+
+        // 3. Assert: exactly 1 ToDo should have been deleted
+        expect(deletedAmount).toBe(1);
+
+        // the expired ToDo musst be removed from storage
+        expect(ToDo.fromStorage("trash-1")).toBeNull();
+
+        // the fresh ToDo musst still be there, as it will only expire 30 days from now
+        expect(ToDo.fromStorage("trash-2")).not.toBeNull();
+
+        // clean-up of the 2nd todo for following tests
+        ToDo.delete("trash-2");
+    })
     
     afterAll(() => {
         window.localStorage.clear();
