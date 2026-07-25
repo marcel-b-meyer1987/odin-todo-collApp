@@ -39,6 +39,7 @@ export class ToDo {
 		this.parentID = parentID || null;
 		
 		ToDo.#cache.set(this.id, this);
+		this.saveToStorage();
 	}
 	
 	saveToStorage() {
@@ -60,6 +61,14 @@ export class ToDo {
 		else {
 			return true;
 		} 
+	}
+
+	static getAllChildren(parentID) {
+		// Helper method: Finds all ToDos in the system having this ToDo as parent
+
+		const children = [...ToDo.#cache.values()].filter(todo => todo.parentID === parentID);
+
+		return children;
 	}
 
 	static isCached(todoID) {
@@ -87,58 +96,54 @@ export class ToDo {
 		// if not cached, return from data layer
 		const data = DB_Handler.getItem(todoID);
 
-
-		// if todo id not found, return early + print warning
+		// if todo id not found in storage either, return early + print warning
 		if (!data) {
 			console.warn(`ToDo with id ${todoID} not found.`);
 			return null;
 		}
 
-		console.log("Raw data:", data);
-		console.log("Parsed data:", JSON.parse(data));
-
 		try {
-			const parsed = JSON.parse(data);
-			const id = parsed.id;
-			
-			// load todo with todoID from localStorage (later: IndexedDB)
-			const {	title,
-					notes,
-					createdDate,
-					dueDate,
-					parentID,
-					checklist,
-					status,
-					project,
-					categories,
-					assignedTo,
-					prio,
-					customSortNo,
-					trashBinDate
-				} = parsed;
-
 			// create a new ToDo instance with the data from storage
-			return new ToDo({	id,
-								title,
-								notes,
-								createdDate,
-								dueDate,
-								parentID,
-								checklist,
-								status,
-								project,
-								categories,
-								assignedTo,
-								prio,
-								customSortNo,
-								trashBinDate
-							});
+			const parsed = JSON.parse(data);
+			return new ToDo(parsed);
 		} 
 		catch(error) {
 			console.error(error);
 			return null;
 		}
 		
+	}
+
+	static delete(todoID) {
+		if (!todoID) return 1;
+
+		// get todo from storage
+		const todoToDelete = ToDo.fromStorage(todoID);
+		if (!todoToDelete) {
+			console.warn(`Todo with ID ${todoID} not found for deletion.`);
+			return 1;
+		}
+
+		// project clean-up: If todo is associated to project, remove it from the project
+		if(todoToDelete.project) {
+			const associatedProject = Project.fromStorage(todoToDelete.project);
+			if (associatedProject) {
+				associatedProject.removeToDo(todoID); // will call saveToStorage() on the project internally
+			}
+		}
+
+		// remove all child todos
+		const childToDos = ToDo.getAllChildren(todoID);
+		childToDos.forEach(child => {
+			ToDo.delete(child.id); // recursive method call for each child todo
+		})
+
+		// finally, remove ToDo itself from storage + cache
+		DB_Handler.removeItem(todoID);
+		ToDo.clearSingleCacheItem(todoID);
+
+		return 0; // success
+
 	}
 
 	setTitle(newTitle) {
@@ -193,7 +198,7 @@ export class ToDo {
 	}
 
 	getParent() {
-		// returns either null (if parentID invalid) or the parent ToDo O
+		// returns either null (if parentID invalid) or the parent ToDo
 		return (ToDo.fromStorage(this.parentID));
 	}
 

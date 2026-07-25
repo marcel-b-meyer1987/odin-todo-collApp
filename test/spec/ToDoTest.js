@@ -1,25 +1,25 @@
 import { ToDo } from "../../js/ToDo.js";
+import { Project } from "../../js/Project.js";
+import { DB_Handler } from "../../js/DB_Handler.js";
 
 describe("ToDo class test suite", () => {
     
     // Setup
-        const parentToDo = new ToDo({title: "Parent-ToDo"});
-        parentToDo.saveToStorage();
+    let mockStorage = {};
 
-        const anotherParent = new ToDo({title: "Another Parent"});
-        anotherParent.saveToStorage();            
-
-        const toDo = new ToDo({
-            title: "Test-ToDo",
-            notes: "this is a basic test todo",
-            parentID: parentToDo.id,
-        });
-        toDo.saveToStorage();
-        
-        const saved = ToDo.fromStorage(toDo.id);
-        
-        console.log("created freshly:", toDo);
-        console.log("loaded from storage:", saved);
+    const parentToDo = new ToDo({ id: "parent-1", title: "Parent-ToDo"});
+    const anotherParent = new ToDo({ id: "parent-2", title: "Another Parent"});
+    const toDo = new ToDo({
+        id: "toDo-1",
+        title: "Test-ToDo",
+        notes: "this is a basic test todo",
+        parentID: parentToDo.id,
+    });
+    
+    const saved = ToDo.fromStorage(toDo.id);
+    
+    // console.log("created freshly:", toDo);
+    // console.log("loaded from storage:", saved);
         
     it("should be able to be attached to a parent", () => {
         toDo.parentID = null; // reset
@@ -73,9 +73,9 @@ describe("ToDo class test suite", () => {
     })
     
     it("can get its parent instance from storage", () => {
-        const parent = toDo.getParent();
-        expect(parent instanceof ToDo).toBe(true);
-        console.log(parent);
+        const loadedParent = toDo.getParent();
+        expect(loadedParent.id).toBe("parent-1");
+        // console.log(parent);
     })    
     
     it("can build a path object", ()=> {
@@ -97,6 +97,39 @@ describe("ToDo class test suite", () => {
         expect(pathObject.hierarchy.length).toBe(2);
         expect(pathObject.hierarchy[0].id).toBe("parent-1");
         expect(pathObject.hierarchy[1].id).toBe("child-1");
+    })
+
+    it("should remove itself from its project and delete all child todos recursively before deleting itself", () => {
+        // 1. Arrange: Create a project, a todo within it + a child todo
+        const pName = "ToDo Deletion Project";
+        const testProject = new Project({ name: pName });
+        const mainTodo = new ToDo({ id: "main-1", title: "Main Task", project: pName });
+        const subTodo = new ToDo({ id: "sub-1", title: "Sub Task", parentID: "main-1" });
+
+        // Make connections
+        testProject.addToDo(mainTodo.id);
+
+        // persist all objects + register in cache
+        [testProject, mainTodo, subTodo].forEach(obj => obj.saveToStorage());
+
+        // 2. Act: Delete main todo
+        const result = ToDo.delete("main-1");
+        expect(result).toBe(0);
+
+        // 3. Assert: Main todo and sub todo must be deleted completely
+        expect(ToDo.fromStorage("main-1")).toBeNull();
+        expect(ToDo.fromStorage("sub-1")).toBeNull();
+
+        // empty both caches in order to check state freshly off storage
+        Project.clearCache();
+        ToDo.clearCache();
+
+        // 4. Assert: Check if project was refreshed and doesn't contain the todo anymore
+        const reloadedProject = Project.fromStorage(pName);
+        expect(reloadedProject).not.toBeNull();
+        expect(reloadedProject.toDos).not.toContain("main-1"); // ID was removed
+
+
     })
     
     
