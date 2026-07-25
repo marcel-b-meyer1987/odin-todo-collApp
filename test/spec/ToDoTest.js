@@ -1,6 +1,7 @@
 import { ToDo } from "../../js/ToDo.js";
 import { Project } from "../../js/Project.js";
 import { DB_Handler } from "../../js/DB_Handler.js";
+import { APP_CONST } from "../../js/const.js";
 
 describe("ToDo class test suite", () => {
     
@@ -158,6 +159,28 @@ describe("ToDo class test suite", () => {
 
         // clean-up of the 2nd todo for following tests
         ToDo.delete("trash-2");
+    })
+
+    it("should automatically maintain the global ToDo ID index in storage", () => {
+        // 1. Arrange: get storage key from const.js
+        let key = APP_CONST.STORAGE_KEYS.PREFIX; 
+            key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
+            key += APP_CONST.STORAGE_KEYS.TODOS;
+        
+        // 2. Act: Create a new ToDo (triggering constructor)
+        const trackedToDo = new ToDo({ id: "tracked-123", title: "Index Test Task" });
+
+        // 3. Assert: Check if global index contains the id 
+        let currentIndex = ToDo.getGlobalIndex();
+        expect(currentIndex).toContain("tracked-123");
+
+        // 4. Act: Delete ToDo for good
+        ToDo.delete("tracked-123");
+
+        // 4. Assert: Make sure the ID has been removed from the global index properly
+        let updatedIndex = ToDo.getGlobalIndex();
+        expect(updatedIndex).not.toContain("tracked-123");
+
     })
     
     afterAll(() => {

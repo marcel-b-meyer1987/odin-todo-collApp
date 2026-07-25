@@ -56,8 +56,7 @@ export default class ToDoApp {
         if (todoIDs.length < 1) return [];
 
         // iterate over all IDs and load the ToDos from storage to the cache
-        const allTodos = [];
-        todoIDs.forEach(id => allTodos.push(ToDo.fromStorage(id)));
+        const allTodos = todoIDs.map(id => ToDo.fromStorage(id));
 
         return allTodos;
     }
