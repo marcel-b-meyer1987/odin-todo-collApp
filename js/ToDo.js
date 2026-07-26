@@ -35,7 +35,7 @@ export class ToDo {
 		this.checklist = checklist || [];
 		this.status = status || TODO_STATUS.PENDING;
 		this.project = project || null;
-		this.categories = categories || ["Uncategorized"];
+		this.categories = categories && categories.length > 0 ? categories : ["Uncategorized"];
 		this.assignedTo  = assignedTo || undefined;
 		this.prio = prio || TODO_PRIO.NORMAL;
 		this.customSortNo = customSortNo || undefined;

@@ -37,9 +37,15 @@ export default class ToDoApp {
         // if newCat is an empty string, return with exit code 1 (error)
         if (newCat.trim().length < 1) return 1;
 
-        // else add newCat to categories array and return 0 (success)
-        this.categories.push(newCat);
-        return 0;
+        // prevent duplicates
+        if(!this.categories.includes(newCat.trim())) {
+            // add to cats object in RAM + update index
+            this.categories.push(newCat.trim());
+            DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(this.categories));
+            return 0; // success
+        }
+
+        return 1; // Error: already existing
     }
 
     addProject = (projName) => {
@@ -59,6 +65,30 @@ export default class ToDoApp {
         return i;
     }
 
+    deleteCategory = (catName) => {
+        if (catName === "Uncategorized") return 1; // Fallback may not be deleted
+
+        this.categories = this.categories.filter(cat => cat !== catName);
+        DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(this.categories));
+
+        // remove the category from each todo which was assigned to it
+        const allTodos = this.loadAllToDos();
+        allTodos.forEach(todo => {
+            if (todo.categories.includes(catName)) {
+                // remove deleted cat from todo
+                todo.categories = todo.categories.filter(c => c !== catName);
+                // if no categories left, set to default
+                if (todo.categories.length < 1) {
+                    todo.categories.push("Uncategorized");
+                }
+                // save update
+                todo.saveToStorage();
+            }
+        });
+
+        return 0; // success
+    }
+
     loadAllToDos = () => {
         // get a list of all ToDo IDs in the storage
         const todoIDs = ToDo.getGlobalIndex();
@@ -73,11 +103,19 @@ export default class ToDoApp {
     }
 
     loadAllCategories = () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX;
-            key += APP_CONST.STORAGE_KEYS.USER;
-            key += APP_CONST.STORAGE_KEYS.CATS;
+        let categories = [];
 
-        return JSON.parse(localStorage.getItem(key));
+        const data = DB_Handler.getItem(this.CatIndexKey);
+
+        if (data) {
+            categories = JSON.parse(data);
+        } else {
+            categories = ["Uncategorized"];
+            // in case nothing was set up in storage, set it up now
+            DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(categories));
+        }
+        
+        return categories;
     }
 
     loadAllProjects = () => {
@@ -90,14 +128,12 @@ export default class ToDoApp {
         return projectNames.map(name => Project.fromStorage(name));
     }
 
-    saveAllToDos= () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX;
-            key += APP_CONST.STORAGE_KEYS.USER;
-            key += APP_CONST.STORAGE_KEYS.TODOS;
+    // saveAllToDos= () => {
+    //     // NEEDS A REWRITE    
 
-        localStorage.setItem(key, JSON.stringify(this.todos));
-        console.log(`Saved ${this.todos.length} todos under ${key}.`);
-    }
+    //     localStorage.setItem(key, JSON.stringify(this.todos));
+    //     console.log(`Saved ${this.todos.length} todos under ${key}.`);
+    // }
 
     saveAllCategories = () => {
         let key = APP_CONST.STORAGE_KEYS.PREFIX;
