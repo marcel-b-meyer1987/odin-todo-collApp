@@ -15,6 +15,17 @@ export default class ToDoApp {
         this.teamMembers = [];
         this.toDos = this.loadAllToDos() || [];
         this.UI_Manager = new UI_Manager(this);
+
+        // import constants
+        this.ToDoIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+                            APP_CONST.STORAGE_KEYS.USER +
+                            APP_CONST.STORAGE_KEYS.TODOS;
+        this.ProjectIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+                                APP_CONST.STORAGE_KEYS.USER +
+                                APP_CONST.STORAGE_KEYS.PROJECTS;
+        this.CatIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+                            APP_CONST.STORAGE_KEYS.USER +
+                            APP_CONST.STORAGE_KEYS.CATS;
     }
 
 
@@ -70,38 +81,13 @@ export default class ToDoApp {
     }
 
     loadAllProjects = () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX;
-            key += APP_CONST.STORAGE_KEYS.USER;
-            key += APP_CONST.STORAGE_KEYS.PROJECTS;
-
-        const projectsData = JSON.parse(localStorage.getItem(key));
+        const projectNames = Project.getGlobalIndex();
         
-        // if no projects stored, return an empty array
-        if (!projectsData) return [];
+        // if no names = no projects => return empty array
+        if (projectNames.length < 1) return [];
 
-        // else create a projects array
-        const projects = [];
-
-        // loop through each project's dataset...
-        for (let i = 0; i < projectsData.length; i++) {
-            const {
-                    name,
-                    creationTimestamp,
-                    deadline,
-                    toDos
-                } = projectsData[i];
-
-            // and create a fresh Instance of the Project class, populated with the respective data
-            const proj = new Project(name);
-            proj.creationTimestamp = creationTimestamp;
-            proj.deadline = deadline;
-            proj.toDos = toDos;
-
-            // then push the re-instantiated project into the array
-            projects.push(proj);
-        }
-
-        return projects;
+        // load all projects into cache and return as array
+        return projectNames.map(name => Project.fromStorage(name));
     }
 
     saveAllToDos= () => {

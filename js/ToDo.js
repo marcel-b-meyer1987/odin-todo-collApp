@@ -7,6 +7,10 @@ export class ToDo {
 	// cache for all todos used by the app
 	static #cache = new Map();
 
+	static #indexKey =  APP_CONST.STORAGE_KEYS.PREFIX +
+						APP_CONST.STORAGE_KEYS.USER +
+						APP_CONST.STORAGE_KEYS.TODOS;
+
 	constructor({
 		id,
 		title,
@@ -151,10 +155,7 @@ export class ToDo {
 	}
 
 	static getGlobalIndex() {
-		let key = APP_CONST.STORAGE_KEYS.PREFIX; 
-            key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
-            key += APP_CONST.STORAGE_KEYS.TODOS;
-        const data = DB_Handler.getItem(key);
+        const data = DB_Handler.getItem(ToDo.#indexKey);
 		return data ? JSON.parse(data) : [];
 	}
 
@@ -162,21 +163,14 @@ export class ToDo {
 		const index = ToDo.getGlobalIndex();
 		if (!index.includes(todoID)) {
 			index.push(todoID);
-			let key = APP_CONST.STORAGE_KEYS.PREFIX; 
-				key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
-				key += APP_CONST.STORAGE_KEYS.TODOS;
-			DB_Handler.saveItem(key, JSON.stringify(index));
+			DB_Handler.saveItem(ToDo.#indexKey, JSON.stringify(index));
 		}
 	}
 
 	static #removeFromGlobalIndex(todoID) {
 		let index = ToDo.getGlobalIndex();
-	
 		index = index.filter(id => id !== todoID);
-		let key = APP_CONST.STORAGE_KEYS.PREFIX; 
-			key += APP_CONST.STORAGE_KEYS.USER; // may be change to user ID or some such later in multi-user version
-			key += APP_CONST.STORAGE_KEYS.TODOS;
-		DB_Handler.saveItem(key, JSON.stringify(index));
+		DB_Handler.saveItem(ToDo.#indexKey, JSON.stringify(index));
 	
 	}
 

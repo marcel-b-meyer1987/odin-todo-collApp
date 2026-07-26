@@ -1,6 +1,7 @@
 import { Project } from "../../js/Project.js";
 import { ToDo } from "../../js/ToDo.js";
 import { DB_Handler } from "../../js/DB_Handler.js"
+import { APP_CONST } from "../../js/const.js";
 
 describe("Project class test suite", () => {
 
@@ -15,6 +16,10 @@ describe("Project class test suite", () => {
     futureDate.setFullYear(currentYear+1);
     console.log(pastDate);
     console.log(futureDate);
+
+    const indexKey = APP_CONST.STORAGE_KEYS.PREFIX + 
+                            APP_CONST.STORAGE_KEYS.USER +
+                            APP_CONST.STORAGE_KEYS.PROJECTS;
 
     beforeAll(() => {
         todo0 = new ToDo({title: "New Todo 0"});
@@ -251,6 +256,24 @@ describe("Project class test suite", () => {
         const reloadedTodo = ToDo.fromStorage("orphan-todo-999");
         expect(reloadedTodo).not.toBeNull();
         expect(reloadedTodo.project).toBeNull();
+    })
+
+    it("should automatically maintain the global project index during creation, deletion and renaming", () => {
+        // 1. test creation
+        const testProj = new Project({ name: "Index Project Alpha" });
+        let currentIndex = JSON.parse(mockStorage[indexKey]);
+        expect(currentIndex).toContain("Index Project Alpha");
+
+        // 2. test renaming
+        testProj.changeName("Index Project Beta");
+        let renamedIndex = JSON.parse(mockStorage[indexKey]);
+        expect(renamedIndex).not.toContain("Index Project Alpha");
+        expect(renamedIndex).toContain("Index Project Beta");
+
+        // 3. test deletion
+        Project.delete("Index Project Beta");
+        let finalIndex = JSON.parse(mockStorage[indexKey]);
+        expect(finalIndex).not.toContain("Index Project Beta");
     })
 
     afterAll(() => {

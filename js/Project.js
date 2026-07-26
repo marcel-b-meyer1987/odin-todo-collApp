@@ -1,6 +1,7 @@
 
 import { ToDo } from "./ToDo.js";
 import { DB_Handler } from "./DB_Handler.js";
+import { APP_CONST } from "./const.js";
 
 // DIETER
 
@@ -8,6 +9,9 @@ export class Project {
 
     // cache for all Projects used by the app
     static #cache = new Map();
+    static #indexKey = APP_CONST.STORAGE_KEYS.PREFIX + 
+                        APP_CONST.STORAGE_KEYS.USER +
+                        APP_CONST.STORAGE_KEYS.PROJECTS;
     
     constructor(projectData) {
 
@@ -17,14 +21,16 @@ export class Project {
         this.deadline = deadline || undefined; // default value = no deadline at all
         this.toDos = toDos || []; // array of strings holding the IDs of associated todos only
 
-        Project.#cache.set(this.name, this);
+        // save new Project in storage and register in cache + index
+        this.saveToStorage();
     }
 
     saveToStorage() {
         DB_Handler.saveItem(this.name, JSON.stringify(this));
         
-        // update cache, too, to keep data consistent
+        // update cache and global index, too, to keep data consistent
         Project.#cache.set(this.name, this);
+        Project.#addToGlobalIndex(this.name);
     }
 
     static fromStorage(ProjectName) {
@@ -90,11 +96,13 @@ export class Project {
                     associatedTodo.saveToStorage();
                 });
             }
-        } 
+        }
 
-        // remove the project itself for from DB and cache
+
+        // remove the project itself for from DB, cache and global index
         DB_Handler.removeItem(projectName);
         Project.#cache.delete(projectName);
+        Project.#removeFromGlobalIndex(projectName);
         return 0; // success
     }
 
@@ -108,13 +116,34 @@ export class Project {
         return 0; // success
     }
 
+    static getGlobalIndex() {
+        const data = DB_Handler.getItem(Project.#indexKey);
+        return data ? JSON.parse(data) : [];
+    }
+
+    static #addToGlobalIndex(projectName) {
+        const index = Project.getGlobalIndex();
+        if (!index.includes(projectName)) {
+            index.push(projectName);
+            DB_Handler.saveItem(Project.#indexKey, JSON.stringify(index));
+        }
+    }
+
+    static #removeFromGlobalIndex(projectName) {
+        let index = Project.getGlobalIndex();
+        index = index.filter(name => name !== projectName);
+        DB_Handler.saveItem(Project.#indexKey, JSON.stringify(index));
+    }
+
     changeName(newName) {
 
         // if the new name is no empty string, change it and return 0 (success)
         // otherwise, return 1 (error)
         if (newName.trim() != "") {
-            // remove old entry in cache to keep data consistent
+            // remove old entry from cache + index to keep data consistent
             Project.#cache.delete(this.name);
+            Project.#removeFromGlobalIndex(this.name);
+
             this.name = newName.trim();
 
             // save to storage (which also re-enters project into cache)
