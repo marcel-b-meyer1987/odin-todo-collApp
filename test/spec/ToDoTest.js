@@ -211,6 +211,36 @@ describe("ToDo class test suite", () => {
         // 6. Assert: Progress should now be 50 (1/2 DONE)
         expect(main.getChecklistProgress()).toBe(50);
     });
+
+    it("should detect redundant sub-task titles within the same task checklist", () => {
+        // 1. Arrange: Create a main todo and "existing" sub todo
+        const mainTask = new ToDo({ id: "parent-root", title: "Einkaufsliste" });
+        const existingSub = new ToDo({ id: "child-exist", title: "Frische Milch kaufen" });
+        
+        mainTask.saveToStorage();
+        existingSub.saveToStorage();
+        mainTask.addSubTask(existingSub.id);
+
+        // 2. Act & Assert: Check a very similar title (redundancy should be detected)
+        const redundantTitle = "Milch einkaufen";
+        const warningResult = mainTask.checkForRedundancy(redundantTitle);
+        
+        expect(warningResult).not.toBeNull();
+        if (warningResult) {
+            expect(warningResult.title).toBe("Frische Milch kaufen"); // shows the duplicate title
+        }
+
+        // 3. Act & Assert: Check a completely different title (should return null = no problem)
+        const safeTitle = "Brot backen";
+        const safeResult = mainTask.checkForRedundancy(safeTitle);
+        expect(safeResult).toBeNull();
+    });
+
+    it("should correctly handle German umlauts in string similarity", () => {
+        const sim = ToDo.calculateStringSimilarity("Büro aufräumen", "Buero aufraeumen");
+        // should report high similarity, despite spelling with umlauts
+        expect(sim).toBeGreaterThan(0.5); 
+    });
     
     afterAll(() => {
         window.localStorage.clear();

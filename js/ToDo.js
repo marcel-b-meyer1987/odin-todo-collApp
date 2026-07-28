@@ -375,6 +375,59 @@ export class ToDo {
         // return the rounded percentage
         return Math.round((doneCount / childTodos.length) * 100);
     }
+
+	static calculateStringSimilarity(str1, str2) {
+        // filter out every kind of special characters (replace by '')
+        const s1 = str1.toLowerCase().replace(/[^a-z0-9\säöüß]/g, '').trim();
+        const s2 = str2.toLowerCase().replace(/[^a-z0-9\säöüß]/g, '').trim();
+
+        if (s1 === s2) return 1.0;
+        if (s1.length < 2 || s2.length < 2) return 0.0;
+
+        const getBigrams = (str) => {
+            const bigrams = new Set();
+            for (let i = 0; i < str.length - 1; i++) {
+                // i + 2 ist korrekt, da der End-Index bei substring() exklusiv ist
+                bigrams.add(str.substring(i, i + 2));
+            }
+            return bigrams;
+        };
+
+        const bigrams1 = getBigrams(s1);
+        const bigrams2 = getBigrams(s2);
+
+        let intersection = 0;
+        bigrams1.forEach(bigram => {
+            if (bigrams2.has(bigram)) intersection++;
+        });
+
+        return (2.0 * intersection) / (bigrams1.size + bigrams2.size);
+    }
+
+	checkForRedundancy(newSubTaskTitle, similarityThreshold = APP_CONST.DEFAULT_SETTINGS.STD_SIMILARITY_THRESHOLD) {
+    
+	/*
+	** Check for possible redundancy in new subtask titles,
+	** based on a similarity threshold
+	** @returns {Object|null} - either returns the similar todo or null
+	*/
+	
+		if (!newSubTaskTitle || newSubTaskTitle.trim() === "") return null;
+
+        // get all sibling tasks (which are already in the checklist)
+        const existingChildren = this.checklist.map(id => ToDo.fromStorage(id)).filter(Boolean);
+
+        for (const child of existingChildren) {
+            const similarity = ToDo.calculateStringSimilarity(child.title, newSubTaskTitle);
+            
+            // if similarity above threshold (e. g. 60%), return the object in question
+            if (similarity >= similarityThreshold) {
+                return child; // Gibt die existierende, ähnliche Aufgabe zurück
+            }
+        }
+
+        return null; // no redundancy detected
+    }
 }
 
 
