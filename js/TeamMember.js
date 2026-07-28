@@ -92,6 +92,17 @@ export class TeamMember {
             });
         }
 
+        // remove member from all assigned projects
+        if (memberToDelete && memberToDelete.projects && memberToDelete.projects.length > 0) {
+            memberToDelete.projects.forEach(projectName => {
+                const project = Project.fromStorage(projectName);
+                if (project) {
+                    project.members = project.members.filter(id => id !== memberID);
+                    project.saveToStorage();
+                }
+            });
+        }
+
         // remove from index, DB and cache
         TeamMember.#removeFromGlobalIndex(memberID);
         DB_Handler.removeItem(memberID);
@@ -157,20 +168,22 @@ export class TeamMember {
     }
 
     addToProject(projectName) {
-        if (this.projects.indexOf(projectName) >= 0) return 1; // if project already in list, return early 
+        if (!projectName) return 1; // argument missing
+        const project = Project.fromStorage(projectName);
+        if(!project) return 1; // project not found
 
-        this.projects.push(projectName);
-        this.saveToStorage();
-        return 0;
+        if(!this.projects.includes(projectName)) {
+            return project.addTeamMember(this.id); // 0 if success
+        }
     }
 
     removeFromProject(projectName) {
-        const index = this.projects.indexOf(projectName);
+        if (!projectName) return 1; // argument missing
+        const project = Project.fromStorage(projectName);
+        if(!project) return 1; // project not found
 
-        if (index < 0) return 1;    // if project is not assigned (anymore), return 1 (error)
-
-        this.projects.splice(index, 1);
-        this.saveToStorage();
-        return 0;
+        if(this.projects.includes(projectName)) {
+            return project.removeTeamMember(this.id); // 0 if success
+        }
     }
 }

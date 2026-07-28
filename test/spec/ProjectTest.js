@@ -1,5 +1,6 @@
 import { Project } from "../../js/Project.js";
 import { ToDo } from "../../js/ToDo.js";
+import { TeamMember } from "../../js/TeamMember.js";
 import { DB_Handler } from "../../js/DB_Handler.js"
 import { APP_CONST } from "../../js/const.js";
 
@@ -275,6 +276,32 @@ describe("Project class test suite", () => {
         let finalIndex = JSON.parse(mockStorage[indexKey]);
         expect(finalIndex).not.toContain("Index Project Beta");
     })
+
+    it("should maintain a bidirectional relationship between projects and team members and clean up on deletion", () => {
+        // 1. Arrange: Create project and member
+        const pName = "Bidirectional Project";
+        const proj = new Project({ name: pName });
+        const member = new TeamMember("Clara");
+
+        // 2. Act: add member to project
+        const result = proj.addTeamMember(member.id);
+        expect(result).toBe(0);
+
+        // 3. Assert: Both objects must know about the connection in RAM
+        expect(proj.members).toContain(member.id);
+        expect(member.projects).toContain(pName);
+
+        // 4. Act: Delete the project
+        Project.delete(pName);
+
+        // Clear caches to test state in storage
+        Project.clearCache();
+        TeamMember.clearCache();
+
+        // 5. Assert: The member may not have the project in its list anymore
+        const reloadedMember = TeamMember.fromStorage(member.id);
+        expect(reloadedMember.projects).not.toContain(pName);
+    });
 
     afterAll(() => {
         // log new project class instance for inspection

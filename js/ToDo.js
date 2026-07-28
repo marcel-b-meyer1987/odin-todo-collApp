@@ -217,11 +217,19 @@ export class ToDo {
 				Cannot assign a single ToDo to more than one parent.
 				ToDo is already attached to ToDo ID ${this.parentID}`);
 			return 1;
-			}
+		}
 			
 		// if both OK, set parentID to parentID and return 0 (success)
 		this.parentID = parentID;
 		this.saveToStorage();
+
+		// add child ID to parent's checklist + save
+		const parentTodo = ToDo.fromStorage(parentID);
+		if (parentTodo && !parentTodo.checklist.includes(this.id)) {
+			parentTodo.checklist.push(this.id);
+			parentTodo.saveToStorage();
+		}
+
 		return 0;
 	}
 
@@ -319,6 +327,54 @@ export class ToDo {
 
 		return deletedCount; // contrary to the rest of the codebase, deviating from 0 does not mean an error in this method
 	}
+
+	addSubTask(subTodoID) {
+		if (!subTodoID || subTodoID === this.id) return 1; // forbid circular references 
+		if (this.checklist.indexOf(subTodoID) >= 0) return 1 // subtask is already part of this todo's checklist
+
+		// 1. Add ID to the parent's checklist and save
+		this.checklist.push(subTodoID);
+		this.saveToStorage();
+
+		// 2. Set bidirectional link at child (register parentID)
+		const subTodo = ToDo.fromStorage(subTodoID);
+		if (subTodo && subTodo.parentID !== this.id) {
+			subTodo.parentID = this.id;
+			subTodo.saveToStorage();
+		}
+		return 0; // success
+	}
+
+	removeSubTask(subTodoID) {
+		if (!subTodoID) return 1;
+		const index = this.checklist.indexOf(subTodoID);
+        if (index < 0) return 1;
+
+        // 1. Remove ID from parent's checklist and save
+        this.checklist.splice(index, 1);
+        this.saveToStorage();
+
+        // 2. Remove bidirectional link from child todo (reset parentID to null)
+        const subTodo = ToDo.fromStorage(subTodoID);
+        if (subTodo && subTodo.parentID === this.id) {
+            subTodo.parentID = null;
+            subTodo.saveToStorage();
+        }
+        return 0; // success
+	}
+
+	getChecklistProgress() {
+        if (!this.checklist || this.checklist.length === 0) return 0;
+
+        // get all child todos from memory/storage
+        const childTodos = this.checklist.map(id => ToDo.fromStorage(id)).filter(Boolean);
+        
+        // count the ones with status DONE
+        const doneCount = childTodos.filter(child => child.status === TODO_STATUS.DONE).length;
+
+        // return the rounded percentage
+        return Math.round((doneCount / childTodos.length) * 100);
+    }
 }
 
 

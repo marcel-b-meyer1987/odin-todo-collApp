@@ -2,6 +2,7 @@
 import { ToDo } from "./ToDo.js";
 import { DB_Handler } from "./DB_Handler.js";
 import { APP_CONST } from "./const.js";
+import { TeamMember } from "./TeamMember.js";
 
 // DIETER
 
@@ -15,12 +16,12 @@ export class Project {
     
     constructor(projectData) {
 
-        const { name, creationTimestamp, deadline, toDos } = projectData;
+        const { name, creationTimestamp, deadline, toDos, members } = projectData;
         this.name = name;
         this.creationTimestamp = creationTimestamp || Date.now();
         this.deadline = deadline || undefined; // default value = no deadline at all
         this.toDos = toDos || []; // array of strings holding the IDs of associated todos only
-
+        this.members = members || []; // array of strings holding the IDs of associated team members only
         // save new Project in storage and register in cache + index
         this.saveToStorage();
     }
@@ -96,6 +97,17 @@ export class Project {
                     associatedTodo.saveToStorage();
                 });
             }
+        }
+
+        // remove project from each member's project list before deletion
+        if (projectToDelete.members && projectToDelete.members.length > 0) {
+            projectToDelete.members.forEach(memberID => {
+                const member = TeamMember.fromStorage(memberID);
+                if (member) {
+                    member.projects = member.projects.filter(pName => pName !== projectName);
+                    member.saveToStorage();
+                }
+            });
         }
 
 
@@ -224,6 +236,41 @@ export class Project {
         // by re-setting it to undefined
         this.deadline = undefined;
         this.saveToStorage();
+    }
+
+    addTeamMember(memberID) {
+        if (!memberID) return 1;
+        if (this.members.indexOf(memberID) >= 0) return 1; // member already included
+
+        // include within project + save
+        this.members.push(memberID);
+        this.saveToStorage();
+
+        // add bidirectional link within member object + save
+        const member = TeamMember.fromStorage(memberID);
+        if (member && !member.projects.includes(this.name)) {
+            member.projects.push(this.name);
+            member.saveToStorage();
+        }
+        return 0; // success
+    }
+
+    removeTeamMember(memberID) {
+        const index = this.members.indexOf(memberID);
+        if (index < 0) return 1; // member not in project
+
+        // remove ID from project + save
+        this.members.splice(index, 1);
+        this.saveToStorage();
+
+        // remove bidirectioal link from team member 
+        const member = TeamMember.fromStorage(memberID);
+        if (member && member.projects.includes(this.name)) {
+            member.projects = member.projects.filter(pName => pName !== this.name);
+            member.saveToStorage();
+        }
+
+        return 0; // success
     }
 
 }

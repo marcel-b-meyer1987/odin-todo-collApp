@@ -1,7 +1,7 @@
 import { ToDo } from "../../js/ToDo.js";
 import { Project } from "../../js/Project.js";
 import { DB_Handler } from "../../js/DB_Handler.js";
-import { APP_CONST } from "../../js/const.js";
+import { APP_CONST, TODO_STATUS } from "../../js/const.js";
 
 describe("ToDo class test suite", () => {
     
@@ -182,6 +182,35 @@ describe("ToDo class test suite", () => {
         expect(updatedIndex).not.toContain("tracked-123");
 
     })
+
+    it("should maintain a tree structure of sub-tasks and correctly calculate checklist progress", () => {
+        // 1. Arrange: create main todo + 2 sub-todos
+        const main = new ToDo({ id: "main-task", title: "Main Project Goal" });
+        const sub1 = new ToDo({ id: "sub-task-1", title: "First milestone" });
+        const sub2 = new ToDo({ id: "sub-task-2", title: "Second milestone" });
+        
+        main.saveToStorage();
+        sub1.saveToStorage();
+        sub2.saveToStorage();
+
+        // 2. Act: act sub todos to main todo
+        main.addSubTask(sub1.id);
+        main.addSubTask(sub2.id);
+
+        // 3. Assert: Check bidirectional link in RAM
+        expect(main.checklist).toContain("sub-task-1");
+        expect(sub1.parentID).toBe("main-task");
+
+        // 4. Assert: since no sub todo is done yet, progress should be 0
+        expect(main.getChecklistProgress()).toBe(0);
+
+        // 5. Act: Set 1st sub task to DONE
+        sub1.status = TODO_STATUS.DONE;
+        sub1.saveToStorage();
+
+        // 6. Assert: Progress should now be 50 (1/2 DONE)
+        expect(main.getChecklistProgress()).toBe(50);
+    });
     
     afterAll(() => {
         window.localStorage.clear();
