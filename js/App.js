@@ -128,6 +128,15 @@ export default class ToDoApp {
         return projectNames.map(name => Project.fromStorage(name));
     }
 
+    loadAllTeamMembers = () => {
+        const memberIDs = TeamMember.getGlobalIndex();
+        if (memberIDs.length < 1) return [];
+        
+        // load all team members from storage into cache using the IDs from thr index
+        return memberIDs.map(id => TeamMember.fromStorage(id));
+    }
+
+
     // saveAllToDos= () => {
     //     // NEEDS A REWRITE    
 

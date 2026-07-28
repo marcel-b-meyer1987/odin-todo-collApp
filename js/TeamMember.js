@@ -104,9 +104,18 @@ export class TeamMember {
         // if todoID was already in the ToDo-List of the team member, return 1 as error code
 
         if (this.toDos.indexOf(todoID) < 0) {
+            // 1. register ToDo-ID with team member
             this.toDos.push(todoID);
             this.saveToStorage();
-            return 0;
+
+            // 2. link team member to ToDo 
+            const associatedTodo = ToDo.fromStorage(todoID);
+            if (associatedTodo && associatedTodo.assignedTo !== this.id) {
+                associatedTodo.assignedTo = this.id;
+                associatedTodo.saveToStorage(); // refresh DB and cache for the ToDo
+            }
+
+            return 0; // success
         } else {
             return 1;
         }
@@ -116,8 +125,16 @@ export class TeamMember {
         const index = this.toDos.indexOf(todoID);
         if (index < 0) return 1;
 
+        // 1. remove ToDo-ID from team member
         this.toDos.splice(index, 1);
         this.saveToStorage();
+
+        // 2. remove team member from ToDo
+        const associatedTodo = ToDo.fromStorage(todoID);
+        if (associatedTodo && associatedTodo.assignedTo === this.id) {
+            associatedTodo.assignedTo = undefined;
+            associatedTodo.saveToStorage();
+        }
         return 0;
     }
 
