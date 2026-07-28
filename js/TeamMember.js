@@ -41,7 +41,7 @@ export class TeamMember {
     }
     
     static #removeFromGlobalIndex(memberID) {
-        const index = TeamMember.getGlobalIndex();
+        let index = TeamMember.getGlobalIndex();
         index = index.filter(id => id !== memberID);
         DB_Handler.saveItem(TeamMember.indexKey, JSON.stringify(index));
     }

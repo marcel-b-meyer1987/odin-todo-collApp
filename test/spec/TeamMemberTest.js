@@ -5,7 +5,9 @@ import { APP_CONST } from "../../js/const.js";
 
 describe("TeamMember class test suite", () => {
     let mockStorage;
-    const teamKey = APP_CONST.STORAGE_KEYS.TEAM;
+    const teamKey = APP_CONST.STORAGE_KEYS.PREFIX +
+                        APP_CONST.STORAGE_KEYS.USER +
+                        APP_CONST.STORAGE_KEYS.TEAM;
 
     beforeEach(() => {
         // fresh, empty mock storage before every single test case
