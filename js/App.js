@@ -38,6 +38,9 @@ export default class ToDoApp {
 
 
         // import constants 
+        this.CatIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+                            APP_CONST.STORAGE_KEYS.USER +
+                            APP_CONST.STORAGE_KEYS.CATS;
 
         // *** THESE SHOULD NOT BE NEEDED HERE AFTER ALL, THANKS TO ENCAPSULATION ***
         // this.ToDoIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
@@ -46,9 +49,6 @@ export default class ToDoApp {
         // this.ProjectIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
         //                         APP_CONST.STORAGE_KEYS.USER +
         //                         APP_CONST.STORAGE_KEYS.PROJECTS;
-        // this.CatIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-        //                     APP_CONST.STORAGE_KEYS.USER +
-        //                     APP_CONST.STORAGE_KEYS.CATS;
     }
 
 
@@ -57,18 +57,13 @@ export default class ToDoApp {
     }
 
     addCategory = (newCat) => {
-        // if newCat is an empty string, return with exit code 1 (error)
-        if (newCat.trim().length < 1) return 1;
+        if (newCat.trim().length < 1) return 1; // no empty strings allowed - ext w/ error
+        if(this.categories.includes(newCat.trim())) return 1; // prevent duplicates
 
-        // prevent duplicates
-        if(!this.categories.includes(newCat.trim())) {
-            // add to cats object in RAM + update index
-            this.categories.push(newCat.trim());
-            DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(this.categories));
-            return 0; // success
-        }
-
-        return 1; // Error: already existing
+        // add to cats object in RAM + update index
+        this.categories.push(newCat.trim());
+        DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(this.categories));
+        return 0; // success
     }
 
 
