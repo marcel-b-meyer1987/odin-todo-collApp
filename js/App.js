@@ -48,21 +48,9 @@ export default class ToDoApp {
         return 1; // Error: already existing
     }
 
-    addProject = (projName) => {
-        const newProj = new Project({name: projName});
-        this.projects.push(newProj);
-        return newProj;
-    }
 
-    deleteProject = (proj) => {
-        const i = this.projects.indexOf(proj);
-        
-        // if the proj is not find in the array, return -1 as flag ("not in array")
-        if (i === -1) return i;
-
-        // otherwise, remove the project out of the array and return the index of the (now deleted) project
-        this.projects.splice(i, 1);
-        return i;
+    deleteProject = (projectName) => {
+        return Project.delete(projectName);
     }
 
     deleteCategory = (catName) => {
@@ -125,7 +113,7 @@ export default class ToDoApp {
         if (projectNames.length < 1) return [];
 
         // load all projects into cache and return as array
-        return projectNames.map(name => Project.fromStorage(name));
+        return projectNames.map(name => Project.fromStorage(name)).filter(Boolean);
     }
 
     loadAllTeamMembers = () => {

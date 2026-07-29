@@ -5,9 +5,9 @@ export const TODO_STATUS = {
 }
 
 export const TODO_PRIO = {
-    HIGH: 0,
+    HIGH: 2,
     NORMAL: 1,
-    LOW: 2
+    LOW: 0
 }
 
 export const APP_CONST = {

@@ -1,21 +1,27 @@
 import { APP_CONST } from "../../js/const.js";
 import { DB_Handler } from "../../js/DB_Handler.js";
 import { app } from "../../js/index.js";
+import { Project } from "../../js/Project.js";
 import { ToDo } from "../../js/ToDo.js";
 import "../lib/jasmine-6.2.0/jasmine.js";
 
 describe("ToDoApp class test suite", () => {
 
     
-    beforeAll(() => {
+    beforeEach(() => {
 
 
 
-        //console.clear();
+        // console.clear();
         
-        // clear old storage + app todos array
-        localStorage.removeItem("TODO_COLLAPP_USER_TODOS");
+        // clear storage + cache for ToDos + Projects
         app.todos = [];
+        ToDo.clearCache();
+        ToDo.getGlobalIndex().forEach(id => ToDo.delete(id));
+
+        app.projects = [];
+        Project.clearCache();
+        Project.getGlobalIndex().forEach(n => Project.delete(n));
 
         // add 2 test todos
         app.addToDo({
@@ -58,35 +64,24 @@ describe("ToDoApp class test suite", () => {
         expect(savedToDos.length).toBe(2);
     })
 
-    it("can add projects", () => {
-        const countBefore = app.projects.length;
-        app.addProject("New cool project");
-        expect(countBefore).toEqual(app.projects.length - 1);
-    })
+    // it("can add projects", () => {
+    //     const countBefore = app.projects.length;
+    //     app.addProject("New cool project");
+    //     expect(countBefore).toEqual(app.projects.length - 1);
+    // })
 
     it("can delete projects", () => {
-        const proj = app.addProject("RemovableProject");
-        const countBefore = app.projects.length;
-        app.deleteProject(proj);
-        expect(countBefore).toEqual(app.projects.length + 1);
-    })
-
-    it("should save all projects", () => {
-        app.projects = [];
-        app.addProject("Project 1");
-        app.addProject("Project 2");
-        app.saveAllProjects();
-
-        const savedCount = app.loadAllProjects().length;
-        expect(savedCount).toBe(app.projects.length);
+        const proj = new Project({name: "RemovableProject"});
+        const countBefore = Project.getGlobalIndex().length;
+        Project.delete(proj.name);
+        const countAfter = Project.getGlobalIndex().length;
+        expect(countBefore).toEqual(countAfter + 1);
     })
 
     it("should load all projects", () => {
-        app.projects = [];
-        app.addProject("Project 1");
-        app.addProject("Project 2");
-        app.saveAllProjects();
-        app.projects = [];
+        const proj1 = new Project({name: "Project 1"});
+        const proj2 = new Project({name: "Project 2"});
+        
         app.projects = app.loadAllProjects();
         expect(app.projects.length).toEqual(2);
         
@@ -118,4 +113,6 @@ describe("ToDoApp class test suite", () => {
         expect(reloadedTodo.categories).toContain("Uncategorized");
         expect(reloadedTodo.categories).not.toContain("Category-X");
     })
+
+    
 })

@@ -1,6 +1,7 @@
 import { TODO_STATUS, TODO_PRIO, APP_CONST } from "./const.js";
 import { Project } from "./Project.js";
 import { DB_Handler } from "./DB_Handler.js";
+import { ProgressEntry } from "./ProgressEntry.js";
 
 export class ToDo {
 
@@ -17,6 +18,7 @@ export class ToDo {
 		notes,
 		createdDate,
 		dueDate,
+		completedDate,
 		parentID,
 		checklist,
 		status,
@@ -32,6 +34,7 @@ export class ToDo {
 		this.notes = notes || "";
 		this.createdDate = createdDate || Date.now();
 		this.dueDate = dueDate || undefined; // default = undefinde (no deadline at all)
+		this.completedDate = completedDate || undefined; // default = undefinded (still pending)
 		this.checklist = checklist || [];
 		this.status = status || TODO_STATUS.PENDING;
 		this.project = project || null;
@@ -54,6 +57,12 @@ export class ToDo {
 
 		// update in cache, too, to keep data consistent
 		ToDo.#cache.set(this.id, this);
+
+		// if ToDo is marked as done and assigned to a team member,
+		// update the team member's progress statistics
+		if (this.status === TODO_STATUS.DONE && this.assignedTo) {
+			ProgressEntry.updateProgressForToday(this.assignedTo);
+		}
 	}
 
 	static exists(todoID) {
@@ -375,6 +384,12 @@ export class ToDo {
         // return the rounded percentage
         return Math.round((doneCount / childTodos.length) * 100);
     }
+
+	markAsCompleted() {
+		this.status = TODO_STATUS.DONE;
+		this.completedDate = Date.now();
+		this.saveToStorage();
+	}
 
 	// *** methods for redundancy tetection ***
 
