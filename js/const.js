@@ -17,7 +17,9 @@ export const APP_CONST = {
         TODOS: "TODOS",
         CATS: "CATEGORIES", // to retrieve a list of all categories
         PROJECTS: "PROJECTS", // to retrieve a list of all projects
-        TEAM: "TEAM", // to retrieve a list of 
+        TEAM: "TEAM", // to retrieve a list of team members
+        DIARY: "DIARY", // to retrieve a list of diary entries
+        PROGRESS: "PROGRESS", // to retrieve progress entries from storage
         TRASH_BIN: "TRASH_BIN" // to retrieve the list of ids of recycled todos
     },
 
@@ -26,6 +28,14 @@ export const APP_CONST = {
         STD_SIMILARITY_THRESHOLD: 0.6, // standard treshold for title similarity within the same todo "tree", used for redundancy warnings 
         NO_CAT_STD_LABEL: "Uncategorized", // standard placeholder label for uncategorized todos
     },
+
+    MOODS: {
+        HAPPY: ":smile:",
+        NEUTRAL: ":neutral:",
+        SAD: ":sad:",
+        THINKING: ":thinking:",
+        STRONG: ":muscle:",
+    }
 }
 
 

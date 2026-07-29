@@ -136,30 +136,15 @@ export default class ToDoApp {
         return memberIDs.map(id => TeamMember.fromStorage(id));
     }
 
+    loadAllDiaryEntries = () => {
+        /**
+         ** Loads all diary entries from storage into memory on cold start
+         ** @returns {DiaryEntry[]} Array of all loaded entries
+         */
+        const diaryDates = DiaryEntry.getGlobalIndex();
+        if (diaryDates.length < 1) return [];
 
-    // saveAllToDos= () => {
-    //     // NEEDS A REWRITE    
-
-    //     localStorage.setItem(key, JSON.stringify(this.todos));
-    //     console.log(`Saved ${this.todos.length} todos under ${key}.`);
-    // }
-
-    saveAllCategories = () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX;
-            key += APP_CONST.STORAGE_KEYS.USER;
-            key += APP_CONST.STORAGE_KEYS.CATS;
-
-        localStorage.setItem(key, JSON.stringify(this.categories));
-        console.log(`Saved ${this.categories.length} categories under ${key}.`);
-    }
-
-    saveAllProjects = () => {
-        let key = APP_CONST.STORAGE_KEYS.PREFIX;
-            key += APP_CONST.STORAGE_KEYS.USER;
-            key += APP_CONST.STORAGE_KEYS.PROJECTS;
-
-        localStorage.setItem(key, JSON.stringify(this.projects));
-        console.log(`Saved ${this.projects.length} projects under ${key}.`);
-    }
-
+        // Loads all entries into cache via date key
+        return diaryDates.map(dateStr => DiaryEntry.fromStorage(dateStr));
+    };
 }
