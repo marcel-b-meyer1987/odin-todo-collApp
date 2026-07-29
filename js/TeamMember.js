@@ -1,6 +1,7 @@
 import { DB_Handler } from "./DB_Handler.js";
 import { APP_CONST } from "./const.js";
 import { ToDo } from "./ToDo.js";
+import { Project } from "./Project.js";
 
 export class TeamMember {
 
@@ -14,12 +15,13 @@ export class TeamMember {
     constructor(memberData) {
         // allows instantiating with string (=name) or object (=more properties) as argument
         const data = typeof memberData === "string" ? { name: memberData } : memberData;
-        const { id, name, registrationTimestamp, categories, projects, toDos } = data;
+        const { id, name, email, registrationTimestamp, categories, projects, toDos } = data;
         
-        this.id = id || crypto.randomUUID();
-        this.name = name || "New Team Member";
+        this.id = id ?? crypto.randomUUID();
+        this.name = name ?? "New Team Member";
+        this.email = email ?? undefined;
         this.registrationTimestamp = Date.now();
-        this.categories = [];
+        this.categories = []; // holds array of cat names (strings)
         this.projects = []; // holds project names
         this.toDos = []; // holds todo IDs (=strings)
 
@@ -70,6 +72,64 @@ export class TeamMember {
             console.error(error);
             return null;
         }
+    }
+
+    static fromGoogleSignIn(googleUserObj) {
+        /**
+         ** Creates or updates a TeamMember instance, based on the data from Google Identity Services (GIS).
+         ** @param {Object} googleUserObj - the decoded user object from google
+         ** @returns {TeamMember} the instance of TeamMember
+         */
+        // googleUserObj.sub is the worldwide unique Google-ID of the user
+        const googleId = googleUserObj.sub; 
+        
+        // check if the tem member already exists in cache/storage
+        let member = TeamMember.fromStorage(googleId);
+
+        if (!member) {
+            // if new user: Register with static Google-ID
+            member = new TeamMember({
+                id: googleId, // static Google-ID instead of random UUID!
+                name: googleUserObj.name,
+                email: googleUserObj.email,
+            });
+            console.log(`Registered new team member via Google: ${member.name}`);
+        } else {
+            // If existing: Update name in case it has been changed at Google
+            member.name = googleUserObj.name;
+            member.saveToStorage();
+            console.log(`Existing Google user logged in: ${member.name}`);
+        }
+
+        // immediately set as current user
+        member.setCurrentUser();
+        return member;
+    }
+
+    setCurrentUser() {
+        /**
+         * Sets this TeamMember as current user of the app.
+         */
+        DB_Handler.saveItem(APP_CONST.STORAGE_KEYS.USER, this.id);
+        console.log(`User succesfully changed to: ${this.name} (${this.id})`);
+    }
+
+    static getCurrentUser() {
+        /**
+         ** Gets the currently logged-in TeamMember object from storage / cache.
+         ** @returns {TeamMember|null} the current member or null, in case nobody is logged in.
+         */
+        const currentUserID = DB_Handler.getItem(APP_CONST.STORAGE_KEYS.USER);
+        if (!currentUserID) return null;
+
+        return TeamMember.fromStorage(currentUserID);
+    }
+
+    static logout() {
+        /**
+         ** Log out the current user (deletes the session)
+         */
+        DB_Handler.removeItem(APP_CONST.STORAGE_KEYS.USER);
     }
 
     static clearCache() {
@@ -170,11 +230,11 @@ export class TeamMember {
     addToProject(projectName) {
         if (!projectName) return 1; // argument missing
         const project = Project.fromStorage(projectName);
+        
         if(!project) return 1; // project not found
-
-        if(!this.projects.includes(projectName)) {
-            return project.addTeamMember(this.id); // 0 if success
-        }
+        if(this.projects.includes(projectName)) return 1; // already assigned
+        
+        return project.addTeamMember(this.id); // 0 if success
     }
 
     removeFromProject(projectName) {

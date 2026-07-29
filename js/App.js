@@ -2,30 +2,53 @@
 // DIETER
 
 import { APP_CONST } from "./const.js";
-import { ToDo } from "./ToDo.js";
-import { Project } from "./Project.js";
 import { DB_Handler } from "./DB_Handler.js";
+import { DiaryEntry } from "./DiaryEntry.js";
+import { ProgressEntry } from "./ProgressEntry.js";
+import { Project } from "./Project.js";
+import { TeamMember } from "./TeamMember.js";
+import { ToDo } from "./ToDo.js";
 import { UI_Manager } from "./UI_Manager.js";
 
 export default class ToDoApp {
 
     constructor() {
-        this.categories = this.loadAllCategories() || [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
-        this.projects = this.loadAllProjects() || [];
-        this.teamMembers = [];
-        this.toDos = this.loadAllToDos() || [];
+        
+        // CONNECT DATA FROM BUSINESS LOGIC MODULES
+        this.categories = this.loadAllCategories() ?? [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
+        this.projects = this.loadAllProjects() ?? [];
+        this.teamMembers = this.loadAllTeamMembers() ?? [];
+        this.toDos = this.loadAllToDos() ?? [];
+        
+        // CONNECT UI BIDIRECTIONALLY (DEPENDENCY INJECTION)
         this.UI_Manager = new UI_Manager(this);
 
-        // import constants
-        this.ToDoIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-                            APP_CONST.STORAGE_KEYS.USER +
-                            APP_CONST.STORAGE_KEYS.TODOS;
-        this.ProjectIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-                                APP_CONST.STORAGE_KEYS.USER +
-                                APP_CONST.STORAGE_KEYS.PROJECTS;
-        this.CatIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-                            APP_CONST.STORAGE_KEYS.USER +
-                            APP_CONST.STORAGE_KEYS.CATS;
+        // LOGIN + SESSION MANAGEMENT
+        // check if a user is logged in and, if yes, who it is
+        let currentUser = TeamMember.getCurrentUser(); // TeamMember instance or null
+
+        if (currentUser) {
+            console.log(`Willkommen zurück, ${currentUser.name}. Lade dein Dashboard...`);
+            // Add trigger for usual dashboard rendering here
+            this.UI_Manager.renderDashboard({ userID: currentUser.id });
+        } else {
+            console.log("Kein Benutzer angemeldet. Zeige Login- / Finde-Bildschirm.");
+            // Redirect to Login Screen
+        }
+
+
+        // import constants 
+
+        // *** THESE SHOULD NOT BE NEEDED HERE AFTER ALL, THANKS TO ENCAPSULATION ***
+        // this.ToDoIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+        //                     APP_CONST.STORAGE_KEYS.USER +
+        //                     APP_CONST.STORAGE_KEYS.TODOS;
+        // this.ProjectIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+        //                         APP_CONST.STORAGE_KEYS.USER +
+        //                         APP_CONST.STORAGE_KEYS.PROJECTS;
+        // this.CatIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
+        //                     APP_CONST.STORAGE_KEYS.USER +
+        //                     APP_CONST.STORAGE_KEYS.CATS;
     }
 
 
