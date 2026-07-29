@@ -36,11 +36,11 @@ export class ToDo {
 		this.dueDate = dueDate || undefined; // default = undefinde (no deadline at all)
 		this.completedDate = completedDate || undefined; // default = undefinded (still pending)
 		this.checklist = checklist || [];
-		this.status = status || TODO_STATUS.PENDING;
+		this.status = status ?? TODO_STATUS.PENDING;
 		this.project = project || null;
 		this.categories = categories && categories.length > 0 ? categories : [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
 		this.assignedTo  = assignedTo || undefined;
-		this.prio = prio || TODO_PRIO.NORMAL;
+		this.prio = prio ?? TODO_PRIO.NORMAL;
 		this.customSortNo = customSortNo || undefined;
 		this.trashBinDate = trashBinDate || undefined; // needed to calculate the day that the Todo will be deleted from trash for good / default undefined means: not recycled 
 		this.parentID = parentID || null;
