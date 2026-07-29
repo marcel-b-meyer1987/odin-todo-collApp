@@ -35,7 +35,7 @@ export class ToDo {
 		this.checklist = checklist || [];
 		this.status = status || TODO_STATUS.PENDING;
 		this.project = project || null;
-		this.categories = categories && categories.length > 0 ? categories : ["Uncategorized"];
+		this.categories = categories && categories.length > 0 ? categories : [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
 		this.assignedTo  = assignedTo || undefined;
 		this.prio = prio || TODO_PRIO.NORMAL;
 		this.customSortNo = customSortNo || undefined;
@@ -251,7 +251,7 @@ export class ToDo {
 		// open the respective parent element (or category) when clicked
 		// for this purpose, the object consists of:
 		//
-		// path.category = the categori(es) of the current ToDo OR "Uncategorized"
+		// path.category = the categori(es) of the current ToDo OR APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL
 		// path.hierarchy = an array of the parents + the current ToDo as last element
 		//
 		// example: "/uncategorized/parent_1/.../parent_n/current_todo"
@@ -376,6 +376,8 @@ export class ToDo {
         return Math.round((doneCount / childTodos.length) * 100);
     }
 
+	// *** methods for redundancy tetection ***
+
 	static calculateStringSimilarity(str1, str2) {
         // filter out every kind of special characters (replace by '')
         const s1 = str1.toLowerCase().replace(/[^a-z0-9\säöüß]/g, '').trim();
@@ -428,6 +430,103 @@ export class ToDo {
 
         return null; // no redundancy detected
     }
+
+	// *** methods for fltering + sorting + display ***
+
+    static getAllActiveToDos() {
+		/**
+		 ** returns all active todos
+		 ** excludes todos with status TRASH_BIN
+		 */
+        // filter(Boolean) secures against possible RAM zombies
+        return Array.from(ToDo.#cache.values())
+            .filter(Boolean)
+            .filter(todo => todo.status !== TODO_STATUS.TRASH_BIN);
+    }
+
+    static filterByProject(projectName) {
+		/**
+		 ** Filters all active todos by a given project name
+		 ** @param {string|null} projectName - Name des Projekts, oder null für "Misc"
+		 **/
+
+        const activeToDos = ToDo.getAllActiveToDos();
+        
+        if (projectName === null || projectName === "Misc") {
+            // show all todos which aren't assigned to ANY project
+            return activeToDos.filter(todo => !todo.project);
+        }
+        
+        return activeToDos.filter(todo => todo.project === projectName);
+    }
+
+    static filterByCategory(categoryNames) {
+		/**
+		 ** Filtert alle aktiven ToDos nach einer Kategorie.
+		 ** @param {string|string[]|null} categoryNames - Name der Kategorie (z.B. "Work" oder "Misc")
+		 */
+        const activeToDos = ToDo.getAllActiveToDos();
+        
+        if (!categoryNames || categoryNames === "Misc" || categoryNames === APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL) {
+            // return all ToDos with empty cat list or "Uncategorized" 
+            return activeToDos.filter(todo => !todo.categories || todo.categories.includes(APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL) || todo.categories.length === 0);
+        }
+
+		// Flexibly handle params - if a single string is passed, wrap it in an array
+		const catsToFilter = Array.isArray(categoryNames) ? categoryNames : [categoryNames];
+
+		// if the filter array is empty, return all active todos
+		if (catsToFilter.length < 1) return activeToDos;
+        
+		// return every todo which has at least one of the categoryNames in their list
+        return activeToDos.filter(todo => 
+			todo.categories && todo.categories.some(cat => catsToFilter.includes(cat)));
+    }
+
+    static filterByTeamMember(memberIDs) {
+		/**
+		 ** Filters all active ToDos by one (or several) team members (via Member-IDs).
+		 ** @param {string|string[]|null} memberIDs - one single UUID, an Array of UUIDs, or null/"Misc" for "Unassigned"
+		 */
+        const activeToDos = ToDo.getAllActiveToDos();
+        
+        // 1. Catch "Misc" / null Fallback (unassigned todos)
+        if (!memberIDs || memberIDs === "Misc" || memberIDs === "Unassigned") {
+            return activeToDos.filter(todo => !todo.assignedTo);
+        }
+        
+        // 2. Flexibly handle params: if a single string is passed, put it into an Array
+        const idsToFilter = Array.isArray(memberIDs) ? memberIDs : [memberIDs];
+
+        // 3. If array is empty, return all active todos (no filter set)
+        if (idsToFilter.length === 0) {
+            return activeToDos;
+        }
+
+        // 4. return all todos the assignedTo value of which are included in the filter array
+        return activeToDos.filter(todo => idsToFilter.includes(todo.assignedTo));
+    }                                                                             
+
+    static sortByPriority(todosArray) {
+		/**
+		* Sorts the passed array by prio (HIGH -> NORMAL -> LOW).
+		* uses the constants from const.js (HIGH: 0, NORMAL: 1, LOW: 2).
+		*/
+        // .slice() copies the array to not change the original
+        return todosArray.slice().sort((a, b) => a.prio - b.prio);
+    }
+
+    static sortByDeadline(todosArray) {
+		/**
+		* sorts a passed ToDo-Array by deadline (future first, no deadline last).
+		*/
+        return todosArray.slice().sort((a, b) => {
+            if (!a.dueDate) return 1;  // Keine Deadline nach hinten schieben
+            if (!b.dueDate) return -1;
+            return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+        });
+    }
+
 }
 
 

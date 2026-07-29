@@ -24,6 +24,7 @@ export const APP_CONST = {
     DEFAULT_SETTINGS: {
         TRASH_BIN_DEFAULT_PRESERVE_DURATION: 30, // how many days should todos be preserved within trash bin before final deletion
         STD_SIMILARITY_THRESHOLD: 0.6, // standard treshold for title similarity within the same todo "tree", used for redundancy warnings 
+        NO_CAT_STD_LABEL: "Uncategorized", // standard placeholder label for uncategorized todos
     },
 }
 
@@ -75,3 +76,4 @@ export const UI_CONST = {
         
     ],
 }
+

@@ -1,7 +1,7 @@
 import { ToDo } from "../../js/ToDo.js";
 import { Project } from "../../js/Project.js";
 import { DB_Handler } from "../../js/DB_Handler.js";
-import { APP_CONST, TODO_STATUS } from "../../js/const.js";
+import { APP_CONST, TODO_STATUS, TODO_PRIO } from "../../js/const.js";
 
 describe("ToDo class test suite", () => {
     
@@ -240,6 +240,87 @@ describe("ToDo class test suite", () => {
         const sim = ToDo.calculateStringSimilarity("Büro aufräumen", "Buero aufraeumen");
         // should report high similarity, despite spelling with umlauts
         expect(sim).toBeGreaterThan(0.5); 
+    });
+
+    it("should correctly filter by project including 'Misc' and sort by priority", () => {
+        ToDo.clearCache();
+        
+        // 1. Arrange: Create 3 todos with different prios and projects 
+        const todoProj = new ToDo({ id: "t-p1", title: "Project Task", project: "Project-A", prio: TODO_PRIO.LOW });
+        const todoMisc1 = new ToDo({ id: "t-m1", title: "Misc Task High", project: null, prio: TODO_PRIO.HIGH });
+        const todoMisc2 = new ToDo({ id: "t-m2", title: "Misc Task Normal", project: undefined, prio: TODO_PRIO.NORMAL });
+
+        todoProj.saveToStorage();
+        todoMisc1.saveToStorage();
+        todoMisc2.saveToStorage();
+
+        // 2. Act: Filter for "Misc" (no Projekt)
+        const miscTasks = ToDo.filterByProject("Misc");
+
+        // 3. Assert: Only the 2 todos without project should be returned
+        expect(miscTasks.length).toBe(2);
+        const miscIds = miscTasks.map(t => t.id);
+        expect(miscIds).toContain("t-m1");
+        expect(miscIds).toContain("t-m2");
+        expect(miscIds).not.toContain("t-p1");
+
+        // 4. Act: Sort Misc-Tasks regarding priority
+        const sortedMisc = ToDo.sortByPriority(miscTasks);
+
+        // 5. Assert: HIGH (0) must come before NORMAL (1)
+        expect(sortedMisc[0].id).toBe("t-m1");
+        expect(sortedMisc[1].id).toBe("t-m2");
+    });
+
+    it("should filter todos by a single team member ID or an array of team member IDs", () => {
+        // 1. Arrange: Create 3 todos for different team members
+        const t1 = new ToDo({ id: "todo-m1", title: "Task Max", assignedTo: "user-max" });
+        const t2 = new ToDo({ id: "todo-m2", title: "Task Moritz", assignedTo: "user-moritz" });
+        const t3 = new ToDo({ id: "todo-m3", title: "Task Clara", assignedTo: "user-clara" });
+
+        t1.saveToStorage();
+        t2.saveToStorage();
+        t3.saveToStorage();
+
+        // 2. Act & Assert: Test with a single string
+        const singleFilter = ToDo.filterByTeamMember("user-clara");
+        expect(singleFilter.length).toBe(1);
+        expect(singleFilter[0].id).toBe("todo-m3");
+
+        // 3. Act & Assert: Test with an ARRAY of IDs (Multi-Filter)
+        const multiFilter = ToDo.filterByTeamMember(["user-max", "user-moritz"]);
+        expect(multiFilter.length).toBe(2);
+        
+        const filteredIds = multiFilter.map(todo => todo.id);
+        expect(filteredIds).toContain("todo-m1");
+        expect(filteredIds).toContain("todo-m2");
+        expect(filteredIds).not.toContain("todo-m3");
+    });
+
+    it("should filter todos by a single category string or an array of categories", () => {
+        // 1. Arrange: Create 3 todos with various (partly overlapping) categories
+        const t1 = new ToDo({ id: "todo-c1", title: "Work Task", categories: ["Work"] });
+        const t2 = new ToDo({ id: "todo-c2", title: "Urgent Private Task", categories: ["Private", "Urgent"] });
+        const t3 = new ToDo({ id: "todo-c3", title: "Normal Private Task", categories: ["Private"] });
+
+        t1.saveToStorage();
+        t2.saveToStorage();
+        t3.saveToStorage();
+
+        // 2. Act & Assert: Test with a single String 
+        const singleFilter = ToDo.filterByCategory("Work");
+        expect(singleFilter.length).toBe(1);
+        expect(singleFilter[0].id).toBe("todo-c1");
+
+        // 3. Act & Assert: Test with an array of categories (Multi-Filter)
+        // Should find all todos categorized as "Work" OR "Urgent"
+        const multiFilter = ToDo.filterByCategory(["Work", "Urgent"]);
+        expect(multiFilter.length).toBe(2);
+        
+        const filteredIds = multiFilter.map(todo => todo.id);
+        expect(filteredIds).toContain("todo-c1"); // Hat "Work"
+        expect(filteredIds).toContain("todo-c2"); // Hat "Urgent"
+        expect(filteredIds).not.toContain("todo-c3"); // Hat nur "Private"
     });
     
     afterAll(() => {

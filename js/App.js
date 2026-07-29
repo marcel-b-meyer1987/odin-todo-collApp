@@ -10,7 +10,7 @@ import { UI_Manager } from "./UI_Manager.js";
 export default class ToDoApp {
 
     constructor() {
-        this.categories = this.loadAllCategories() || ["Uncategorized"];
+        this.categories = this.loadAllCategories() || [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
         this.projects = this.loadAllProjects() || [];
         this.teamMembers = [];
         this.toDos = this.loadAllToDos() || [];
@@ -66,7 +66,7 @@ export default class ToDoApp {
     }
 
     deleteCategory = (catName) => {
-        if (catName === "Uncategorized") return 1; // Fallback may not be deleted
+        if (catName === APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL) return 1; // Fallback may not be deleted
 
         this.categories = this.categories.filter(cat => cat !== catName);
         DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(this.categories));
@@ -79,7 +79,7 @@ export default class ToDoApp {
                 todo.categories = todo.categories.filter(c => c !== catName);
                 // if no categories left, set to default
                 if (todo.categories.length < 1) {
-                    todo.categories.push("Uncategorized");
+                    todo.categories.push(APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL);
                 }
                 // save update
                 todo.saveToStorage();
@@ -110,7 +110,7 @@ export default class ToDoApp {
         if (data) {
             categories = JSON.parse(data);
         } else {
-            categories = ["Uncategorized"];
+            categories = [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
             // in case nothing was set up in storage, set it up now
             DB_Handler.saveItem(this.CatIndexKey, JSON.stringify(categories));
         }
