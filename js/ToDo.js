@@ -211,8 +211,10 @@ export class ToDo {
         }
 	}
 
-	setParent(parentID) {
-
+	setParent(parent) {
+		// enable flexibly passing parent IDs or full object
+		const parentID = typeof parent === "object" ? parent.id : parent;
+		
 		// validate if parentID is a valid todoID from the app
 		if (! ToDo.exists(parentID)) {
 			console.error(`Could not attachach to parent ToDo. ToDo ID ${parentID} not existing in storage.`);
@@ -220,7 +222,7 @@ export class ToDo {
 		}
 		
 		// check if the todo isn't already assigned to another parent
-		if (this.parentID != null) {
+		if (this.parentID) {
 			console.error(`
 				Attaching to parent failed. 
 				Cannot assign a single ToDo to more than one parent.
@@ -528,7 +530,7 @@ export class ToDo {
 		* uses the constants from const.js (HIGH: 0, NORMAL: 1, LOW: 2).
 		*/
         // .slice() copies the array to not change the original
-        return todosArray.slice().sort((a, b) => a.prio - b.prio);
+        return todosArray.slice().sort((a, b) => b.prio - a.prio);
     }
 
     static sortByDeadline(todosArray) {
