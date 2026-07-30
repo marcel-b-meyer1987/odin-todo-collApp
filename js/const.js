@@ -42,6 +42,13 @@ export const APP_CONST = {
 export const UI_CONST = {
     MENU_ITEMS: [
         {
+            name: "todos",
+            disp_name: {
+                en: "ToDos",
+                de: "ToDos"
+            }
+        },
+        {
             name: "categories",
             disp_name: {
                 en: "Categories",
@@ -70,7 +77,7 @@ export const UI_CONST = {
             }
         },
         {
-            name: "About",
+            name: "about",
             disp_name: {
                 en: "About",
                 de: "About"
@@ -83,7 +90,32 @@ export const UI_CONST = {
                 de: "Dokumentation"
             }
         },
-        
+        {
+            name: "darkmode",
+            disp_name: {
+                0: {
+                    en: "Dark Mode",
+                    de: "Dark Mode"
+                },
+                1:  {
+                    en: "Light Mode",
+                    de: "Light Mode",
+                }
+            }
+        },
+        {
+            name: "lang",
+            disp_name: {
+                en: {
+                    en: "English",
+                    de: "Englisch"
+                },
+                de:  {
+                    en: "German",
+                    de: "Deutsch",
+                }
+            }
+        },
     ],
 }
 
