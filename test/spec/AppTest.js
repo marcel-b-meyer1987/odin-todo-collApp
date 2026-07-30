@@ -7,13 +7,27 @@ import "../lib/jasmine-6.2.0/jasmine.js";
 
 describe("ToDoApp class test suite", () => {
 
+    // Setup
+    // For mocking storage
+    let mockStorage = {};
     
-    beforeEach(() => {
+    beforeAll(() => {
 
+        spyOn(DB_Handler, "saveItem").and.callFake((key, value) => {
+            mockStorage[key] = String(value);
+        });
 
+        spyOn(DB_Handler, "getItem").and.callFake(key => {
+            return mockStorage[key] || null;
+        });
 
-        // console.clear();
-        
+        spyOn(DB_Handler, "removeItem").and.callFake((key) => {
+            delete mockStorage[key];
+        });
+    })
+
+    // clean up test environment before each test
+    beforeEach(() => {        
         // clear storage + cache for ToDos + Projects
         app.todos = [];
         ToDo.clearCache();
@@ -23,7 +37,10 @@ describe("ToDoApp class test suite", () => {
         Project.clearCache();
         Project.getGlobalIndex().forEach(n => Project.delete(n));
 
-        // add 2 test todos
+    });  
+
+    it("should contain an array of 2 todos as todos property if 2 todos are added", () => {
+        // 1. Act: add 2 test todos
         app.addToDo({
                  title: "Test-ToDo 1",
                  notes: "this is a basic test todo"
@@ -33,9 +50,8 @@ describe("ToDoApp class test suite", () => {
                  title: "Test-ToDo 2",
                  notes: "this is a 2nd basic test todo"
              });
-    });  
 
-    it("should contain an array of 2 todos as todos property if 2 todos are added", () => {
+        // 2. Assert: correct no. of todos in app.todos array
         expect(app.todos.length).toEqual(2);
     })
 
@@ -114,5 +130,5 @@ describe("ToDoApp class test suite", () => {
         expect(reloadedTodo.categories).not.toContain("Category-X");
     })
 
-    
+
 })

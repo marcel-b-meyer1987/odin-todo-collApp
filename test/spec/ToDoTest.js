@@ -7,76 +7,151 @@ describe("ToDo class test suite", () => {
     
     // Setup
     let mockStorage = {};
-
-    const parentToDo = new ToDo({ id: "parent-1", title: "Parent-ToDo"});
-    const anotherParent = new ToDo({ id: "parent-2", title: "Another Parent"});
-    const toDo = new ToDo({
-        id: "toDo-1",
-        title: "Test-ToDo",
-        notes: "this is a basic test todo",
-        parentID: parentToDo.id,
-    });
     
-    const saved = ToDo.fromStorage(toDo.id);
-    
-    // console.log("created freshly:", toDo);
-    // console.log("loaded from storage:", saved);
         
     it("should be able to be attached to a parent", () => {
+        // 1. Arrange
+        const toDo = new ToDo({ id: "toDo-1", title: "Test-ToDo" });
+        const parentToDo = new ToDo({ id: "parent-1", title: "Parent-ToDo" });
         toDo.parentID = null; // reset
-        toDo.setParent(parentToDo.id);
-        // expect(toDo.parentID != null).toBe(true);
+        
+        // 2. Assert
+        expect(toDo.setParent(parentToDo.id)).toBe(0);
         expect(toDo.parentID).toBe(parentToDo.id);
     })
 
     it("should not overwrite a parentID with another one", () => {
-        let exitCode = toDo.setParent(anotherParent.id);
+        // 1. Arrange
+        const toDo = new ToDo({ id: "toDo-1", title: "Test-ToDo" });
+        const parentToDo = new ToDo({ id: "parent-1", title: "Parent-1" });
+        const anotherParent = new ToDo({ id: "parent-2", title: "Parent 2" });
+
+        // 2. Act
+        toDo.setParent(parentToDo);
+        expect(toDo.setParent(anotherParent)).toBe(1);
+
+        // 3. Assert
         expect(toDo.parentID).toBe(parentToDo.id);
-        expect(exitCode).toBe(1);
+        
     })
 
     it("should instantiate an object of the ToDo class", () => {
+        const toDo = new ToDo({ id: "toDo-1", title: "Test-ToDo" });
         expect(toDo).toBeInstanceOf(ToDo);
     });
 
     it("should have an ID even if not passed for the constructor", () => {
+        // 1. Arrange
+        const toDo = new ToDo({
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+        
+        // 2. Assert
         expect(toDo.id).not.toBe(null);
     })
 
     it("should have the correct notes", () => {
+        // 1. Arrange:
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+
+        // 2. Assert:
         expect(toDo.notes).toBe("this is a basic test todo");
     });
 
     it("should save to storage", () => {
+        // 1. Arrange:
+        const toDo = new ToDo({ id: "toDo-1", title: "Test-ToDo" });
+
+        // 2. Assert
         expect(ToDo.fromStorage(toDo.id)).not.toBe(undefined);
     });
 
     it("should re-instantiate saved objects from storage as class instances", () => {
+        // 1. Arrange:
+        const toDo = new ToDo({ id: "toDo-1", title: "Test-ToDo" });
+        const saved = ToDo.fromStorage(toDo.id);
+
+        // 2. Assert
         expect(saved).toBeInstanceOf(ToDo);
     })
 
     it("should be able to set a due date", () => {
-        expect(saved.setDeadline(Date.now())).toBe(0);
+        // 1. Arrange:
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+
+        // 2. Assert:
+        const date = Date.now() + 500000;
+        expect(toDo.setDeadline(date)).toBe(0);
+        expect(toDo.dueDate.getTime()).toEqual(date);
     })
 
     it("should be able to set a new title", () => {
-        toDo.setTitle("New ToDo Title");
-        expect(toDo.title).toBe("New ToDo Title");
+        // 1. Arrange
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+        
+        // 2. Act:
+        expect(toDo.setTitle("New Title")).toBe(0);
+
+        // 3. Assert:
+        expect(toDo.title).toBe("New Title");
     })
 
     it("should not set an empty string as new title", () => {
+        // 1. Arrange
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+        
+        // 2. Act:
         expect(toDo.setTitle("")).toBe(1);
+
+        // 3. Assert:
+        expect(toDo.title).toBe("Test-ToDo");
     })
 
     it("can check if a ToDo item exists in the storage", () => {
+        // 1. Arrange:
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+
+        // 2. Assert
         expect(ToDo.exists(toDo.id)).toBe(true);
         expect(ToDo.exists("safafsdasdfadf")).toBe(false);
     })
     
     it("can get its parent instance from storage", () => {
+
+        // 1. Arrange:
+        const parentToDo = new ToDo({ id: "parent-1", title: "Parent-ToDo"});
+        const anotherParent = new ToDo({ id: "parent-2", title: "Another Parent"});
+        const toDo = new ToDo({
+            id: "toDo-1",
+            title: "Test-ToDo",
+            notes: "this is a basic test todo",
+        });
+        toDo.setParent(parentToDo);
         const loadedParent = toDo.getParent();
+        
+        // 2. Assert:
         expect(loadedParent.id).toBe("parent-1");
-        // console.log(parent);
     })    
     
     it("can build a path object", ()=> {
@@ -244,6 +319,7 @@ describe("ToDo class test suite", () => {
 
     it("should correctly filter by project including 'Misc' and sort by priority", () => {
         ToDo.clearCache();
+
         
         // 1. Arrange: Create 3 todos with different prios and projects 
         const todoProj = new ToDo({ id: "t-p1", title: "Project Task", project: "Project-A", prio: TODO_PRIO.LOW });

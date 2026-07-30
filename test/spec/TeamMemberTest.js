@@ -1,6 +1,7 @@
 import { TeamMember } from "../../js/TeamMember.js";
 import { ToDo } from "../../js/ToDo.js";
 import { DB_Handler } from "../../js/DB_Handler.js";
+import { Project } from "../../js/Project.js";
 import { APP_CONST } from "../../js/const.js";
 
 describe("TeamMember class test suite", () => {
@@ -87,6 +88,7 @@ describe("TeamMember class test suite", () => {
     it("should correctly manage project assignments by name", () => {
         const member = new TeamMember("Charlie");
         const pName = "Project Apollo";
+        const project = new Project({name: pName});
 
         // 1. add to project
         expect(member.addToProject(pName)).toBe(0);
@@ -128,5 +130,33 @@ describe("TeamMember class test suite", () => {
         const reloadedTodo = ToDo.fromStorage("work-task-1");
         expect(reloadedTodo).not.toBeNull();
         expect(reloadedTodo.assignedTo).toBeUndefined();
+    });
+
+    it("should allow a team member to become the current user and persist the session", () => {
+        const sessionKey = APP_CONST.STORAGE_KEYS.USER;
+
+        // 1. Arrange: Create new team member
+        const member = new TeamMember("Clara Oswald");
+
+        // Nobody is logged in yet
+        expect(DB_Handler.getItem(sessionKey)).toBeNull();
+        expect(TeamMember.getCurrentUser()).toBeNull();
+
+        // 2. Act: Set as current user
+        member.setCurrentUser();
+
+        // 3. Assert: The ID must be registered in the session storage 
+        expect(mockStorage[sessionKey]).toBe(member.id);
+
+        // 4. Assert: The static method must return the correct user
+        const activeUser = TeamMember.getCurrentUser();
+        expect(activeUser).not.toBeNull();
+        expect(activeUser.name).toBe("Clara Oswald");
+        expect(activeUser.id).toBe(member.id);
+
+        // 5. Act: Logout
+        TeamMember.logout();
+        expect(mockStorage[sessionKey]).toBeUndefined();
+        expect(TeamMember.getCurrentUser()).toBeNull();
     });
 });
