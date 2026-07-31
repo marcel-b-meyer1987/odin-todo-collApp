@@ -101,6 +101,48 @@ main {
     grid-area: main;
 }
 
+.search-filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: var(--spacing-unit) 0;
+    width: 90%;
+}
+
+#search-input {
+    font-weight: 500;
+    font-size: var(--font-size-base);
+    font-family: inherit;
+    line-height: normal;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    border: 3px solid var(--border-color);
+    outline: none;
+    padding: 0.5em var(--spacing-unit);
+    width: 90%;
+}
+
+.filter-btn {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: calc(var(--font-size-base) * 1.5);
+    font-family: inherit;
+    line-height: normal;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    border: 3px solid var(--border-color);
+    outline: none;
+}
+
+#path-container {
+    background-color: var(--secondary-color);
+    padding: 0.5em var(--spacing-unit);
+}
+
 footer {
     grid-area: footer;
 

@@ -21,7 +21,30 @@
         
         <!-- Dynamic Main Content -->
         <main id="app-main">
+
+            <!-- Search & Filter -->
+            <div class="search-filter-container">
+                <input type="text" id="search-input" placeholder="Search & Filter">
+                <button class="filter-btn">ᯤ</button> 
+            </div>
             
+            <!-- Display Path-->
+             <div id="path-container">
+                 <!-- ${pathStr} -->
+                <span class="path-node root-node" data-type="root">/</span>
+                <span class="path-node project-node">TÜV 08/2026</span>
+                &nbsp;/&nbsp;
+                <span class="path-node todo-node">THW</span>
+                &nbsp;/&nbsp;
+                <span class="path-node todo-node">Auflieger</span>
+                &nbsp;/&nbsp;
+                <span class="path-node todo-node">PS-WS 295</span>
+                &nbsp;/&nbsp;
+             </div>
+
+            <!-- Display ToDo-List -->
+            <ul class="todo-list" id="todo-list-ul"></ul>
+
         </main>
 
         <footer class="app-footer">
