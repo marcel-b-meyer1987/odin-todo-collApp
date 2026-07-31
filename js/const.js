@@ -11,6 +11,7 @@ export const TODO_PRIO = {
 }
 
 export const APP_CONST = {
+    APP_lOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
     STORAGE_KEYS: {
         PREFIX: "TODO_COLLAPP_", // prefix for all stored strings of the app
         USER: "USER_",
@@ -27,6 +28,7 @@ export const APP_CONST = {
         TRASH_BIN_DEFAULT_PRESERVE_DURATION: 30, // how many days should todos be preserved within trash bin before final deletion
         STD_SIMILARITY_THRESHOLD: 0.6, // standard treshold for title similarity within the same todo "tree", used for redundancy warnings 
         NO_CAT_STD_LABEL: "Uncategorized", // standard placeholder label for uncategorized todos
+        LANG: "en", // standard display language for the UI
     },
 
     MOODS: {

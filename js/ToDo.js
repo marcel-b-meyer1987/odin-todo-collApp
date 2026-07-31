@@ -278,7 +278,6 @@ export class ToDo {
 		// use a set to detect circular references
 		const visitedIDs = new Set([this.id]);
 
-		//THIS PART OF LOGIC CREATES FREEZE / CRASH => ENDLESS LOOP?
 		while (currentParent && currentParent.id) {
 
 			// make sure the parent is not in the array already to precent circular reference
@@ -294,10 +293,12 @@ export class ToDo {
 
 			currentParent = currentParent.getParent();
 		}
+
+		// in case the todo belongs to a project, use that as 1st element of the hierarchy
+		if (this.project) hierarchy.unshift(this.project);
 		
 		// build + return path object from the components above
 		return {
-			categories: this.categories || [],
 			hierarchy: hierarchy
 		};
 		

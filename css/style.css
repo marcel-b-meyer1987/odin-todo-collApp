@@ -1,0 +1,110 @@
+/* Globale CSS Custom Properties (Light Mode / Standard) */
+:root {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    --primary-color: #ffffff;
+    --secondary-color: #f5f5f5;
+    --accent-color: #007acc;
+    --text-color: #333333;
+    --text-muted: #666666;
+    --border-color: #dddddd;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --font-size-base: 1rem;
+    --spacing-unit: 1em; /* Relative Maßeinheiten laut Design.md */
+}
+
+/* Automatischer Dark Mode über das Betriebssystem */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary-color: #1e1e1e;
+        --secondary-color: #252526;
+        --accent-color: #0098ff;
+        --text-color: #ffffff;
+        --text-muted: #aaaaaa;
+        --border-color: #3c3c3c;
+    }
+}
+
+
+/* Manueller Dark Mode Override (wird per Klasse auf <body> gesetzt) */
+body.dark-theme {
+    --primary-color: #1e1e1e;
+    --secondary-color: #252526;
+    --accent-color: #0098ff;
+    --text-color: #ffffff;
+    --text-muted: #aaaaaa;
+    --border-color: #3c3c3c;
+}
+
+/* Responsives Ein-Spalten-Layout (Mobile First) */
+body {
+    font-size: var(--font-size-base);
+    background-color: var(--primary-color);
+    color: var(--text-color);
+    margin: 0;
+    font-family: sans-serif;
+
+    min-height: 100vh;
+}
+
+#app-root {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: 
+        "header"
+        "main"
+        "footer";
+}
+
+header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-logo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-style: italic; 
+    font-weight: 900; 
+    font-family: Noto Sans; 
+    font-size: 2rem; 
+    padding: 1rem;
+}
+
+.menu-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 3.6em;
+    background: none;
+    outline: none;
+    border: none;
+    padding: 0.5em 1em;
+    cursor: pointer;
+}
+
+.bar {
+    background-color: var(--text-color);
+    width: 2.2em;
+    height: 0.4em;
+}
+
+main {
+    grid-area: main;
+}
+
+footer {
+    grid-area: footer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

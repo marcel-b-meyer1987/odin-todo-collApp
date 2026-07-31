@@ -15,11 +15,12 @@ export class TeamMember {
     constructor(memberData) {
         // allows instantiating with string (=name) or object (=more properties) as argument
         const data = typeof memberData === "string" ? { name: memberData } : memberData;
-        const { id, name, email, registrationTimestamp, categories, projects, toDos } = data;
+        const { id, name, email, lang, registrationTimestamp, categories, projects, toDos } = data;
         
         this.id = id ?? crypto.randomUUID();
         this.name = name ?? "New Team Member";
         this.email = email ?? undefined;
+        this.lang = lang ?? APP_CONST.DEFAULT_SETTINGS.LANG;
         this.registrationTimestamp = Date.now();
         this.categories = []; // holds array of cat names (strings)
         this.projects = []; // holds project names

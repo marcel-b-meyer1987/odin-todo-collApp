@@ -1,6 +1,3 @@
-
-// DIETER
-
 import { APP_CONST } from "./const.js";
 import { DB_Handler } from "./DB_Handler.js";
 import { DiaryEntry } from "./DiaryEntry.js";
@@ -29,10 +26,12 @@ export default class ToDoApp {
 
         if (currentUser) {
             console.log(`Willkommen zurück, ${currentUser.name}. Lade dein Dashboard...`);
+            this.lang = currentUser.lang;
             // Add trigger for usual dashboard rendering here
             this.UI_Manager.renderDashboard({ userID: currentUser.id });
         } else {
             console.log("Kein Benutzer angemeldet. Zeige Login- / Finde-Bildschirm.");
+            this.lang = APP_CONST.DEFAULT_SETTINGS.LANG;
             // Redirect to Login Screen
         }
 
@@ -154,3 +153,10 @@ export default class ToDoApp {
         return diaryDates.map(dateStr => DiaryEntry.fromStorage(dateStr));
     };
 }
+
+const app = new ToDoApp();
+
+UI_Manager.initLayout();
+UI_Manager.renderWelcomeView();
+UI_Manager.renderMenu();
+UI_Manager.renderPath();
