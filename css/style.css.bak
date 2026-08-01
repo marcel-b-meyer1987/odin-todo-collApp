@@ -49,7 +49,7 @@ body {
     background-color: var(--primary-color);
     color: var(--text-color);
     margin: 0;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: sans-serif;
 
     min-height: 100vh;
 }
@@ -154,7 +154,6 @@ main {
 #path-container {
     background-color: var(--secondary-color);
     padding: 0.5em var(--spacing-unit);
-    width: 100%;
 }
 
 .path-node {
