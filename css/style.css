@@ -152,6 +152,19 @@ main {
     padding: 0.5em var(--spacing-unit);
 }
 
+.path-node {
+    cursor: pointer;
+}
+
+.project-node {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.todo-node {
+    font-style: italic;
+}
+
 footer {
     grid-area: footer;
 
