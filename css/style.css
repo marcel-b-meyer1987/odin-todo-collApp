@@ -39,6 +39,10 @@ body.dark-theme {
     --border-color: #3c3c3c;
 }
 
+.hidden {
+    display: none;
+}
+
 /* Responsives Ein-Spalten-Layout (Mobile First) */
 body {
     font-size: var(--font-size-base);
@@ -163,6 +167,63 @@ main {
 
 .todo-node {
     font-style: italic;
+}
+
+.todo-list {
+    list-style: none;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    /* gap: calc(var(--spacing-unit) * 0.25); */
+}
+
+.todo-item {
+    padding-top: calc(var(--spacing-unit) * 0.25);
+    padding-bottom: calc(var(--spacing-unit) * 0.25);
+}
+
+.todo-item:nth-child(odd) {
+    background-color: var(--secondary-color);
+}
+
+.todo-context-menu {
+    /* hidden by default */
+    transition: all 300ms ease-in-out;
+    display: none;
+    flex-direction: column;
+    gap: calc(var(--spacing-unit) * 0.25);
+    width: max-content;
+    justify-self: flex-end;
+    margin-right: calc(var(--spacing-unit) * 3);
+
+    /* position: absolute;
+    right: calc(var(--spacing-unit) * 3); */
+}
+
+.context-menu-hidden {
+    opacity: 0; /* set to 1 on show*/
+    display: none; /* set to flex on show */
+
+}
+
+.context-menu-visible {
+    display: flex; 
+    opacity: 1;
+}
+
+.todo-context-menu button {
+    font-weight: 500;
+    font-size: calc(var(--font-size-base) * 0.75);
+    font-family: inherit;
+    line-height: normal;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    border: 1.5px solid var(--text-color);
+    outline: none;
+    border-radius: calc(var(--font-size-base) * 0.25);
+    cursor: pointer;
+    padding: 0.5em var(--spacing-unit);
 }
 
 footer {

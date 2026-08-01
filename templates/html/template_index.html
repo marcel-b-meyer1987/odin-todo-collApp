@@ -6,6 +6,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="../../ToDo CollApp Favicon.png">
     <title>ToDo CollApp</title>
     <link rel="stylesheet" href="../../css/style.css">
+    
 </head>
 <body id="app-root">
     <!-- DOM will be rendered here dynamically by UI Manager -->
@@ -38,18 +39,98 @@
                 &nbsp;/&nbsp;
                 <span class="path-node todo-node">Auflieger</span>
                 &nbsp;/&nbsp;
-                <span class="path-node todo-node">PS-WS 295</span>
-                &nbsp;/&nbsp;
              </div>
 
             <!-- Display ToDo-List -->
-            <ul class="todo-list" id="todo-list-ul"></ul>
+            <ul class="todo-list" id="todo-list-ul">
+                <li class="todo-item" id="1">
+                    <div class="todo-item-main">
+                        <span class="status-icon">⭕</span>
+                        <span class="todo-title">PS-WS 295</span>
+                    </div>
+                    <!-- Context menu (per default hidden via CSS) -->
+                    <div class="todo-context-menu context-menu-hidden" id="context-1">
+                        <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
+                        <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
+                        <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+                    </div>
+                </li>
+                <li class="todo-item" id="2">
+                    <div class="todo-item-main">
+                        <span class="status-icon">✅</span>
+                        <span class="todo-title">Menü-Test</span>
+                    </div>
+                    <!-- Context menu (per default hidden via CSS) -->
+                    <div class="todo-context-menu context-menu-hidden" id="context-2">
+                        <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
+                        <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
+                        <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+                    </div>
+                </li>
+                <li class="todo-item" id="3">
+                    <div class="todo-item-main">
+                        <span class="status-icon">⭕</span>
+                        <span class="todo-title">PS-WS 870</span>
+                    </div>
+                    <!-- Context menu (per default hidden via CSS) -->
+                    <div class="todo-context-menu context-menu-hidden" id="context-3">
+                        <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
+                        <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
+                        <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+                    </div>
+                </li>
+                <li class="todo-item" id="4">
+                    <div class="todo-item-main">
+                        <span class="status-icon">⭕</span>
+                        <span class="todo-title">PS-WS 795</span>
+                    </div>
+                    <!-- Context menu (per default hidden via CSS) -->
+                    <div class="todo-context-menu context-menu-hidden" id="context-4">
+                        <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
+                        <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
+                        <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+                    </div>
+                </li>
+            </ul>
 
         </main>
 
         <footer class="app-footer">
             <p>--- The Footer comes here ---</p>
         </footer>
+
+        <script defer>
+            const toggleContextMenu = (e) => {
+                const targetMenu =  e.target.closest(".todo-item").querySelector(".todo-context-menu");
+                if (!targetMenu) return 1;
+                const openCtxMenus = document.querySelectorAll(".context-menu-visible");
+                
+                // console.log(openCtxMenus);
+                // console.log(targetMenu);
+                
+                // close open context menus (if any)
+                openCtxMenus.forEach(m => {
+                    if (m !== targetMenu){
+                        m.classList.remove("context-menu-visible");
+                        m.classList.add("context-menu-hidden");
+                    }
+                });
+                
+                if (targetMenu.classList.contains("context-menu-hidden")) {
+                    targetMenu.classList.remove("context-menu-hidden");
+                    targetMenu.classList.add("context-menu-visible");
+                } else {
+                    targetMenu.classList.remove("context-menu-visible");
+                    targetMenu.classList.add("context-menu-hidden");
+                }
+                
+            }
+
+            // activate event listeners for all todos to toggle their context menu
+            const todos = document.querySelectorAll(".todo-item");
+            todos.forEach(t => t.addEventListener("click", toggleContextMenu));
+
+        </script>
      
     <!-- <script type="module" src="./js/App.js"></script> -->
 </body>
