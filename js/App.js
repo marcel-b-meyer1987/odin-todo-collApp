@@ -10,7 +10,7 @@ import { UI_Manager } from "./UI_Manager.js";
 export default class ToDoApp {
 
     constructor() {
-        
+
         // CONNECT DATA FROM BUSINESS LOGIC MODULES
         this.categories = this.loadAllCategories() ?? [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
         this.projects = this.loadAllProjects() ?? [];
@@ -41,18 +41,14 @@ export default class ToDoApp {
                             APP_CONST.STORAGE_KEYS.USER +
                             APP_CONST.STORAGE_KEYS.CATS;
 
-        // *** THESE SHOULD NOT BE NEEDED HERE AFTER ALL, THANKS TO ENCAPSULATION ***
-        // this.ToDoIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-        //                     APP_CONST.STORAGE_KEYS.USER +
-        //                     APP_CONST.STORAGE_KEYS.TODOS;
-        // this.ProjectIndexKey = APP_CONST.STORAGE_KEYS.PREFIX +
-        //                         APP_CONST.STORAGE_KEYS.USER +
-        //                         APP_CONST.STORAGE_KEYS.PROJECTS;
+        console.log("App.js connected");
     }
 
 
     addToDo = (configObj) => {
-        this.todos.push(new ToDo(configObj));
+        const todo = new ToDo(configObj);
+        this.toDos.push(todo);
+        return todo.id;
     }
 
     addCategory = (newCat) => {
@@ -157,6 +153,8 @@ export default class ToDoApp {
 const app = new ToDoApp();
 
 UI_Manager.initLayout();
-UI_Manager.renderWelcomeView();
 UI_Manager.renderMenu();
+UI_Manager.renderSearchBar();
 UI_Manager.renderPath();
+UI_Manager.renderMainAddButon(app.UI_Manager.addToDo);
+// UI_Manager.renderWelcomeView();

@@ -11,7 +11,7 @@ export const TODO_PRIO = {
 }
 
 export const APP_CONST = {
-    APP_lOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
+    APP_LOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
     STORAGE_KEYS: {
         PREFIX: "TODO_COLLAPP_", // prefix for all stored strings of the app
         USER: "USER_",
@@ -42,6 +42,7 @@ export const APP_CONST = {
 
 
 export const UI_CONST = {
+    SEARCHBAR_PLACEHOLDER: "Search & Filter",
     MENU_ITEMS: [
         {
             name: "todos",
@@ -116,6 +117,43 @@ export const UI_CONST = {
                     en: "German",
                     de: "Deutsch",
                 }
+            }
+        },
+    ],
+    CONTEXT_MENU_ITEMS: [
+        {
+            name: "open",
+            disp_name: {
+                en: "Details",
+                de: "Details"
+            }
+        },
+        {
+            name: "markComplete",
+            disp_name: {
+                en: "Mark as complete",
+                de: "Als erledigt markieren"
+            }
+        },
+        {
+            name: "template",
+            disp_name: {
+                en: "Save As Template",
+                de: "Als Vorlage speichern"
+            }
+        },
+        {
+            name: "detach",
+            disp_name: {
+                en: "Detach",
+                de: "Herauslösen"
+            }
+        },
+        {
+            name: "delete",
+            disp_name: {
+                en: "Delete (Trash Bin)",
+                de: "Löschen (Papierkorb)"
             }
         },
     ],

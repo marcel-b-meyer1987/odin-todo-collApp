@@ -4,16 +4,20 @@ import { Project } from "./Project.js";
 
 export class UI_Manager {
 
-    static #root = document.getElementById("app-root");
+    static #root = document.querySelector("#app-root");
 
     constructor(app) {
         this.app = app;
 
     }
 
+    // ##########################################################
+    // ### INITIAL SETUP + STANDARD RENDERING + MENU TOGGLING ###
+    // ##########################################################
+
     static initLayout() {
         /**
-         ** Initialize base layout (Header + Footer)
+         ** Initialize base layout (Header + Main + Footer)
          */
         UI_Manager.#root.innerHTML = `
             <header class="app-header">
@@ -37,6 +41,96 @@ export class UI_Manager {
         document.getElementById("menu-btn").addEventListener("click", () => {
             UI_Manager.toggleMenu();
         });
+    }
+
+    static renderSearchBar(parentElementStr = "#app-main") {
+        /**
+         ** @param parentElement - The query string for the DOM element to which the component should be attached
+         **                         (defaults to the <main> element)
+         */
+
+        const placeholder = UI_CONST.SEARCHBAR_PLACEHOLDER ?? "Search & Filter";
+
+        const searchBar = document.createElement("div");
+        searchBar.classList.add("search-filter-container");
+
+        const input = document.createElement("input");
+        input.setAttribute("type", "text");
+        input.setAttribute("id", "search-input");
+        input.setAttribute("placeholder", placeholder);
+        
+        const btn = document.createElement("button");
+        btn.classList.add("filter-btn");
+        btn.innerText = "ᯤ";
+        
+        searchBar.appendChild(input);
+        searchBar.appendChild(btn);
+        
+        const parent = document.querySelector(parentElementStr);
+        parent.appendChild(searchBar);
+    }
+
+    static renderPath(parentElementStr = "#app-main", pathObject, onElementClick) {
+        /**
+         ** Creates a clickable, unix-like path (sticky)
+         ** Example: / [Projekt] / [Parent Task] / [Current Task]
+         */
+
+        // <!-- Display Path-->
+        //      <div id="path-container">path-container
+        //          <!-- ${pathStr} -->
+        //         <span class="path-node root-node" data-type="root">/</span>
+        //         <span class="path-node project-node">TÜV 08/2026</span>
+        //         &nbsp;/&nbsp;
+        //         <span class="path-node todo-node">THW</span>
+        //         &nbsp;/&nbsp;
+        //         <span class="path-node todo-node">Auflieger</span>
+        //         &nbsp;/&nbsp;
+        //      </div>
+        
+        
+        const pathContainer = document.createElement("div");
+        pathContainer.setAttribute("id", "path-container");
+        pathContainer.style.position = "sticky";
+        pathContainer.style.top = "50px"; // Direkt unter dem Header
+        pathContainer.style.backgroundColor = "var(--secondary-color)";
+        pathContainer.style.padding = "0.5em var(--spacing-unit)";
+        
+        // Create root anchor
+        pathContainer.innerHTML = `<span class="path-node root-node" data-type="root">/</span>`;
+        
+        
+        
+        // Loop over task hierarchy
+        if (pathObject && pathObject.hierarchy) {
+            pathObject.hierarchy.forEach((node, index) => {
+                const separator = document.createTextNode(" / ");
+                pathContainer.appendChild(separator);
+
+                const span = document.createElement("span");
+                span.innerText = node.name || node.title; // project uses .name, todo uses .title
+                
+                // Visual distinction (as ls in Terminal)
+                if (index === 0) {
+                    span.className = "path-node project-node"; // 1st entry after root = Project
+                    // span.style.fontWeight = "bold";
+                    // span.style.color = "var(--accent-color)";
+                } else {
+                    span.className = "path-node todo-node";
+                    // span.style.fontStyle = "italic";
+                }
+
+                // Enable click navigation for each path element
+                span.addEventListener("click", () => {
+                    onElementClick(node);
+                });
+
+                pathContainer.appendChild(span);
+            });
+        }
+
+        const parent = document.querySelector(parentElementStr);
+        parent.appendChild(pathContainer);
     }
 
     static toggleMenu() {
@@ -121,7 +215,7 @@ export class UI_Manager {
         }
     }
 
-    static renderMenu(menuItemsArray, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
+    static renderMenu(menuItemsArray = UI_CONST.MENU_ITEMS, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
         const menuOverlay = document.createElement("div");
         menuOverlay.className = "menu-overlay";
         
@@ -147,51 +241,66 @@ export class UI_Manager {
         return menuOverlay;
     }
 
-    static renderPath(pathObject, onElementClick) {
-        /**
-         ** Creates a clickable, unix-like path (sticky)
-         ** Example: / [Projekt] / [Parent Task] / [Current Task]
-         */
-        const pathContainer = document.createElement("div");
-        pathContainer.className = "sticky-path-bar";
-        pathContainer.style.position = "sticky";
-        pathContainer.style.top = "50px"; // Direkt unter dem Header
-        pathContainer.style.backgroundColor = "var(--secondary-color)";
-        pathContainer.style.padding = "0.5em var(--spacing-unit)";
+    static renderContextMenu(dataObj, menuItemsArray, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
+        const menu = document.createElement("div");
+        const id = dataObj.id ?? dataObj.name; // use id as identifier for ToDos and TeamMembers, name for Projects
+        menu.setAttribute("id", `context-${id}`);
+        menu.classList.add("todo-context-menu");
+        menu.classList.add("context-menu-hidden");
         
-        // Create root anchor
-        pathContainer.innerHTML = `<span class="path-node root-node" data-type="root">/</span>`;
-
-        // Loop over task hierarchy
-        if (pathObject && pathObject.hierarchy) {
-            const separator = document.createTextNode(" / ");
-            pathObject.hierarchy.forEach((node, index) => {
-                pathContainer.appendChild(separator);
-
-                const span = document.createElement("span");
-                span.innerText = node.name || node.title; // project uses .name, todo uses .title
-                
-                // Visual distinction (as ls in Terminal)
-                if (index === 0) {
-                    span.className = "path-node project-node"; // 1st entry after root = Project
-                    span.style.fontWeight = "bold";
-                    span.style.color = "var(--accent-color)";
-                } else {
-                    span.className = "path-node todo-node";
-                    span.style.fontStyle = "italic";
-                }
-
-                // Enable click navigation for each path element
-                span.addEventListener("click", () => {
-                    onElementClick(node);
-                });
-
-                pathContainer.appendChild(span);
+        menuItemsArray.forEach(item => {
+            // Get the correct display name from the multilingual menuItemsArray (e. g. disp_name.en)
+            const disp_name = item.disp_name[currentLang] || item.disp_name[APP_CONST.DEFAULT_SETTINGS.LANG];
+            
+            const btn = document.createElement("button");
+            btn.outerHTML = `<button class="ctx-btn ${item.name}" data-id="${dataObj.id}">${disp_name}</button>`;
+            
+            
+            btn.addEventListener("click", () => {
+                onActionTriggered(item.name); // calls the callbackFn onActionTriggered with "settings", "projects" etc.
             });
-        }
-
-        return pathContainer;
+            
+            menu.appendChild(btn);
+        });
+        
+        return menu;
     }
    
+    static renderMainAddButon(callbackFn) {
+
+        // <!-- Display Add-Button -->
+        // <button class="main-add-btn">+</button>
+        const btn = document.createElement("button");
+        btn.classList.add("main-add-btn");
+        btn.innerText = "+";
+        btn.addEventListener("click", callbackFn);
+        
+        const main = document.querySelector("#app-main");
+        main.appendChild(btn);
+    }
+
+
+    // ############################################
+    // ### DIALOG VIEWING + INTERACTION METHODS ###
+    // ############################################
+
+    openToDo(todoID) {
+        /**
+         ** @param - The ID of the ToDo to show 
+         */
+        console.log("[DEV] openToDo() triggered");
+         // Render the full detail view for ToDos, fill it with the data of the ToDo
+         // track + save changes applied by the user (if any)
+    }
+
+    addToDo = () => {
+        // create a new ToDo in the app, 
+        // then open its detail view for editing + saving
+
+        console.log("[DEV] UI_Manager.addToDo() triggered");
+        const newToDoID = this.app.addToDo({ title: "New ToDo"});
+        this.openToDo(newToDoID);
+    }
+
 
 }

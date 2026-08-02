@@ -102,6 +102,7 @@ header {
 }
 
 main {
+    position: relative;
     grid-area: main;
     display: flex;
     flex-direction: column;
@@ -232,6 +233,57 @@ main {
     border-radius: calc(var(--font-size-base) * 0.25);
     cursor: pointer;
     padding: 0.5em var(--spacing-unit);
+}
+
+.main-add-btn {
+    --size: max(calc(2rem + 0.1vw), 48px);
+/*     
+    width: var(--size);
+    height: var(--size); */
+    border-radius: calc(var(--size) * 0.25);
+    font-weight: 900;
+    font-size: calc(var(--font-size-base));
+    font-family: inherit;
+    line-height: normal;
+    color: var(--text-color);
+    background-color: var(--primary-color);
+    border: 3px solid var(--border-color);
+    outline: none;
+    cursor: pointer;
+    padding: var(--spacing-unit) calc(1.25 * var(--spacing-unit)) ;
+
+    position: absolute;
+    bottom: var(--size);
+    left: var(--size);
+    z-index: 10;
+}
+
+.todo-detail-container {
+    width: 90%;
+    align-self: center;
+    position: relative;
+    margin-top: var(--spacing-unit);
+    padding: var(--spacing-unit);
+    background-color: var(--secondary-color);
+    border-radius: var(--spacing-unit);
+}
+
+.todo-detail-container .todo-title {
+    color: var(--accent-color); 
+    margin-top: 0;
+}
+
+.todo-detail-container .prio-label {
+    position: absolute;
+    right: var(--spacing-unit);
+    top: var(--spacing-unit);
+    padding: 0.5em var(--spacing-unit);
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--danger-color);
+    background-color: var(--primary-color);
+    border: 2px solid var(--danger-color);
+    border-radius: 50%;
 }
 
 footer {
