@@ -158,7 +158,7 @@ export class UI_Manager {
         
         // Render search bar + path view
         UI_Manager.renderSearchBar();
-        UI_Manager.renderPath();
+        UI_Manager.renderPath("#top-row", null, UI_Manager.navigateToNode);
 
         // create todo list
         // <ul class="todo-list" id="todo-list-ul"></ul>
@@ -169,6 +169,7 @@ export class UI_Manager {
         // render ToDos + append to list
         todosArray.forEach(todo => {
             const li = document.createElement("li");
+            li.setAttribute("data-todo-id", todo.id);
             li.className = `todo-item ${todo.status === 1 ? 'completed' : ''}`;
             li.innerHTML = `
                 <div class="todo-item-main">
@@ -280,9 +281,25 @@ export class UI_Manager {
     // ### DIALOG VIEWING + INTERACTION METHODS ###
     // ############################################
 
-    openToDo(todoID) {
+
+    navigateToNode(node) {
         /**
-         ** @param - The ID of the ToDo to show 
+         ** @param {Node} - The display node in the path which refers to the object (Project/ToDo) the user wants to view 
+         */
+        console.log(`[DEV] navigateToNode() called on node:`, node);
+
+        // Extract reference from node
+        // get data object from storage 
+        // build path object
+        // render path + update path view 
+        // if data object has children: display todo list of the children
+        // if data object has no children: open detail view of the object
+    }
+
+    openToDo(todoID, createMode = false) {
+        /**
+         ** @param {string} todoID - The ID of the ToDo to show 
+         ** @param {boolean} createMode - determines if the todo has just been created freshly
          */
 
         // Render the full detail view for ToDos, fill it with the data of the ToDo
@@ -298,6 +315,10 @@ export class UI_Manager {
                 
             },
             onAbort : () => {
+                // if the todo was just created, delete it,
+                // as it was automatically saved upon creation, 
+                // which would otherwise lead to orphaned data
+                if (createMode) ToDo.delete(todoID);
                 this.closeToDo();
             }
         }
@@ -324,7 +345,7 @@ export class UI_Manager {
         const detailsView = main.querySelector(".todo-detail-container");
 
         main.removeChild(detailsView);
-        UI_Manager.renderToDoListView(this.app.toDos, "/root");
+        UI_Manager.renderToDoListView(ToDo.getAllActiveToDos(), "/root");
         UI_Manager.renderMainAddButon(this.app.UI_Manager.addToDo);
     }
 
@@ -335,7 +356,7 @@ export class UI_Manager {
         console.log("[DEV] UI_Manager.addToDo() triggered");
         const newToDoID = this.app.addToDo({ title: "New ToDo"});
         console.log(`[DEV] Opening new ToDo ID (${newToDoID}) in UI_Manager.openToDo()`);
-        this.openToDo(newToDoID);
+        this.openToDo(newToDoID, true);
     }
 
 

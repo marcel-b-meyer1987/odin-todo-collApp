@@ -16,6 +16,7 @@ export default class ToDoApp {
         this.projects = this.loadAllProjects() ?? [];
         this.teamMembers = this.loadAllTeamMembers() ?? [];
         this.toDos = this.loadAllToDos() ?? [];
+        this.currentPath = null;
         
         // CONNECT UI BIDIRECTIONALLY (DEPENDENCY INJECTION)
         this.UI_Manager = new UI_Manager(this);

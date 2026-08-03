@@ -266,7 +266,7 @@ main {
     bottom: var(--size);
     left: var(--size);
     z-index: 10;
-    opacity: 0.95;
+    opacity: 0.85;
 
     border-radius: calc(var(--size) * 0.25);
     font-weight: 900;
