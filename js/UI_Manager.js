@@ -50,6 +50,12 @@ export class UI_Manager {
          **                         (defaults to the <main> element)
          */
 
+        // Check if there is already a search bar in th DOM
+        // and, if yes, remove from DOM
+        const parent = document.querySelector(parentElementStr);
+        const oldSearchBar = parent.querySelector(".search-filter-container");
+        if (oldSearchBar) parent.removeChild(oldSearchBar);
+
         const placeholder = UI_CONST.SEARCHBAR_PLACEHOLDER ?? "Search & Filter";
 
         const searchBar = document.createElement("div");
@@ -66,8 +72,6 @@ export class UI_Manager {
         
         searchBar.appendChild(input);
         searchBar.appendChild(btn);
-        
-        const parent = document.querySelector(parentElementStr);
         parent.appendChild(searchBar);
     }
 
@@ -76,20 +80,15 @@ export class UI_Manager {
          ** Creates a clickable, unix-like path (sticky)
          ** Example: / [Projekt] / [Parent Task] / [Current Task]
          */
-
-        // <!-- Display Path-->
-        //      <div id="path-container">path-container
-        //          <!-- ${pathStr} -->
-        //         <span class="path-node root-node" data-type="root">/</span>
-        //         <span class="path-node project-node">TÜV 08/2026</span>
-        //         &nbsp;/&nbsp;
-        //         <span class="path-node todo-node">THW</span>
-        //         &nbsp;/&nbsp;
-        //         <span class="path-node todo-node">Auflieger</span>
-        //         &nbsp;/&nbsp;
-        //      </div>
         
+        const parent = document.querySelector(parentElementStr);
         
+        // Check if there is already a path view in the DOM
+        // and, if yes, remove from DOM
+        const oldPathView = parent.querySelector("#path-container");
+        if (oldPathView) parent.removeChild(oldPathView); 
+        
+        // Create new path view
         const pathContainer = document.createElement("div");
         pathContainer.setAttribute("id", "path-container");
         pathContainer.style.position = "sticky";
@@ -99,8 +98,6 @@ export class UI_Manager {
         
         // Create root anchor
         pathContainer.innerHTML = `<span class="path-node root-node" data-type="root">/</span>`;
-        
-        
         
         // Loop over task hierarchy
         if (pathObject && pathObject.hierarchy) {
@@ -130,7 +127,6 @@ export class UI_Manager {
             });
         }
 
-        const parent = document.querySelector(parentElementStr);
         parent.appendChild(pathContainer);
     }
 
@@ -162,19 +158,17 @@ export class UI_Manager {
          */
         const main = document.getElementById("app-main");
         
-        // Such- und Filterleiste + Pfadanzeige rendern
-        main.innerHTML = `
-            <div class="search-filter-container">
-                <input type="text" id="search-input" placeholder="Search & Filter">
-                <button class="filter-btn">ᯤ<!--⏳--></button> 
-            </div>
-            <div class="view-path">${pathStr}</div>
-            <ul class="todo-list" id="todo-list-ul"></ul>
-        `;
+        // Render search bar + path view
+        UI_Manager.renderSearchBar();
+        UI_Manager.renderPath();
 
-        const ul = document.getElementById("todo-list-ul");
+        // create todo list
+        // <ul class="todo-list" id="todo-list-ul"></ul>
+        const ul = document.createElement("ul");
+        ul.setAttribute("id", "todo-list-ul");
+        ul.className = "todo-list";
 
-        // render ToDos
+        // render ToDos + append to list
         todosArray.forEach(todo => {
             const li = document.createElement("li");
             li.className = `todo-item ${todo.status === 1 ? 'completed' : ''}`;
@@ -207,6 +201,9 @@ export class UI_Manager {
 
             ul.appendChild(li);
         });
+
+        // append todo list to main section
+        main.appendChild(ul);
     }
 
     static toggleContextMenu(todoID) {
@@ -309,19 +306,28 @@ export class UI_Manager {
         
         const detailsView = ToDoDetail.create(todo, this.app.lang, callbacks);
         
-        // Remove ToDo list from DOM (if existing)
-        // Add detailView instead
+        // Remove Add-Button + (if existing) ToDo list from DOM
+        // add detailView instead
         const main = document.querySelector("#app-main");
         const todoList = main.querySelector("#todo-list-ul");
+        const addBtn = main.querySelector(".main-add-btn");
 
         if (todoList) main.removeChild(todoList);
+        if (addBtn) main.removeChild(addBtn);
         main.appendChild(detailsView);
-
     }
 
     closeToDo() {
-        // Close the detail view of the todo
         console.log(`[DEV] closeToDo() was called`);
+
+        // Close the ToDo detail view 
+        // and re-render ToDo list + add button
+        const main = document.querySelector("#app-main");
+        const detailsView = main.querySelector(".todo-detail-container");
+
+        main.removeChild(detailsView);
+        UI_Manager.renderToDoListView(this.app.toDos, "/root");
+        UI_Manager.renderMainAddButon();
     }
 
     addToDo = () => {
