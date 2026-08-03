@@ -52,6 +52,9 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 
     min-height: 100vh;
+
+    scrollbar-color: var(--secondary-color) var(--border-color);
+
 }
 
 #app-root {
@@ -329,7 +332,7 @@ main {
 
 .todo-notes {
     resize: none;
-    overflow: hidden;
+    overflow-y: scroll;
     
     display: block;
     width: 90%;
@@ -372,6 +375,10 @@ main {
     align-items: center;
 }
 
+.two-col-details-container > *:nth-child(2) {
+    cursor: pointer;
+}
+
 .dates-container {
     display: flex;
     align-items: center;
@@ -397,6 +404,10 @@ input[type="date"] {
     font: inherit;
     border: none;
     outline: none;
+}
+
+.checklist-link {
+    text-decoration: underline;
 }
 
 input[type="text"] {

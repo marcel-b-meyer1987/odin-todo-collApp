@@ -58,30 +58,35 @@
                      <textarea name="todo-notes" id="todo-notes" class="todo-notes" rows="3" autocorrect="off"></textarea>
                  </div>
 
+                 
                  <!-- Creation Date & Due Date -->
-
-                <!-- Dates, Checklist, Categories & Assigned team member -->
-                <div class="two-col-details-container" id="checklist-container">
-                    <label for="due-date" id="calendar-icon">📅</label>
+                 <div class="two-col-details-container" id="dates-container">
+                    <label for="due-date" id="calendar-icon" title="Edit Due Date">📅</label>
                     <div class="dates-container">
-                    <div>
-                        <span id="created-label" class="todo-details-label">Erstellt:</span>
-                        <input type="date" id="created-date" value="2026-08-02" readonly>
-                    </div>
-                    <div>
-                        <span id="due-label" class="todo-details-label">Fällig:</span>
-                        <input type="date" id="due-date" value="2026-08-10">
-                    </div>
-                  </div> 
+                        <div>
+                            <span id="created-label" class="todo-details-label">Erstellt:</span>
+                            <input type="date" id="created-date" value="2026-08-02" readonly>
+                        </div>
+                        <div>
+                            <span id="due-label" class="todo-details-label">Fällig:</span>
+                            <input type="date" id="due-date" value="2026-08-10">
+                        </div>
+                    </div> 
                 </div>
+
+                <!-- Checklist -->
                 <div class="two-col-details-container" id="checklist-container">
                     <span><strong>&#9745</strong></span>
-                    <span class="todo-details-label">Checkliste</span>
+                    <span class="todo-details-label checklist-link">Checkliste erstellen / bearbeiten</span>
                 </div>
+
+                <!-- Categories -->
                 <div class="two-col-details-container" id="categories-container">
                     <span><strong>#</strong></span>
                     <input type="text" id="categories-display" placeholder="Kategorie hinzufügen">
                 </div>
+
+                <!-- Assigned team member -->
                 <div class="two-col-details-container" id="assignment-container">
                     <label for="select-team-member">👤</label>
                     <select id="select-team-member">
