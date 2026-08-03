@@ -23,6 +23,7 @@ export class UI_Manager {
         UI_Manager.#root.innerHTML = `
             <header class="app-header">
                 ${APP_CONST.APP_LOGO}
+                <div id="header-middle-column"></div>    
                 <button class="menu-toggle" id="menu-btn">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -31,6 +32,7 @@ export class UI_Manager {
             </header>
             
             <!-- Dynamischer Hauptinhalt -->
+            <div id="top-row"></div>
             <main id="app-main"></main>
 
             <footer class="app-footer">
@@ -44,7 +46,7 @@ export class UI_Manager {
         });
     }
 
-    static renderSearchBar(parentElementStr = "#app-main") {
+    static renderSearchBar(parentElementStr = "#header-middle-column") {
         /**
          ** @param parentElement - The query string for the DOM element to which the component should be attached
          **                         (defaults to the <main> element)
@@ -75,7 +77,7 @@ export class UI_Manager {
         parent.appendChild(searchBar);
     }
 
-    static renderPath(parentElementStr = "#app-main", pathObject, onElementClick) {
+    static renderPath(parentElementStr = "#top-row", pathObject, onElementClick) {
         /**
          ** Creates a clickable, unix-like path (sticky)
          ** Example: / [Projekt] / [Parent Task] / [Current Task]
@@ -90,11 +92,7 @@ export class UI_Manager {
         
         // Create new path view
         const pathContainer = document.createElement("div");
-        pathContainer.setAttribute("id", "path-container");
-        pathContainer.style.position = "sticky";
-        pathContainer.style.top = "50px"; // Direkt unter dem Header
-        pathContainer.style.backgroundColor = "var(--secondary-color)";
-        pathContainer.style.padding = "0.5em var(--spacing-unit)";
+        pathContainer.setAttribute("id", "path-container");      
         
         // Create root anchor
         pathContainer.innerHTML = `<span class="path-node root-node" data-type="root">/</span>`;
@@ -264,7 +262,7 @@ export class UI_Manager {
         return menu;
     }
    
-    static renderMainAddButon(callbackFn) {
+    static renderMainAddButon(callbackFn = app.UI_Manager.addToDo) {
 
         // <!-- Display Add-Button -->
         // <button class="main-add-btn">+</button>
@@ -327,7 +325,7 @@ export class UI_Manager {
 
         main.removeChild(detailsView);
         UI_Manager.renderToDoListView(this.app.toDos, "/root");
-        UI_Manager.renderMainAddButon();
+        UI_Manager.renderMainAddButon(this.app.UI_Manager.addToDo);
     }
 
     addToDo = () => {
