@@ -76,7 +76,7 @@ export class ToDoDetail {
 
         // Event-Listener binden
         container.querySelector("#save-btn").addEventListener("click", () => {
-            callbacks.onSave.();
+            callbacks.onSave?.();
         });
         container.querySelector("#abort-btn").addEventListener("click", () => {
             callbacks.onAbort?.();

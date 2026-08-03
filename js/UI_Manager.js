@@ -1,6 +1,7 @@
 import { APP_CONST, UI_CONST } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
+import { ToDoDetail } from "../templates/ToDoDetail.js";
 
 export class UI_Manager {
 
@@ -288,9 +289,39 @@ export class UI_Manager {
         /**
          ** @param - The ID of the ToDo to show 
          */
+
+        // Render the full detail view for ToDos, fill it with the data of the ToDo
+        // track + save changes applied by the user (if any)
         console.log("[DEV] openToDo() triggered");
-         // Render the full detail view for ToDos, fill it with the data of the ToDo
-         // track + save changes applied by the user (if any)
+
+        
+        const todo = ToDo.fromStorage(todoID);
+        
+        // define callback functions for detail view
+        const callbacks = {
+            onSave : () => {
+                
+            },
+            onAbort : () => {
+                this.closeToDo();
+            }
+        }
+        
+        const detailsView = ToDoDetail.create(todo, this.app.lang, callbacks);
+        
+        // Remove ToDo list from DOM (if existing)
+        // Add detailView instead
+        const main = document.querySelector("#app-main");
+        const todoList = main.querySelector("#todo-list-ul");
+
+        if (todoList) main.removeChild(todoList);
+        main.appendChild(detailsView);
+
+    }
+
+    closeToDo() {
+        // Close the detail view of the todo
+        console.log(`[DEV] closeToDo() was called`);
     }
 
     addToDo = () => {
@@ -305,3 +336,5 @@ export class UI_Manager {
 
 
 }
+
+// DIETER
