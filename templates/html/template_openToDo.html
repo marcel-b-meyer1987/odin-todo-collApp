@@ -25,7 +25,7 @@
 
             <!-- Search & Filter -->
             <div class="search-filter-container">
-                <input type="text" id="search-input" placeholder="Search & Filter">
+                <input type="search" id="search-input" placeholder="Search & Filter">
                 <button class="filter-btn">ᯤ</button> 
             </div>
             
@@ -47,10 +47,57 @@
         
             <div class="todo-detail-container" style="padding: var(--spacing-unit);">
                 
-                <h2 class="todo-title">${todo.title}</h2>
-                <span class="prio-label">!</span>
+                <div class="todo-detail-title-row">
+                    <input type="text" class="todo-title" placeholder="${todo.title}">
+                    <span class="prio-label">!</span>
+                </div>
+
+                <!-- Notes / Description -->
+                 <div class="notes-container">
+                     <label for="todo-notes" class="todo-details-label">Notes:</label>
+                     <textarea name="todo-notes" id="todo-notes" class="todo-notes" rows="3" autocorrect="off"></textarea>
+                 </div>
+
+                 <!-- Creation Date & Due Date -->
+
+                <!-- Dates, Checklist, Categories & Assigned team member -->
+                <div class="two-col-details-container" id="checklist-container">
+                    <label for="due-date" id="calendar-icon">📅</label>
+                    <div class="dates-container">
+                    <div>
+                        <span id="created-label" class="todo-details-label">Erstellt:</span>
+                        <input type="date" id="created-date" value="2026-08-02" readonly>
+                    </div>
+                    <div>
+                        <span id="due-label" class="todo-details-label">Fällig:</span>
+                        <input type="date" id="due-date" value="2026-08-10">
+                    </div>
+                  </div> 
+                </div>
+                <div class="two-col-details-container" id="checklist-container">
+                    <span><strong>&#9745</strong></span>
+                    <span class="todo-details-label">Checkliste</span>
+                </div>
+                <div class="two-col-details-container" id="categories-container">
+                    <span><strong>#</strong></span>
+                    <input type="text" id="categories-display" placeholder="Kategorie hinzufügen">
+                </div>
+                <div class="two-col-details-container" id="assignment-container">
+                    <label for="select-team-member">👤</label>
+                    <select id="select-team-member">
+                        <option value="">Mitarbeiter zuweisen:</option>
+                        <option value="new">Mitarbeiter erstellen</option>
+                    </select>
+                </div>
+
+                <!-- Save & Abort buttons-->
+                <div class="buttons-container">
+                    <button id="save-btn">Speichern</button>
+                    <button id="abort-btn">Abbrechen</button>
+                </div>
+
                 <!-- Accordeon for saving space -->
-                <details class="mobile-accordion" style="border: 1px solid var(--border-color); padding: 0.5em; border-radius: 4px; margin-top: 1em;">
+                <!-- <details class="mobile-accordion" style="border: 1px solid var(--border-color); padding: 0.5em; border-radius: 4px; margin-top: 1em;">
                     <summary style="cursor: pointer; font-weight: bold; color: var(--text-muted);">${labels.more}</summary>
                     
                     <div class="accordion-content" style="margin-top: 1em;">
@@ -62,7 +109,7 @@
                             ${todo.categories.map(cat => `<span class="cat-tag" style="background: var(--secondary-color); padding: 2px 6px; margin-right: 5px; border-radius: 3px; font-size: 0.85em;">${cat}</span>`).join('')}
                         </div>
                     </div>
-                </details>
+                </details> -->
             </div>
             
 
