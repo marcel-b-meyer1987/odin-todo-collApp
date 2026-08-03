@@ -45,8 +45,8 @@
             <!-- DISPLAY FORM FOR NEW TODO INSTEAD: --> 
         
         
-            <div class="todo-detail-container" style="padding: var(--spacing-unit);">
-                
+            <div class="todo-detail-container">
+                <!-- Title + Prio -->
                 <div class="todo-detail-title-row">
                     <input type="text" class="todo-title" placeholder="${todo.title}">
                     <span class="prio-label">!</span>
@@ -57,7 +57,6 @@
                      <label for="todo-notes" class="todo-details-label">Notes:</label>
                      <textarea name="todo-notes" id="todo-notes" class="todo-notes" rows="3" autocorrect="off"></textarea>
                  </div>
-
                  
                  <!-- Creation Date & Due Date -->
                  <div class="two-col-details-container" id="dates-container">
@@ -100,21 +99,7 @@
                     <button id="save-btn">Speichern</button>
                     <button id="abort-btn">Abbrechen</button>
                 </div>
-
-                <!-- Accordeon for saving space -->
-                <!-- <details class="mobile-accordion" style="border: 1px solid var(--border-color); padding: 0.5em; border-radius: 4px; margin-top: 1em;">
-                    <summary style="cursor: pointer; font-weight: bold; color: var(--text-muted);">${labels.more}</summary>
-                    
-                    <div class="accordion-content" style="margin-top: 1em;">
-                        <p><strong>${labels.priority}:</strong> ${Object.keys(TODO_PRIO).find(key => TODO_PRIO[key] === todo.prio)}</p>
-                        <p><strong>${labels.notes}:</strong> ${todo.notes || "---"}</p>
-                        
-                        <div class="categories-list">
-                            <strong>Kategorien:</strong>
-                            ${todo.categories.map(cat => `<span class="cat-tag" style="background: var(--secondary-color); padding: 2px 6px; margin-right: 5px; border-radius: 3px; font-size: 0.85em;">${cat}</span>`).join('')}
-                        </div>
-                    </div>
-                </details> -->
+                
             </div>
             
 

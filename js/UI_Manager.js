@@ -299,6 +299,7 @@ export class UI_Manager {
 
         console.log("[DEV] UI_Manager.addToDo() triggered");
         const newToDoID = this.app.addToDo({ title: "New ToDo"});
+        console.log(`[DEV] Opening new ToDo ID (${newToDoID}) in UI_Manager.openToDo()`);
         this.openToDo(newToDoID);
     }
 
