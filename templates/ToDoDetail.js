@@ -1,4 +1,5 @@
 import { TODO_STATUS, TODO_PRIO, APP_CONST } from "../js/const.js";
+import { DiaryEntry } from "../js//DiaryEntry.js";
 
 export class ToDoDetail {
     /**
@@ -28,7 +29,7 @@ export class ToDoDetail {
             <!-- Notes / Description -->
                 <div class="notes-container">
                     <label for="todo-notes" class="todo-details-label">Notes:</label>
-                    <textarea name="todo-notes" id="todo-notes" class="todo-notes" rows="3" autocorrect="off"></textarea>
+                    <textarea name="todo-notes" id="todo-notes" class="todo-notes" rows="3" autocorrect="off">${todo.notes ?? ""}</textarea>
                 </div>
                 
                 <!-- Creation Date & Due Date -->
@@ -37,7 +38,7 @@ export class ToDoDetail {
                 <div class="dates-container">
                     <div>
                         <span id="created-label" class="todo-details-label">${labels.created}</span>
-                        <input type="date" id="created-date" value="2026-08-02" readonly>
+                        <input type="date" id="created-date" value="${DiaryEntry.formatDate(todo.creationDate)}" readonly>
                     </div>
                     <div>
                         <span id="due-label" class="todo-details-label">${labels.due}</span>
