@@ -38,7 +38,7 @@ export class ToDoDetail {
                 <div class="dates-container">
                     <div>
                         <span id="created-label" class="todo-details-label">${labels.created}</span>
-                        <input type="date" id="created-date" value="${DiaryEntry.formatDate(todo.creationDate)}" readonly>
+                        <input type="date" id="created-date" valueAsNumber="${todo.creationDate.getTime()}" readonly>
                     </div>
                     <div>
                         <span id="due-label" class="todo-details-label">${labels.due}</span>
