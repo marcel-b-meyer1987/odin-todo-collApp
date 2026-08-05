@@ -296,7 +296,7 @@ export class UI_Manager {
         // if data object has no children: open detail view of the object
     }
 
-    openToDo(todoID, createMode = false) {
+    openToDo(todoID, config = { mode: "open" }) {
         /**
          ** @param {string} todoID - The ID of the ToDo to show 
          ** @param {boolean} createMode - determines if the todo has just been created freshly
@@ -318,7 +318,7 @@ export class UI_Manager {
                 // if the todo was just created, delete it,
                 // as it was automatically saved upon creation, 
                 // which would otherwise lead to orphaned data
-                if (createMode) ToDo.delete(todoID);
+                if (config && config.mode === "create") ToDo.delete(todoID);
                 this.closeToDo();
             }
         }
@@ -356,7 +356,7 @@ export class UI_Manager {
         console.log("[DEV] UI_Manager.addToDo() triggered");
         const newToDoID = this.app.addToDo({ title: "New ToDo"});
         console.log(`[DEV] Opening new ToDo ID (${newToDoID}) in UI_Manager.openToDo()`);
-        this.openToDo(newToDoID, true);
+        this.openToDo(newToDoID, { mode: "create" });
     }
 
 
