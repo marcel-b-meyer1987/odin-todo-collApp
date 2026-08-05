@@ -296,10 +296,10 @@ export class UI_Manager {
         // if data object has no children: open detail view of the object
     }
 
-    openToDo(todoID, config = { mode: "open" }) {
+    openToDo(todoID, config = { mode: "show" }) {
         /**
          ** @param {string} todoID - The ID of the ToDo to show 
-         ** @param {boolean} createMode - determines if the todo has just been created freshly
+         ** @param {object} config - determines additional config parameters - at least, if todo is being opened for creation OR showing only
          */
 
         // Render the full detail view for ToDos, fill it with the data of the ToDo
