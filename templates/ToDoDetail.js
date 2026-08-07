@@ -19,6 +19,8 @@ export class ToDoDetail {
         }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
 
         // Core info (always visible)
+        console.log("todo.createdDate", todo.createdDate);
+        console.log("DiaryEntry.formatDate(todo.createdDate)", DiaryEntry.formatDate(todo.createdDate));
         container.innerHTML = `
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
@@ -38,7 +40,7 @@ export class ToDoDetail {
                 <div class="dates-container">
                     <div>
                         <span id="created-label" class="todo-details-label">${labels.created}</span>
-                        <input type="date" id="created-date" valueAsNumber="${todo.creationDate.getTime()}" readonly>
+                        <input type="date" id="created-date" value="${DiaryEntry.formatDate(todo.createdDate)}" readonly>
                     </div>
                     <div>
                         <span id="due-label" class="todo-details-label">${labels.due}</span>
