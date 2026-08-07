@@ -24,7 +24,7 @@ export class ToDoDetail {
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
                 <input type="text" class="todo-title" placeholder="${todo.title ?? 'Neues Todo'}">
-                <span class="prio-label">!</span>
+                <span class="prio-label prio-${todo.prio}">!</span>
             </div>
 
             <!-- Notes / Description -->

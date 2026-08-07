@@ -11,6 +11,7 @@
     --text-muted: #666666;
     --border-color: #dddddd;
     --success-color: #28a745;
+    --warning-color: orange;
     --danger-color: #dc3545;
     --font-size-base: 1rem;
     --spacing-unit: 1em; /* Relative Maßeinheiten laut Design.md */
@@ -336,10 +337,26 @@ main {
     padding: 0.5em var(--spacing-unit);
     font-size: 1rem;
     font-weight: 900;
+    
+    border-radius: 50%;
+}
+
+.prio-0 {
+    color: var(--success-color);
+    background-color: var(--primary-color);
+    border: 2px solid var(--success-color);
+}
+
+.prio-1 {
+    color: var(--warning-color);
+    background-color: var(--primary-color);
+    border: 2px solid var(--warning-color);
+}
+
+.prio-2 {
     color: var(--danger-color);
     background-color: var(--primary-color);
     border: 2px solid var(--danger-color);
-    border-radius: 50%;
 }
 
 .todo-detail-container .notes-container {
