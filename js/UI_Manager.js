@@ -318,6 +318,7 @@ export class UI_Manager {
                 // if the todo was just created, delete it,
                 // as it was automatically saved upon creation, 
                 // which would otherwise lead to orphaned data
+                console.log(config.mode);
                 if (config && config.mode === "create") ToDo.delete(todoID);
                 this.closeToDo();
             }

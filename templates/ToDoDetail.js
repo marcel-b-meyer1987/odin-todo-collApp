@@ -2,13 +2,15 @@ import { TODO_STATUS, TODO_PRIO, APP_CONST } from "../js/const.js";
 import { DiaryEntry } from "../js//DiaryEntry.js";
 
 export class ToDoDetail {
-    /**
-     ** Creates the DOM Element for the detail view of a ToDo
-     ** @param {ToDo} todo - The ToDo Object
-     ** @param {string} userLang - User language ('de' or 'en'), default = app default
-     ** @param {Object} callbacks - click actions (e. g. Back, Edit)
-     */
+    
     static create(todo, userLang = APP_CONST.DEFAULT_SETTINGS.LANG, callbacks) {
+        /**
+         ** Creates the DOM Element for the detail view of a ToDo
+         ** @param {ToDo} todo - The ToDo Object
+         ** @param {string} userLang - User language ('de' or 'en'), default = app default
+         ** @param {Object} callbacks - click actions (e. g. Back, Edit)
+         */
+    
         const container = document.createElement("div");
         container.className = "todo-detail-container";
 
@@ -17,6 +19,8 @@ export class ToDoDetail {
             de: { title: "Aufgabe", notes: "Notizen", editDue : "Fälligkeitsdatum bearbeiten", created : "Erstellt:", due: "Fällig", checklist : "Checkliste bearbeiten", cats : "Kategorie hinzufügen", assign : "Mitarbeiter zuweisen", createTeamMember : "Mitarbeiter erstellen", save : "Speichern", abort : "Abbrechen" },
             en: { title: "Task", notes: "Notes", editDue : "Edit Due Date", created : "Created on:", due : "Due date:", checklist : "Edit checklist", cats : "Add category", assign : "Assign to Team Member", createTeamMember : "Add New Team Member", save : "Save", abort : "Abort" },
         }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
+
+        const catStr = todo.categories ? todo.categories.join(", ") : "";
 
         // Core info (always visible)
         // For due date: use either due date (if set) or default to 1 week from now
@@ -57,7 +61,7 @@ export class ToDoDetail {
             <!-- Categories -->
             <div class="two-col-details-container" id="categories-container">
                 <span><strong>#</strong></span>
-                <input type="text" id="categories-display" placeholder="${labels.cats}">
+                <input type="text" id="categories-display" placeholder="${todo.categories ? catStr : ''}">
             </div>
 
             <!-- Assigned team member -->
