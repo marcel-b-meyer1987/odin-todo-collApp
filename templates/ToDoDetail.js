@@ -19,8 +19,7 @@ export class ToDoDetail {
         }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
 
         // Core info (always visible)
-        console.log("todo.createdDate", todo.createdDate);
-        console.log("DiaryEntry.formatDate(todo.createdDate)", DiaryEntry.formatDate(todo.createdDate));
+        // For due date: use either due date (if set) or default to 1 week from now
         container.innerHTML = `
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
@@ -44,7 +43,7 @@ export class ToDoDetail {
                     </div>
                     <div>
                         <span id="due-label" class="todo-details-label">${labels.due}</span>
-                        <input type="date" id="due-date" value="2026-08-10">
+                        <input type="date" id="due-date" value="${todo.dueDate ? DiaryEntry.formatDate(todo.dueDate) : DiaryEntry.formatDate(new Date(Date.now() + (7  * 24 * 60 * 60 * 1000)))}">
                     </div>
                 </div> 
             </div>
