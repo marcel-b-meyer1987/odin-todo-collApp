@@ -2,6 +2,7 @@ import { APP_CONST, UI_CONST } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
+import { InputValidator } from "./InputValidator.js";
 
 export class UI_Manager {
 
@@ -9,7 +10,7 @@ export class UI_Manager {
 
     constructor(app) {
         this.app = app;
-
+        this.validate = new InputValidator();
     }
 
     // ##########################################################
@@ -296,7 +297,7 @@ export class UI_Manager {
         // if data object has no children: open detail view of the object
     }
 
-    openToDo(todoID, config = { mode: "show" }) {
+    openToDo(todoID, config = { mode: "show" }, app) {
         /**
          ** @param {string} todoID - The ID of the ToDo to show 
          ** @param {object} config - determines additional config parameters - at least, if todo is being opened for creation OR showing only
@@ -324,7 +325,7 @@ export class UI_Manager {
             }
         }
         
-        const detailsView = ToDoDetail.create(todo, this.app.lang, callbacks);
+        const detailsView = ToDoDetail.create(app, todo, this.app.lang, callbacks);
         
         // Remove Add-Button + (if existing) ToDo list from DOM
         // add detailView instead
@@ -357,7 +358,7 @@ export class UI_Manager {
         console.log("[DEV] UI_Manager.addToDo() triggered");
         const newToDoID = this.app.addToDo({ title: "New ToDo"});
         console.log(`[DEV] Opening new ToDo ID (${newToDoID}) in UI_Manager.openToDo()`);
-        this.openToDo(newToDoID, { mode: "create" });
+        this.openToDo(newToDoID, { mode: "create" }, this.app);
     }
 
 

@@ -3,7 +3,7 @@ import { DiaryEntry } from "../js//DiaryEntry.js";
 
 export class ToDoDetail {
     
-    static create(todo, userLang = APP_CONST.DEFAULT_SETTINGS.LANG, callbacks) {
+    static create(app, todo, userLang = APP_CONST.DEFAULT_SETTINGS.LANG, callbacks) {
         /**
          ** Creates the DOM Element for the detail view of a ToDo
          ** @param {ToDo} todo - The ToDo Object
@@ -20,14 +20,40 @@ export class ToDoDetail {
             en: { title: "Task", notes: "Notes", editDue : "Edit Due Date", created : "Created on:", due : "Due date:", checklist : "Edit checklist", cats : "Add category", assign : "Assign to Team Member", createTeamMember : "Add New Team Member", save : "Save", abort : "Abort" },
         }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
 
+        // helper variables
         const catStr = todo.categories ? todo.categories.join(", ") : "";
+        const team = app.teamMembers;
+
+        // create team member dropdown + option tags for all team members + these generic ones:
+        // <option value="">${labels.assign}</option>
+        // <option value="new">${labels.createTeamMember}</option>
+        const select = document.createElement("select");
+        select.setAttribute("id", "select-team-member");
+
+        const option1 = document.createElement("option");
+        option1.setAttribute("value", "");
+        option1.innerHTML = labels.assign;
+        
+        const option2 = document.createElement("option");
+        option2.setAttribute("value", "");
+        option2.innerHTML = labels.createTeamMember;
+        
+        select.appendChild(option1);
+        select.appendChild(option2);
+
+        team?.forEach(member => {
+            const option = document.createElement("option");
+            option.value = member.id;
+            option.innerHTML = member.name;
+            select.appendChild(option);
+        });
 
         // Core info (always visible)
         // For due date: use either due date (if set) or default to 1 week from now
         container.innerHTML = `
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
-                <input type="text" class="todo-title" placeholder="${todo.title ?? 'Neues Todo'}">
+                <input id="todo-title-input" type="text" class="todo-title" placeholder="${todo.title ?? 'Neues Todo'}">
                 <span class="prio-label prio-${todo.prio}">!</span>
             </div>
 
@@ -67,10 +93,7 @@ export class ToDoDetail {
             <!-- Assigned team member -->
             <div class="two-col-details-container" id="assignment-container">
                 <label for="select-team-member">👤</label>
-                <select id="select-team-member">
-                    <option value="">${labels.assign}</option>
-                    <option value="new">${labels.createTeamMember}</option>
-                </select>
+                ${select.outerHTML}
             </div>
 
             <!-- Save & Abort buttons-->

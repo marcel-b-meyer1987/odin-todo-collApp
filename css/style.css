@@ -314,18 +314,21 @@ main {
 
 .todo-detail-container .todo-title {
     flex-grow: 1;
+    flex-shrink: 1;
 
     font-weight: 900;
     font-size: 1.5rem;
     font-family: inherit;
     line-height: 1.5rem;
-    
-    color: var(--accent-color); 
+
+    color: var(--accent-color);
     background-color: var(--primary-color);
     border: 3px solid var(--border-color);
     outline: none;
+
     border-radius: var(--font-size-base);
     padding: 0.5em var(--spacing-unit);
+    max-width: clamp(300px,88%,1280px);
 }
 
 .todo-detail-container .todo-title::placeholder {
@@ -424,7 +427,7 @@ main {
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: calc(2* var(--spacing-unit));
+    gap: clamp(var(--spacing-unit), (2* var(--spacing-unit)), 25dvw);
 
     width: 100%;
 }
