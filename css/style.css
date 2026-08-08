@@ -52,7 +52,8 @@ body {
     margin: 0;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 
-    height: 100vh;
+    height: 100dvh;
+    width: 100dvw;
 
     scrollbar-color: var(--secondary-color) var(--border-color);
 
@@ -332,7 +333,7 @@ main {
 }
 
 .todo-detail-container .prio-label {
-    flex-grow: 0;
+    /* flex-grow: 0; */
     flex-shrink: 0;
     padding: 0.5em var(--spacing-unit);
     font-size: 1rem;
