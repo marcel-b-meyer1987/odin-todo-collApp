@@ -1,4 +1,4 @@
-import { APP_CONST, UI_CONST } from "./const.js";
+import { APP_CONST, UI_CONST, SYMBOLS } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
@@ -97,7 +97,8 @@ export class UI_Manager {
         pathContainer.setAttribute("id", "path-container");      
         
         // Create root anchor
-        pathContainer.innerHTML = `<span class="path-node root-node" data-type="root">/</span>`;
+        pathContainer.innerHTML = `<span class="icon">${SYMBOLS.FOLDER}</span>
+                                    <span class="path-node root-node" data-type="root">/</span>`;
         
         // Loop over task hierarchy
         if (pathObject && pathObject.hierarchy) {
@@ -175,30 +176,38 @@ export class UI_Manager {
             li.className = `todo-item ${todo.status === 1 ? 'completed' : ''}`;
             li.innerHTML = `
                 <div class="todo-item-main">
-                    <span class="status-icon">${todo.status === 1 ? '✅' : '⭕'}</span>
+                    <!-- <span class="status-icon">${todo.status === 1 ? '✅' : '⭕'}</span> -->
                     <span class="todo-title">${todo.title}</span>
                 </div>
-                <!-- Context menu (per default hidden via CSS) -->
-                <div class="todo-context-menu" id="context-${todo.id}" style="display: none;">
-                    <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
-                    <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
-                    <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+                <div class="todo-card-actions">
+                    <button class="card-btn complete-btn" title="Mark As Complete">${SYMBOLS.COMPLETE}</button>
+                    <button class="card-btn copy-btn" title="Copy">${SYMBOLS.CD}</button>
+                    <button class="card-btn template-btn" title="Save As Template">${SYMBOLS.TEMPLATE}</button>
+                    <button class="card-btn delete-btn" title="Delete">${SYMBOLS.DELETE}</button>
                 </div>
-            `;
+                `;
+                
+            // DEPRECATED:
+            // <!-- Context menu (per default hidden via CSS) -->
+            // <div class="todo-context-menu" id="context-${todo.id}" style="display: none;">
+            //     <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
+            //     <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
+            //     <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
+            // </div>
 
-            // Event Listener for opening context menu
-            li.querySelector(".todo-item-main").addEventListener("click", () => {
-                UI_Manager.toggleContextMenu(todo.id);
-            });
+            // // Event Listener for opening context menu
+            // li.querySelector(".todo-item-main").addEventListener("click", () => {
+            //     UI_Manager.toggleContextMenu(todo.id);
+            // });
 
-            // Event-Listener for the buttons of the context menu
-            li.querySelector(".ctx-btn.complete").addEventListener("click", (e) => {
-                e.stopPropagation(); // Verhindert das Schließen des Menüs
-                todo.markAsCompleted(); // Deine Logik-Methode!
-                li.classList.add("completed");
-                li.querySelector(".status-icon").textContent = "✅";
-                UI_Manager.toggleContextMenu(todo.id); // Schließen
-            });
+            // // Event-Listener for the buttons of the context menu
+            // li.querySelector(".ctx-btn.complete").addEventListener("click", (e) => {
+            //     e.stopPropagation(); // Verhindert das Schließen des Menüs
+            //     todo.markAsCompleted(); // Deine Logik-Methode!
+            //     li.classList.add("completed");
+            //     li.querySelector(".status-icon").textContent = "✅";
+            //     UI_Manager.toggleContextMenu(todo.id); // Schließen
+            // });
 
             ul.appendChild(li);
         });

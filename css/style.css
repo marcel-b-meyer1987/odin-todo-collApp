@@ -180,8 +180,6 @@ main {
     
     background-color: var(--secondary-color); 
     padding: 0.5em var(--spacing-unit);
-    background-color: var(--secondary-color);
-    padding: 0.5em var(--spacing-unit);
     width: 100%;
 }
 
@@ -201,9 +199,11 @@ main {
 .todo-list {
     list-style: none;
     position: relative;
-    width: 90%%;
+    width: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: center;
+
     gap: calc(var(--spacing-unit) * 0.05);
 }
 
@@ -212,6 +212,7 @@ main {
     align-items: center;
     justify-content: space-between;
     padding: calc(var(--spacing-unit) * 0.5) 1em;
+    width: 90%;
 }
 
 .todo-item:nth-child(odd) {
@@ -220,11 +221,23 @@ main {
 
 .todo-item-main {
     padding: calc(var(--spacing-unit) * 0.15) 1em;
-    align-self: flex-start;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 
-.todo-context-menu {
-    /* hidden by default */
+.todo-card-actions button {
+    cursor: pointer;
+    background: none;
+    border: none;
+    outline: none;
+
+    font-size: calc(1.25 * var(--font-size-base));
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+}
+
+/* .todo-context-menu {
+    
     transition: all 300ms ease-in-out;
     display: none;
     flex-direction: column;
@@ -233,22 +246,21 @@ main {
     justify-self: flex-end;
     margin-right: calc(var(--spacing-unit) * 3);
 
-    /* position: absolute;
-    right: calc(var(--spacing-unit) * 3); */
+    position: absolute;
+    right: calc(var(--spacing-unit) * 3);
 }
 
 .context-menu-hidden {
-    opacity: 0; /* set to 1 on show*/
-    display: none; /* set to flex on show */
-
+    opacity: 0; 
+    display: none; 
 }
 
 .context-menu-visible {
     display: flex; 
     opacity: 1;
-}
+} */
 
-.todo-context-menu button {
+/* .todo-context-menu button {
     font-weight: 500;
     font-size: calc(var(--font-size-base) * 0.75);
     font-family: inherit;
@@ -260,7 +272,7 @@ main {
     border-radius: calc(var(--font-size-base) * 0.25);
     cursor: pointer;
     padding: 0.5em var(--spacing-unit);
-}
+} */
 
 .main-add-btn {
     --size: max(calc(2rem + 0.1vw), 48px);

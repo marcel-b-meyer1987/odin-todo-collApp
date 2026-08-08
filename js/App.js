@@ -158,5 +158,6 @@ UI_Manager.initLayout();
 UI_Manager.renderMenu();
 UI_Manager.renderSearchBar();
 UI_Manager.renderPath();
+UI_Manager.renderToDoListView(ToDo.getAllActiveToDos(), "/root");
 UI_Manager.renderMainAddButon(app.UI_Manager.addToDo);
 // UI_Manager.renderWelcomeView();
