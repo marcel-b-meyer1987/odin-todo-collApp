@@ -21,7 +21,8 @@ export class ToDoDetail {
         }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
 
         // helper variables
-        const catStr = todo.categories ? todo.categories.join(", ") : "";
+        const now = new Date();
+        const catStr = todo.categories?.join(", ") || "";
         const team = app.teamMembers;
 
         // create team member dropdown + option tags for all team members + these generic ones:
@@ -54,7 +55,7 @@ export class ToDoDetail {
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
                 <input id="todo-title-input" type="text" class="todo-title" placeholder="${todo.title ?? 'Neues Todo'}">
-                <span class="prio-label prio-${todo.prio}">!</span>
+                <span class="prio-label prio-${todo.prio}" data-todo-id="${todo.id}">!</span>
             </div>
 
             <!-- Notes / Description -->
@@ -73,7 +74,7 @@ export class ToDoDetail {
                     </div>
                     <div>
                         <span id="due-label" class="todo-details-label">${labels.due}</span>
-                        <input type="date" id="due-date" value="${todo.dueDate ? DiaryEntry.formatDate(todo.dueDate) : DiaryEntry.formatDate(new Date(Date.now() + (7  * 24 * 60 * 60 * 1000)))}">
+                        <input type="date" id="due-date" min="${DiaryEntry.formatDate(now)}" value="${todo.dueDate ? DiaryEntry.formatDate(todo.dueDate) : DiaryEntry.formatDate(new Date(Date.now() + (7  * 24 * 60 * 60 * 1000)))}">
                     </div>
                 </div> 
             </div>
@@ -103,10 +104,20 @@ export class ToDoDetail {
             </div>
         `;
 
-        // Event-Listener binden
+
+
+        // Bind event listeners
+        container.querySelector(".prio-label").addEventListener("click", () => {
+            callbacks.onPrioChange?.()
+        });
+        container.querySelector(".checklist-link").addEventListener("click", () => {
+            callbacks.onViewChecklist?.()
+        });
+
         container.querySelector("#save-btn").addEventListener("click", () => {
             callbacks.onSave?.();
         });
+
         container.querySelector("#abort-btn").addEventListener("click", () => {
             callbacks.onAbort?.();
         });

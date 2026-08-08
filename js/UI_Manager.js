@@ -151,7 +151,7 @@ export class UI_Manager {
         `;
     }
 
-    static renderToDoListView(todosArray, pathStr = "/root") {
+    static renderToDoListView(app, todosArray, pathStr = "/root") {
         /**
          ** Renders the interactive ToDo list
          ** @param {ToDo[]} todosArray - The filtered + sorted array from app.js
@@ -162,6 +162,10 @@ export class UI_Manager {
         // Render search bar + path view
         UI_Manager.renderSearchBar();
         UI_Manager.renderPath("#top-row", null, UI_Manager.navigateToNode);
+
+        // check if old list in DOM - if yes, remove
+        const oldList = main.querySelector(".todo-list");
+        if (oldList) main.removeChild(oldList);
 
         // create todo list
         // <ul class="todo-list" id="todo-list-ul"></ul>
@@ -182,37 +186,46 @@ export class UI_Manager {
                 <div class="todo-card-actions">
                     <button class="card-btn complete-btn" title="Mark As Complete">${SYMBOLS.COMPLETE}</button>
                     <button class="card-btn copy-btn" title="Copy">${SYMBOLS.CD}</button>
-                    <button class="card-btn template-btn" title="Save As Template">${SYMBOLS.TEMPLATE}</button>
+                    <!-- <button class="card-btn template-btn" title="Save As Template">${SYMBOLS.TEMPLATE}</button> -->
                     <button class="card-btn delete-btn" title="Delete">${SYMBOLS.DELETE}</button>
                 </div>
-                `;
-                
-            // DEPRECATED:
-            // <!-- Context menu (per default hidden via CSS) -->
-            // <div class="todo-context-menu" id="context-${todo.id}" style="display: none;">
-            //     <button class="ctx-btn delete" data-id="${todo.id}">Delete (Trash Bin)</button>
-            //     <button class="ctx-btn complete" data-id="${todo.id}">Mark as complete</button>
-            //     <button class="ctx-btn template" data-id="${todo.id}">Save as template</button>
-            // </div>
+            `;
 
-            // // Event Listener for opening context menu
-            // li.querySelector(".todo-item-main").addEventListener("click", () => {
-            //     UI_Manager.toggleContextMenu(todo.id);
+            // ### Bind event listeners ###
+            
+            // Open Detail View
+            li.addEventListener("click", (e) => { app.UI_Manager.openToDo(todo.id, { mode: "show" }, app) });
+
+            // Mark as completed
+            li.querySelector(".complete-btn").addEventListener("click", (e) => { e.stopPropagation; todo.markAsCompleted(); });
+
+            // Make a copy of the todo and open the copy for editing
+            li.querySelector(".copy-btn").addEventListener("click", (e) => { 
+                e.stopPropagation; 
+                const todoCopy = ToDo.copy(todo.id);
+                this.openToDo(todoCopy);
+            });
+
+            // Save the ToDo as a Template --- TEMPLATE CLASS MUST FIRST BE IMPLEMENTED
+            // li.querySelector(".template-btn").addEventListener("click", (e) => { 
+            //     e.stopPropagation; 
+            //     const newTemplate = Template.fromToDoID(todo.id);
+            //     this.openTemplate(newTemplate);
             // });
 
-            // // Event-Listener for the buttons of the context menu
-            // li.querySelector(".ctx-btn.complete").addEventListener("click", (e) => {
-            //     e.stopPropagation(); // Verhindert das Schließen des Menüs
-            //     todo.markAsCompleted(); // Deine Logik-Methode!
-            //     li.classList.add("completed");
-            //     li.querySelector(".status-icon").textContent = "✅";
-            //     UI_Manager.toggleContextMenu(todo.id); // Schließen
-            // });
+            // Delete ToDo
+            li.querySelector(".delete-btn").addEventListener("click", (e) => { 
+                e.stopPropagation(); 
+                ToDo.delete(todo.id); 
+                UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos(), app.currentPath)
+                return 0; 
+            }, true);
 
+            // Append to list
             ul.appendChild(li);
         });
 
-        // append todo list to main section
+        // append todo list to main section of DOM
         main.appendChild(ul);
     }
 
@@ -357,7 +370,7 @@ export class UI_Manager {
         const detailsView = main.querySelector(".todo-detail-container");
 
         main.removeChild(detailsView);
-        UI_Manager.renderToDoListView(ToDo.getAllActiveToDos(), "/root");
+        UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos(), "/root");
         UI_Manager.renderMainAddButon(this.app.UI_Manager.addToDo);
     }
 

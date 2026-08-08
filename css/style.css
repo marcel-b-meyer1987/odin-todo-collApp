@@ -213,6 +213,11 @@ main {
     justify-content: space-between;
     padding: calc(var(--spacing-unit) * 0.5) 1em;
     width: 90%;
+    cursor:zoom-in;
+}
+
+.todo-item:hover {
+    outline: 0.125rem solid var(--border-color);
 }
 
 .todo-item:nth-child(odd) {
@@ -348,13 +353,12 @@ main {
 }
 
 .todo-detail-container .prio-label {
-    /* flex-grow: 0; */
     flex-shrink: 0;
     padding: 0.5em var(--spacing-unit);
     font-size: 1rem;
     font-weight: 900;
-    
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .prio-0 {
