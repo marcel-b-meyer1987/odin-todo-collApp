@@ -11,6 +11,7 @@ export class UI_Manager {
     constructor(app) {
         this.app = app;
         this.validate = new InputValidator();
+        this.errors = [];
     }
 
     // ##########################################################
@@ -313,13 +314,13 @@ export class UI_Manager {
         // define callback functions for detail view
         const callbacks = {
             onSave : () => {
-                
+                // validate + save
+                this.saveToDo(todoID);
             },
             onAbort : () => {
                 // if the todo was just created, delete it,
                 // as it was automatically saved upon creation, 
                 // which would otherwise lead to orphaned data
-                console.log(config.mode);
                 if (config && config.mode === "create") ToDo.delete(todoID);
                 this.closeToDo();
             }
@@ -361,6 +362,65 @@ export class UI_Manager {
         this.openToDo(newToDoID, { mode: "create" }, this.app);
     }
 
+    saveToDo(todoID) {
+        // loop over all inputs of the open ToDo:
+        // if valid, save the changes
+        // if not, display error message (in footer)
+        const title = document.querySelector(".todo-title");
+        const notes = document.querySelector("#todo-notes");
+        const dueDate = new Date(document.querySelector("#due-date").value);
+        let catsArr = document.querySelector("#categories-display").value.split(",").map(el => el.trim());
+
+        // validate title
+        console.log("[DEV] title:", title);
+        if(this.validate.isEmpty(title)) this.handleError(UI_CONST.ERRORS.EMPTY_TITLE);
+        if(this.validate.exceedsMaxLength(title, APP_CONST.DEFAULT_SETTINGS.MAX_TITLE_LENGTH)) this.handleError(UI_CONST.ERRORS.LONG_TITLE);
+
+        // validate notes
+        if(this.validate.exceedsMaxLength(notes, APP_CONST.DEFAULT_SETTINGS.MAX_NOTES_LENGTH)) this.handleError(UI_CONST.ERRORS.LONG_NOTES);
+
+        // validate dueDate
+        console.log("[DEV] dueDate:", dueDate);
+        if(this.validate.dateIsPast(dueDate)) this.handleError(UI_CONST.ERRORS.PAST_DATE);
+
+        // handle categories
+        // if several cats, remove "Uncategorized"
+        if (catsArr.length > 1) {
+            catsArr = catsArr.filter(cat => {
+                return (cat !== "uncategorized") && (cat !== "Uncategorized");
+            });
+        }
+
+        // make sure "Uncategorized" is still in there, if nothing else
+        if (catsArr.length < 1) {
+            catsArr.push("Uncategorized");
+        }
+        console.log("[DEV] catsArr:", catsArr);
+
+        // if all ok, take over values and save ToDo
+        if(this.errors.length < 1) {
+            const todo = ToDo.fromStorage(todoID);
+            todo.title = title.value.trim();
+            todo.setDeadline(dueDate);
+            todo.categories = catsArr;
+            todo.saveToStorage();
+            this.closeToDo();
+            return 0; // success
+        } else {
+            return 1; // error
+        }
+    }
+
+    handleError(errCode) {
+        this.errors.push(errCode);
+        this.showErrorMsg(this.errors);
+    }
+
+    showErrorMsg(errors) {
+        // TEMPORARY ONLY - MUST BE REPLACED FOR PRODUCTION
+        console.warn("[DEV] UI_Manager.errors:");
+        console.table(errors);
+    }
 
 }
 

@@ -16,7 +16,8 @@ export default class ToDoApp {
         this.projects = this.loadAllProjects() ?? [];
         this.teamMembers = this.loadAllTeamMembers() ?? [];
         this.toDos = this.loadAllToDos() ?? [];
-        this.currentPath = null;
+        this.currentPath = null; // holds a path object of the currently displayed item
+        this.currentDisplayItem = null; // holds ToDo.id, Project.name or TeamMember.id
         
         // CONNECT UI BIDIRECTIONALLY (DEPENDENCY INJECTION)
         this.UI_Manager = new UI_Manager(this);

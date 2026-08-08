@@ -29,6 +29,8 @@ export const APP_CONST = {
         STD_SIMILARITY_THRESHOLD: 0.6, // standard treshold for title similarity within the same todo "tree", used for redundancy warnings 
         NO_CAT_STD_LABEL: "Uncategorized", // standard placeholder label for uncategorized todos
         LANG: "en", // standard display language for the UI
+        MAX_TITLE_LENGTH: 255, // = TINYTEXT SQL data type
+        MAX_NOTES_LENGTH: 255, // = TINYTEXT SQL data type
     },
 
     MOODS: {
@@ -120,6 +122,7 @@ export const UI_CONST = {
             }
         },
     ],
+
     CONTEXT_MENU_ITEMS: [
         {
             name: "open",
@@ -157,5 +160,24 @@ export const UI_CONST = {
             }
         },
     ],
+
+    ERRORS: {
+        EMPTY_TITLE: {
+            en: "Title may not be left blank.",
+            de: "Bitte geben Sie einen Titel ein."
+        },
+        LONG_TITLE: {
+            en: `Title may not be longer than ${APP_CONST.DEFAULT_SETTINGS.MAX_TITLE_LENGTH} characters.`,
+            de: `Der Titel darf nur ${APP_CONST.DEFAULT_SETTINGS.MAX_TITLE_LENGTH} Zeichen lang sein.`
+        },
+        LONG_NOTES: {
+            en: `Notes may not be longer than ${APP_CONST.DEFAULT_SETTINGS.MAX_NOTES_LENGTH} characters.`,
+            de: `Die Notizen dürfen maximal ${APP_CONST.DEFAULT_SETTINGS.MAX_NOTES_LENGTH} Zeichen lang sein.`
+        },
+        PAST_DATE: {
+            en: "The due date may not be set to a date in the past.",
+            de: "Das Fälligkeitsdatum darf nicht in der Vergangenheit liegen."
+        }
+    },
 }
 
