@@ -3,6 +3,7 @@ import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { InputValidator } from "./InputValidator.js";
+import ToDoApp from "./App.js";
 
 export class UI_Manager {
 
@@ -24,7 +25,7 @@ export class UI_Manager {
          */
         UI_Manager.#root.innerHTML = `
             <header class="app-header">
-                ${APP_CONST.APP_LOGO}
+                ${UI_CONST.APP_LOGO}
                 <div id="header-middle-column"></div>    
                 <button class="menu-toggle" id="menu-btn">
                     <span class="bar"></span>
@@ -197,13 +198,16 @@ export class UI_Manager {
             li.addEventListener("click", (e) => { app.UI_Manager.openToDo(todo.id, { mode: "show" }, app) });
 
             // Mark as completed
-            li.querySelector(".complete-btn").addEventListener("click", (e) => { e.stopPropagation; todo.markAsCompleted(); });
+            li.querySelector(".complete-btn").addEventListener("click", (e) => { 
+                e.stopPropagation(); 
+                todo.markAsCompleted(); 
+            });
 
             // Make a copy of the todo and open the copy for editing
             li.querySelector(".copy-btn").addEventListener("click", (e) => { 
-                e.stopPropagation; 
-                const todoCopy = ToDo.copy(todo.id);
-                this.openToDo(todoCopy);
+                e.stopPropagation(); 
+                const todoCopy = ToDo.copy(todo.id, app);
+                app.UI_Manager.openToDo(todoCopy, { mode: "create" }, app);
             });
 
             // Save the ToDo as a Template --- TEMPLATE CLASS MUST FIRST BE IMPLEMENTED
@@ -324,6 +328,7 @@ export class UI_Manager {
         /**
          ** @param {string} todoID - The ID of the ToDo to show 
          ** @param {object} config - determines additional config parameters - at least, if todo is being opened for creation OR showing only
+         ** @param {ToDoApp} app - instance of the ToDoApp
          */
 
         // Render the full detail view for ToDos, fill it with the data of the ToDo
@@ -349,16 +354,23 @@ export class UI_Manager {
         }
         
         const detailsView = ToDoDetail.create(app, todo, this.app.lang, callbacks);
+
         
-        // Remove Add-Button + (if existing) ToDo list from DOM
+        // Remove Add-Button + (if existing) ToDo list 
+        // and old detailView from DOM
         // add detailView instead
         const main = document.querySelector("#app-main");
         const todoList = main.querySelector("#todo-list-ul");
         const addBtn = main.querySelector(".main-add-btn");
+        const oldView = main.querySelector(".todo-detail-container");
 
         if (todoList) main.removeChild(todoList);
         if (addBtn) main.removeChild(addBtn);
+        if (oldView) main.removeChild(oldView);
         main.appendChild(detailsView);
+
+        // if new ToDo, set focus to title
+        if (config.mode === "create") detailsView.querySelector("#todo-title-input").focus(); 
     }
 
     closeToDo() {
@@ -392,6 +404,10 @@ export class UI_Manager {
         const notes = document.querySelector("#todo-notes");
         const dueDate = new Date(document.querySelector("#due-date").value);
         let catsArr = document.querySelector("#categories-display").value.split(",").map(el => el.trim());
+
+        // if the user hasn't changed the title, 
+        // take the placeholder as title
+        if (title.value.trim().length < 1) title.value = title.placeholder;
 
         // validate title
         console.log("[DEV] title:", title);

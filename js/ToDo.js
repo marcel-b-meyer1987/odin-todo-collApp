@@ -1,4 +1,4 @@
-import { TODO_STATUS, TODO_PRIO, APP_CONST } from "./const.js";
+import { TODO_STATUS, TODO_PRIO, APP_CONST, UI_CONST } from "./const.js";
 import { Project } from "./Project.js";
 import { DB_Handler } from "./DB_Handler.js";
 import { ProgressEntry } from "./ProgressEntry.js";
@@ -75,6 +75,35 @@ export class ToDo {
 		else {
 			return true;
 		} 
+	}
+
+	static copy(todoID, app) {
+		/**
+		 ** @param {string} todoID - ID of the ToDo that must be copied
+		 ** @param {object} app - instance of the ToDoApp 
+		 ** @returns {string} copy.id = ID of the newly instantiated copy
+		 */
+
+		// return early, if bad input
+		if (!todoID) return 1;
+		if (!ToDo.exists(todoID)) return 1;
+
+		// extract data from original into a config object
+		const original = ToDo.fromStorage(todoID);
+		const configStr = JSON.stringify(original);
+		const config = JSON.parse(configStr);
+
+		// delete old ID + add COPY suffix to title
+		// set createdDate to current date
+		delete config.id;
+		config.title += ` - ${UI_CONST.COPY[app.lang]}`;
+		config.createdDate = Date.now();
+
+		// instantiate copy - return early, if error
+		const copy = new ToDo(config);
+		if (!ToDo.exists(copy.id)) return 1; 
+
+		return copy.id; // success
 	}
 
 	static getAllChildren(parentID) {
@@ -205,7 +234,7 @@ export class ToDo {
         if (newDate < (Date.now() - 1000)) { // taking into account 1000ms of time buffer on top to make up for latency in unit tests
             return 1;
         } else {
-            this.dueDate.setTime(newDate);
+            this.dueDate = new Date(newDate);
 			this.saveToStorage();
             return 0;
         }

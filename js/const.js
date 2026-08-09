@@ -11,7 +11,6 @@ export const TODO_PRIO = {
 }
 
 export const APP_CONST = {
-    APP_LOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
     STORAGE_KEYS: {
         PREFIX: "TODO_COLLAPP_", // prefix for all stored strings of the app
         USER: "USER_",
@@ -44,7 +43,13 @@ export const APP_CONST = {
 
 
 export const UI_CONST = {
+    APP_LOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
     SEARCHBAR_PLACEHOLDER: "Search & Filter",
+    COPY: {
+        en: "Copy",
+        de: "Kopie"
+    },
+    
     MENU_ITEMS: [
         {
             name: "todos",
