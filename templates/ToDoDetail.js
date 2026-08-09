@@ -1,4 +1,4 @@
-import { TODO_STATUS, TODO_PRIO, APP_CONST } from "../js/const.js";
+import { TODO_STATUS, TODO_PRIO, APP_CONST, UI_CONST, SYMBOLS } from "../js/const.js";
 import { DiaryEntry } from "../js//DiaryEntry.js";
 
 export class ToDoDetail {
@@ -93,7 +93,7 @@ export class ToDoDetail {
 
             <!-- Assigned team member -->
             <div class="two-col-details-container" id="assignment-container">
-                <label for="select-team-member">👤</label>
+                <label for="select-team-member">${SYMBOLS.PERSON}</label>
                 ${select.outerHTML}
             </div>
 

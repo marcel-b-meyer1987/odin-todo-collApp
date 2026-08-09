@@ -340,6 +340,24 @@ export class UI_Manager {
         
         // define callback functions for detail view
         const callbacks = {
+            onPrioChange : () => {
+                // toggle between prios:
+                // 0 (low) - 1 (normal) - 2 (high) on click
+                // if prio was high, reset to low
+
+                const oldPrio = todo.prio; // used to remove prio-class (s. below)
+                todo.prio++;
+                if (todo.prio > 2) todo.prio = 0;
+                // console.log("[DEV] Prio changed to: ", todo.prio);
+
+                // update prio label:
+                const label = document.querySelector(".prio-label");
+                label?.classList.remove(`prio-${oldPrio}`);
+                label?.classList.add(`prio-${todo.prio}`);
+            },
+            onViewChecklist : () => {
+
+            }, 
             onSave : () => {
                 // validate + save
                 this.saveToDo(todoID);

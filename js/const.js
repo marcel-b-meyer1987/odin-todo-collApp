@@ -214,4 +214,15 @@ export const SYMBOLS = {
     ID: "🪪",
     BELL: "🔔",
     SPEAKER: "📢",
+    PERSON: "👤",
+    TEAM: "👥",
+    SPEAK: "💬",
+    STRONG: "💪",
+    THUMB: "👍",
+    FIRE: "🔥",
+    STARS: "✨",
+    ROCKET: "🚀",
+    COOL: "😎",
+    HAPPY: "😊",
+
 }
