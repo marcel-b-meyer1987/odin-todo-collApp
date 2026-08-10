@@ -364,6 +364,17 @@ export class UI_Manager {
     // ### DIALOG VIEWING + INTERACTION METHODS ###
     // ############################################
 
+    getParentDir(currentDir) {
+        /**
+         ** @param {Array} currentDir - pathArray representing the current path
+         ** @return {Array} parentDir - pathArray representing the upper-next directory 
+         */
+
+         const [parent] = currentDir.slice(-1); // a ToDo instance
+         const parentDir = parent.buildPathObject();
+
+         return parentDir;
+    }
 
     navigateToNode = (node) => {
         /**
@@ -497,7 +508,9 @@ export class UI_Manager {
         const detailsView = main.querySelector(".todo-detail-container");
 
         if (detailsView) main.removeChild(detailsView);
-        UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos());
+        this.app.currentPath = this.getParentDir(this.app.currentPath);
+        this.renderPath(this.app.currentPath);
+        UI_Manager.renderToDoListView(this.app, this.app.currentPath);
     }
 
     openProject(projectName, config = { mode: "show" }, app) {
