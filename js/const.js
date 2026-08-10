@@ -45,6 +45,8 @@ export const APP_CONST = {
 export const UI_CONST = {
     APP_LOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
     SEARCHBAR_PLACEHOLDER: "Search & Filter",
+    PATH_SEPARATOR: " / ",
+    
     COPY: {
         en: "Copy",
         de: "Kopie"

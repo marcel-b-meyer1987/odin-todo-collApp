@@ -284,24 +284,24 @@ export class ToDo {
 	}
 
 	buildPathObject() {
-		// the method returns an object which is used by the UI_Manager
+		/**
+		 ** @returns {Array} pathArr - array of Project and ToDo instances in hierarchical order 
+		 */
+		// the method returns an array which is used by the UI_Manager
 		// to build a display of the full path of any ToDo with the
-		// name of each parent ToDo in the path + the cagetory,
-		// while each element in the path should be clickable and 
-		// open the respective parent element (or category) when clicked
-		// for this purpose, the object consists of:
-		//
-		// path.category = the categori(es) of the current ToDo OR APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL
-		// path.hierarchy = an array of the parents + the current ToDo as last element
+		// name of each parent ToDo in the path,
+		// while each element in the path except the last should be clickable and 
+		// open the respective parent element when clicked.
 		//
 		// example: "/uncategorized/parent_1/.../parent_n/current_todo"
 		
 		// =============================================================
+
+
 		// loop over parents recursively from parent_1 to parent_n,
-		// add each parent to the front of the hierarchy array
-		// in order to replicate the hierarchy level in the array depth
-		
-		const hierarchy = [this]; // initialize array with current todo
+		// add each parent to the front of the path array
+		// in order to replicate the "ancestry" level in the array depth
+		const pathArr = [this]; // initialize array with current todo
 		let currentParent = this.getParent();
 
 		// use a set to detect circular references
@@ -315,7 +315,7 @@ export class ToDo {
 				break;
 			}
 			visitedIDs.add(currentParent.id);
-			hierarchy.unshift(currentParent);
+			pathArr.unshift(currentParent);
 
 			// if parentID is null or empty, break loop immediately
 			if (! currentParent.parentID) break;
@@ -324,13 +324,10 @@ export class ToDo {
 		}
 
 		// in case the todo belongs to a project, use that as 1st element of the hierarchy
-		if (this.project) hierarchy.unshift(this.project);
+		if (this.project) pathArr.unshift(this.project);
 		
-		// build + return path object from the components above
-		return {
-			hierarchy: hierarchy
-		};
-		
+		// return the path array
+		return pathArr;
 	}
 
 	moveToTrash() {

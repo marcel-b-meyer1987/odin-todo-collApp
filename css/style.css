@@ -184,16 +184,18 @@ main {
 }
 
 .path-node {
-    cursor: pointer;
+    
 }
 
-.project-node {
+.parent-node {
     color: var(--accent-color);
     font-weight: bold;
+    cursor: pointer;
 }
 
 .todo-node {
     font-style: italic;
+    cursor:default;
 }
 
 .todo-list {

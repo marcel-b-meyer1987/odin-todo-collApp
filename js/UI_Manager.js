@@ -80,13 +80,16 @@ export class UI_Manager {
         parent.appendChild(searchBar);
     }
 
-    static renderPath(parentElementStr = "#top-row", pathObject, onElementClick) {
+    renderPath = (pathArr, onElementClick) => {
         /**
-         ** Creates a clickable, unix-like path (sticky)
+         ** @param {Array} pathArr - an array of ToDo or Project instances in hierarchical order
+         ** @param {Function} onElementClick - a callback function triggered by click events
+         ** ------------------------------------------------------
+         ** Creates a clickable, unix-like path
          ** Example: / [Projekt] / [Parent Task] / [Current Task]
          */
         
-        const parent = document.querySelector(parentElementStr);
+        const parent = document.querySelector("#top-row"); // used to be passed in as param
         
         // Check if there is already a path view in the DOM
         // and, if yes, remove from DOM
@@ -97,22 +100,40 @@ export class UI_Manager {
         const pathContainer = document.createElement("div");
         pathContainer.setAttribute("id", "path-container");      
         
+        // Add folder symbol in beginning
+        const folder = document.createElement("span");
+        folder.className = "icon";
+        folder.textContent = SYMBOLS.FOLDER;
+        pathContainer.appendChild(folder);
+
         // Create root anchor
-        pathContainer.innerHTML = `<span class="icon">${SYMBOLS.FOLDER}</span>
-                                    <span class="path-node root-node" data-type="root">/</span>`;
+        const root = document.createElement("span");
+        root.className = "path-node root-node parent-node";
+        root.setAttribute("data-type", "root");
+        root.textContent = UI_CONST.PATH_SEPARATOR;
+        root.addEventListener("click", () => {
+            this.app.currentPath = []; // set app path to root
+            UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos());
+        })
+        pathContainer.appendChild(root);
+            
         
         // Loop over task hierarchy
-        if (pathObject && pathObject.hierarchy) {
-            pathObject.hierarchy.forEach((node, index) => {
-                const separator = document.createTextNode(" / ");
-                pathContainer.appendChild(separator);
+        if (pathArr) {
+            pathArr.forEach((node, index) => {
+
+                // if not the first node (=directly preceded by root), add separator
+                if (index > 0) {
+                    const separator = document.createTextNode(UI_CONST.PATH_SEPARATOR);
+                    pathContainer.appendChild(separator);
+                }
 
                 const span = document.createElement("span");
                 span.innerText = node.name || node.title; // project uses .name, todo uses .title
                 
                 // Visual distinction (as ls in Terminal)
-                if (index === 0) {
-                    span.className = "path-node project-node"; // 1st entry after root = Project
+                if (index < (pathArr.length - 1)) {
+                    span.className = "path-node parent-node"; // any node except last = parent
                     // span.style.fontWeight = "bold";
                     // span.style.color = "var(--accent-color)";
                 } else {
@@ -120,16 +141,39 @@ export class UI_Manager {
                     // span.style.fontStyle = "italic";
                 }
 
-                // Enable click navigation for each path element
-                span.addEventListener("click", () => {
-                    onElementClick(node);
-                });
+                // Enable click navigation for each PARENT element of the path
+                if (span.classList.contains("parent-node")) {
+                    span.addEventListener("click", () => {
+                        onElementClick(node);
+                    });
+                }
 
                 pathContainer.appendChild(span);
             });
         }
 
         parent.appendChild(pathContainer);
+    }
+
+    static pathToString(pathArr) {
+        /**
+         ** @param {object} pathArr - The object representing a path
+         ** @return {string} pathStr - a flat string representation of the path
+         */
+
+        const separator = UI_CONST.PATH_SEPARATOR; // for instance " / "
+        let pathStr = "";
+
+        // Loop over task hierarchy
+        if (pathArr && pathArr.hierarchy) {
+            pathArr.hierarchy.forEach((node, index) => {
+                pathStr += separator;
+
+                pathStr += node.name || node.title; // project uses .name, todo uses .title
+            });
+        }
+
+        return pathStr.trim();
     }
 
     static toggleMenu() {
@@ -152,17 +196,21 @@ export class UI_Manager {
         `;
     }
 
-    static renderToDoListView(app, todosArray, pathStr = "/root") {
+    static renderToDoListView(app, todosArray) {
         /**
          ** Renders the interactive ToDo list
+         ** @param {ToDoApp} app - instance of the app
          ** @param {ToDo[]} todosArray - The filtered + sorted array from app.js
-         ** @param {string} pathStr - The current path (e. g. from buildPathObject)
          */
         const main = document.getElementById("app-main");
+
+        // close ToDoDetails (if open)
+        const detailsView = main.querySelector(".todo-detail-container");
+        if (detailsView) main.removeChild(detailsView);
         
         // Render search bar + path view
         UI_Manager.renderSearchBar();
-        UI_Manager.renderPath("#top-row", null, UI_Manager.navigateToNode);
+        app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
 
         // check if old list in DOM - if yes, remove
         const oldList = main.querySelector(".todo-list");
@@ -219,9 +267,15 @@ export class UI_Manager {
 
             // Delete ToDo
             li.querySelector(".delete-btn").addEventListener("click", (e) => { 
-                e.stopPropagation(); 
+                e.stopPropagation();
+
+                // set current app path to parent object or root
+                app.currentPath = 
+                    todo.getParent()?.buildPathObject() ?? 
+                    Project.fromStorage(todo.project)?.buildPathObject() ??
+                    []; 
                 ToDo.delete(todo.id); 
-                UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos(), app.currentPath)
+                UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos())
                 return 0; 
             }, true);
 
@@ -231,6 +285,7 @@ export class UI_Manager {
 
         // append todo list to main section of DOM
         main.appendChild(ul);
+        UI_Manager.renderMainAddButon(app.UI_Manager.addToDo);
     }
 
     static toggleContextMenu(todoID) {
@@ -310,18 +365,51 @@ export class UI_Manager {
     // ############################################
 
 
-    navigateToNode(node) {
+    navigateToNode = (node) => {
         /**
-         ** @param {Node} - The display node in the path which refers to the object (Project/ToDo) the user wants to view 
+         ** @param {Object} - The object (Project/ToDo) the user wants to view 
          */
-        console.log(`[DEV] navigateToNode() called on node:`, node);
+        
+        // establish which type of node was passed (ToDo or Project)
+        const type = node instanceof ToDo ? "ToDo" : "Project";
+        console.log(`[DEV] navigateToNode() called on ${type} node:`, node);
 
-        // Extract reference from node
+        // Extract reference from node (id if ToDo / name if Project)
+        const ref = type === "ToDo" ? node.id : node.name;
+
         // get data object from storage 
-        // build path object
-        // render path + update path view 
+        const obj = type === "ToDo" ? ToDo.fromStorage(ref) : Project.fromStorage(ref);
+
+        // build path object + adjust app.currentPath to the same
+        const path = obj.buildPathObject();
+        this.app.currentPath = path;
+
+        // render path + update path view
+        this.renderPath(path, this.navigateToNode);
+
+        // check if node has children
+        const children = type === "ToDo" ? ToDo.getAllChildren(ref) : Project.getAllChildren(ref);
+        
         // if data object has children: display todo list of the children
+        if (children.length > 0) {
+            UI_Manager.renderToDoListView(
+                this.app, 
+                children);
+            return 0;
+        }
+
         // if data object has no children: open detail view of the object
+        if (children.length < 1) {
+            switch(type) {
+                case "ToDo":
+                    this.openToDo(ref, { mode: "show" }, this.app);
+                    break;
+                case "Project":
+                    this.openProject(ref, { mode: "show" }, this.app);
+                    break;
+            }
+            return 0;
+        }
     }
 
     openToDo(todoID, config = { mode: "show" }, app) {
@@ -356,7 +444,12 @@ export class UI_Manager {
                 label?.classList.add(`prio-${todo.prio}`);
             },
             onViewChecklist : () => {
-
+                this.app.currentPath = todo.buildPathObject();
+                // UI_Manager.renderPath("#top-row", this.app.currentPath, this.navigateToNode);
+                UI_Manager.
+                    renderToDoListView(
+                        this.app, 
+                        todo.checklist.map(id => ToDo.fromStorage(id)).filter(Boolean));
             }, 
             onSave : () => {
                 // validate + save
@@ -387,6 +480,10 @@ export class UI_Manager {
         if (oldView) main.removeChild(oldView);
         main.appendChild(detailsView);
 
+        // update app path to current todo's path and re-render
+        this.app.currentPath = todo.buildPathObject();
+        this.renderPath(this.app.currentPath, this.navigateToNode);
+
         // if new ToDo, set focus to title
         if (config.mode === "create") detailsView.querySelector("#todo-title-input").focus(); 
     }
@@ -399,17 +496,37 @@ export class UI_Manager {
         const main = document.querySelector("#app-main");
         const detailsView = main.querySelector(".todo-detail-container");
 
-        main.removeChild(detailsView);
-        UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos(), "/root");
-        UI_Manager.renderMainAddButon(this.app.UI_Manager.addToDo);
+        if (detailsView) main.removeChild(detailsView);
+        UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos());
     }
 
-    addToDo = () => {
+    openProject(projectName, config = { mode: "show" }, app) {
+        /**
+         ** @param {string} projectName - The name of the Project to show 
+         ** @param {object} config - determines additional config parameters - at least, if Project is being opened for creation OR showing only
+         ** @param {ToDoApp} app - instance of the ToDoApp
+         */
+
+        // Render the full detail view for Projects, fill it with the data of the Project
+        // track + save changes applied by the user (if any)
+        console.log("[DEV] openProject() triggered");
+    }
+
+    addToDo = (e) => {
         // create a new ToDo in the app, 
         // then open its detail view for editing + saving
 
         console.log("[DEV] UI_Manager.addToDo() triggered");
         const newToDoID = this.app.addToDo({ title: "New ToDo"});
+
+        // if ToDo is being created as a child element, set parent
+        const pathArr = [...this.app.currentPath];
+        const [parent] = pathArr.slice(-1); // parent = last node of path
+        if (parent) {
+            ToDo.fromStorage(newToDoID).setParent(parent.id);
+            console.log(`[DEV] Set parent of ${newToDoID} to ${parent.id}.`);
+        }
+
         console.log(`[DEV] Opening new ToDo ID (${newToDoID}) in UI_Manager.openToDo()`);
         this.openToDo(newToDoID, { mode: "create" }, this.app);
     }

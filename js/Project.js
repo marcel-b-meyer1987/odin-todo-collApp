@@ -147,6 +147,14 @@ export class Project {
         DB_Handler.saveItem(Project.#indexKey, JSON.stringify(index));
     }
 
+    static getAllChildren(parentProjectName) {
+		// Helper method: Finds all ToDos in the system having this Project as parent
+
+		const children = [...ToDo.#cache.values()].filter(todo => todo.project === parentProjectName);
+
+		return children;
+	}
+
     changeName(newName) {
 
         // if the new name is no empty string, change it and return 0 (success)
@@ -272,5 +280,30 @@ export class Project {
 
         return 0; // success
     }
+
+    buildPathObject() {
+		// the method returns an object which is used by the UI_Manager
+		// to build a display of the full path of any ToDo with the
+		// name of each parent ToDo in the path + the cagetory,
+		// while each element in the path should be clickable and 
+		// open the respective parent element (or category) when clicked
+		// for this purpose, the object consists of:
+		//
+		// path.category = the categori(es) of the current ToDo OR APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL
+		// path.hierarchy = an array of the parents + the current ToDo as last element
+		//
+		// example: "/ProjectName/parent_1/.../parent_n/current_todo"
+		
+		// =============================================================
+		
+        // for Projects, the hierarchy consists of an array with only the Project instance itself
+		const hierarchy = [this]; 
+
+        // build + return path object from the components above
+		return {
+			hierarchy: hierarchy
+		};
+		
+	}
 
 }
