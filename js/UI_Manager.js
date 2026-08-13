@@ -157,20 +157,22 @@ export class UI_Manager {
 
     static pathToString(pathArr) {
         /**
-         ** @param {object} pathArr - The object representing a path
-         ** @return {string} pathStr - a flat string representation of the path
+         ** @param {Array} pathArr - The array of objects representing a path
+         ** @return {String} pathStr - a flat string representation of the path
          */
 
         const separator = UI_CONST.PATH_SEPARATOR; // for instance " / "
         let pathStr = "";
 
         // Loop over task hierarchy
-        if (pathArr && pathArr.hierarchy) {
-            pathArr.hierarchy.forEach((node, index) => {
+        if (pathArr) {
+            pathArr.forEach((node, index) => {
                 pathStr += separator;
 
                 pathStr += node.name || node.title; // project uses .name, todo uses .title
             });
+        } else {
+            pathStr =  separator;
         }
 
         return pathStr.trim();
@@ -370,10 +372,22 @@ export class UI_Manager {
          ** @return {Array} parentDir - pathArray representing the upper-next directory 
          */
 
-         console.log(`[DEV] UI_Manager.getParentDi() was called`);
+         console.log(`[DEV] UI_Manager.getParentDir() was called`);
+         console.log(`[DEV] Old Path: ${UI_Manager.pathToString(currentDir)}`);
 
-         const [parent] = currentDir.slice(-1); // a ToDo instance
-         const parentDir = parent.buildPathObject();
+        const parent = currentDir.at(-1); // a ToDo instance
+        let parentDir = [];
+         console.log(`[DEV] Builduing path of parent object:`, parent);
+
+         // check edge case: if object has no parent, parentDir must be reset to root => leave value at []
+         if (parent === currentDir[0]) {
+            console.log(`[DEV] Object "${currentDir[0].name ?? currentDir[0].title}" has no parent... default to root`)
+            parentDir = [];   
+         } else {
+            parentDir = parent.buildPathObject();
+         }
+
+         console.log(`[DEV] New Path: ${UI_Manager.pathToString(parentDir)}`);
 
          return parentDir;
     }
