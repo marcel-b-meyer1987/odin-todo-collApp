@@ -158,6 +158,6 @@ UI_Manager.initLayout();
 UI_Manager.renderMenu();
 UI_Manager.renderSearchBar();
 app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
-UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos());
+UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos().filter(todo => todo.parentID === null)); // ONLY display root level todos
 UI_Manager.renderMainAddButon(app.UI_Manager.addToDo);
 // UI_Manager.renderWelcomeView();
