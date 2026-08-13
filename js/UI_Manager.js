@@ -370,6 +370,8 @@ export class UI_Manager {
          ** @return {Array} parentDir - pathArray representing the upper-next directory 
          */
 
+         console.log(`[DEV] UI_Manager.getParentDi() was called`);
+
          const [parent] = currentDir.slice(-1); // a ToDo instance
          const parentDir = parent.buildPathObject();
 
@@ -378,7 +380,7 @@ export class UI_Manager {
 
     navigateToNode = (node) => {
         /**
-         ** @param {Object} - The object (Project/ToDo) the user wants to view 
+         ** @param {Object} node - The object (Project/ToDo) the user wants to view 
          */
         
         // establish which type of node was passed (ToDo or Project)
@@ -587,6 +589,7 @@ export class UI_Manager {
         if(this.errors.length < 1) {
             const todo = ToDo.fromStorage(todoID);
             todo.title = title.value.trim();
+            todo.notes = notes.value;
             todo.setDeadline(dueDate);
             todo.categories = catsArr;
             todo.saveToStorage();
