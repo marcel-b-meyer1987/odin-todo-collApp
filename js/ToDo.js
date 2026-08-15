@@ -175,6 +175,15 @@ export class ToDo {
 			}
 		}
 
+		// parent todo clean-up: If todo is associated to parent, remove it from the parent's checklist
+		if(todoToDelete.parentID) {
+			const parent = ToDo.fromStorage(todoToDelete.parentID);
+			if (parent) {
+				parent.checklist = parent.checklist.filter(item => item !== todoID);
+				parent.saveToStorage();
+			}
+		}
+
 		// remove all child todos
 		const childToDos = ToDo.getAllChildren(todoID);
 		childToDos.forEach(child => {

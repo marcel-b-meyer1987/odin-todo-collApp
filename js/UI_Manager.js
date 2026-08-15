@@ -231,8 +231,7 @@ export class UI_Manager {
             li.className = `todo-item ${todo.status === 1 ? 'completed' : ''}`;
             li.innerHTML = `
                 <div class="todo-item-main">
-                    <!-- <span class="status-icon">${todo.status === 1 ? '✅' : '⭕'}</span> -->
-                    <span class="prio-btn-small prio-${todo.prio}" data-todo-id="${todo.id}">!</span>
+                    <button class="prio-btn-small prio-${todo.prio}" data-todo-id="${todo.id}" title="Change Priority">!</button>
                     <span class="todo-title">${todo.title}</span>
                 </div>
                 <div class="todo-card-actions">

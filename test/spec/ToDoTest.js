@@ -170,9 +170,9 @@ describe("ToDo class test suite", () => {
         const pathObject = loadedChild.buildPathObject();
 
         // 3. Assert
-        expect(pathObject.hierarchy.length).toBe(2);
-        expect(pathObject.hierarchy[0].id).toBe("parent-1");
-        expect(pathObject.hierarchy[1].id).toBe("child-1");
+        expect(pathObject.length).toBe(2);
+        expect(pathObject[0].id).toBe("parent-1");
+        expect(pathObject[1].id).toBe("child-1");
     })
 
     it("should remove itself from its project and delete all child todos recursively before deleting itself", () => {
@@ -397,6 +397,30 @@ describe("ToDo class test suite", () => {
         expect(filteredIds).toContain("todo-c1"); // Hat "Work"
         expect(filteredIds).toContain("todo-c2"); // Hat "Urgent"
         expect(filteredIds).not.toContain("todo-c3"); // Hat nur "Private"
+    });
+
+    it("should be removed from its parent's checklist upon deletion", () => {
+        // 1. Arrange: create a parent todo and a child todo
+        const p = new ToDo({ id: "parent" });
+        const c1 = new ToDo({ id: "child1" });
+        c1.setParent(p);
+
+        // 2. Assert: Parent's checklist should contain 1 item
+        expect(p.checklist.length).toBe(1);
+
+        // 3. Act: Add another child
+        const c2 = new ToDo({ id: "child2" });
+        c2.setParent(p);
+
+        // 4. Assert: Parent's checklist should contain 2 items now
+        expect(p.checklist.length).toBe(2);
+
+        // 5. Act: Delete 1 child
+        ToDo.delete(c1.id);
+
+        // 6. Assert: Now, the parent's checklist should have only 1 item again
+        expect(p.checklist.length).toBe(1);
+        
     });
     
     afterAll(() => {
