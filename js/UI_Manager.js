@@ -395,12 +395,18 @@ export class UI_Manager {
 
         // <!-- Display Add-Button -->
         // <button class="main-add-btn">+</button>
-        const btn = document.createElement("button");
-        btn.classList.add("main-add-btn");
-        btn.innerText = "+";
-        btn.addEventListener("click", callbackFn);
-        
+
+        // if no add button existing, add one
         const main = document.querySelector("#app-main");
+        let btn = document.querySelector("main-add-btn");
+        if (!btn) {
+            btn = document.createElement("button");
+            btn.classList.add("main-add-btn");
+            btn.innerText = "+";
+            btn.addEventListener("click", callbackFn);   
+            
+        } 
+
         main.appendChild(btn);
     }
 
