@@ -270,14 +270,15 @@ export class UI_Manager {
             // Delete ToDo
             li.querySelector(".delete-btn").addEventListener("click", (e) => { 
                 e.stopPropagation();
-
                 // set current app path to parent object or root
-                app.currentPath = 
-                    todo.getParent()?.buildPathObject() ?? 
-                    Project.fromStorage(todo.project)?.buildPathObject() ??
-                    []; 
+                // app.currentPath = 
+                //     todo.getParent()?.buildPathObject() ?? 
+                //     Project.fromStorage(todo.project)?.buildPathObject() ??
+                //     []; 
                 ToDo.delete(todo.id); 
-                UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos())
+                // UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos());
+                console.log(this);
+                app.UI_Manager.navigateToNode(app.currentPath.at(-1) ?? app.rootObject);
                 return 0; 
             }, true);
 
