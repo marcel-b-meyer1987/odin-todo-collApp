@@ -211,6 +211,7 @@ main {
 
 .todo-item {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     padding: calc(var(--spacing-unit) * 0.5) 1em;
@@ -240,7 +241,7 @@ main {
     outline: none;
 
     font-size: calc(1.25 * var(--font-size-base));
-    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    padding: calc(0.25 * var(--spacing-unit)) calc(0.25 * var(--spacing-unit));
 }
 
 /* .todo-context-menu {
