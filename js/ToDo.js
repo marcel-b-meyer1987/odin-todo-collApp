@@ -347,6 +347,16 @@ export class ToDo {
 		// change status of ToDo
 		this.status = TODO_STATUS.TRASH_BIN;
 
+		// remove the todo from the parent's checklist
+		if(this.parentID) {
+			const parent = ToDo.fromStorage(this.parentID);
+			if (parent) {
+				parent.checklist = parent.checklist.filter(item => item !== this.id);
+				parent.saveToStorage();
+			}
+		}
+
+
 		this.saveToStorage();
 	}
 
