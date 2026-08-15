@@ -226,5 +226,6 @@ export const SYMBOLS = {
     ROCKET: "🚀",
     COOL: "😎",
     HAPPY: "😊",
+    UP: "⬆️",
 
 }

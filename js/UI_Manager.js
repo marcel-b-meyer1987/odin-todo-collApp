@@ -142,14 +142,38 @@ export class UI_Manager {
                 }
 
                 // Enable click navigation for each PARENT element of the path
+                // and open-on-click for the last element (=child)
                 if (span.classList.contains("parent-node")) {
                     span.addEventListener("click", () => {
                         onElementClick(node);
+                    });
+                } else {
+                    span.addEventListener("click", () => {
+                        this.openToDo(node.id, { mode: "show" }, this.app);
                     });
                 }
 
                 pathContainer.appendChild(span);
             });
+        }
+
+        // If not in root dir: Add button to navigate to upper-next path directory (like "cd .." in unix shell)
+        if (pathArr.length > 0) {
+            const cdUp = document.createElement("span");
+            cdUp.className = "icon cd-up";
+            cdUp.innerText = SYMBOLS.UP;
+            cdUp.setAttribute("title", "Go To Parent");
+            cdUp.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const main = document.querySelector("#app-main");
+                const detailsView = main.querySelector(".todo-detail-container");
+
+                if (detailsView) main.removeChild(detailsView);
+                this.app.currentPath = this.getParentDir(this.app.currentPath);
+                this.navigateToNode(this.app.currentPath.at(-1) ?? this.app.rootObject);
+            })
+            pathContainer.appendChild(cdUp);
+
         }
 
         parent.appendChild(pathContainer);

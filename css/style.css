@@ -195,7 +195,7 @@ main {
 
 .todo-node {
     font-style: italic;
-    cursor:default;
+    cursor:zoom-in;
 }
 
 .todo-list {
@@ -462,6 +462,16 @@ main {
 }
 
 #calendar-icon {
+    cursor: pointer;
+}
+
+.icon {
+
+}
+
+.cd-up {
+    font-size: calc(0.85 * var(--font-size-base));
+    margin-left: calc(1 * var(--spacing-unit));
     cursor: pointer;
 }
 
