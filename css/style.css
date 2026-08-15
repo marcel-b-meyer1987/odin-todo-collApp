@@ -355,13 +355,23 @@ main {
     color: var(--accent-color); 
 }
 
-.todo-detail-container .prio-label {
+.prio-label {
     flex-shrink: 0;
     padding: 0.5em var(--spacing-unit);
     font-size: 1rem;
     font-weight: 900;
     border-radius: 50%;
     cursor: pointer;
+}
+
+.prio-btn-small {
+    flex-shrink: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: calc(0.75 * var(--font-size-base));
+    padding: calc(0.25 * var(--spacing-unit)) calc(0.75 * var(--spacing-unit));
+    margin-right: var(--spacing-unit);
 }
 
 .prio-0 {

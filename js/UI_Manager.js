@@ -232,6 +232,7 @@ export class UI_Manager {
             li.innerHTML = `
                 <div class="todo-item-main">
                     <!-- <span class="status-icon">${todo.status === 1 ? '✅' : '⭕'}</span> -->
+                    <span class="prio-btn-small prio-${todo.prio}" data-todo-id="${todo.id}">!</span>
                     <span class="todo-title">${todo.title}</span>
                 </div>
                 <div class="todo-card-actions">
@@ -243,6 +244,24 @@ export class UI_Manager {
             `;
 
             // ### Bind event listeners ###
+
+            // Change prio
+            const prioBtn = li.querySelector(".prio-btn-small");
+            prioBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                // toggle between prios:
+                // 0 (low) - 1 (normal) - 2 (high) on click
+                // if prio was high, reset to low
+
+                const oldPrio = todo.prio; // used to remove prio-class (s. below)
+                todo.prio++;
+                if (todo.prio > 2) todo.prio = 0;
+                // console.log("[DEV] Prio changed to: ", todo.prio);
+
+                // update prio label:
+                prioBtn?.classList.remove(`prio-${oldPrio}`);
+                prioBtn.classList.add(`prio-${todo.prio}`);
+            });
             
             // Open Detail View
             li.addEventListener("click", (e) => { app.UI_Manager.openToDo(todo.id, { mode: "show" }, app) });
