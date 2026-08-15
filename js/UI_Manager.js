@@ -113,7 +113,7 @@ export class UI_Manager {
         root.textContent = UI_CONST.PATH_SEPARATOR;
         root.addEventListener("click", () => {
             this.app.currentPath = []; // set app path to root
-            UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos());
+            UI_Manager.renderToDoListView(this.app, ToDo.getAllActiveToDos().filter(todo => todo.parentID ===  null)); // display root level objects only
         })
         pathContainer.appendChild(root);
             
@@ -375,13 +375,13 @@ export class UI_Manager {
          console.log(`[DEV] UI_Manager.getParentDir() was called`);
          console.log(`[DEV] Old Path: ${UI_Manager.pathToString(currentDir)}`);
 
-        const parent = currentDir.at(-1); // a ToDo instance
+        const parent = currentDir.at(-2) // ?? currentDir.at(-1); // a ToDo instance
         let parentDir = [];
          console.log(`[DEV] Builduing path of parent object:`, parent);
 
          // check edge case: if object has no parent, parentDir must be reset to root => leave value at []
-         if (parent === currentDir[0]) {
-            console.log(`[DEV] Object "${currentDir[0].name ?? currentDir[0].title}" has no parent... default to root`)
+         if (!parent) {
+            console.log(`[DEV] No parent found... default to root`)
             parentDir = [];   
          } else {
             parentDir = parent.buildPathObject();
@@ -397,28 +397,56 @@ export class UI_Manager {
          ** @param {Object} node - The object (Project/ToDo) the user wants to view 
          */
         
+        let type = undefined;
+        let ref = undefined;
+        let obj = null;
+        let path = null;
+        let children = null;
+        
         // establish which type of node was passed (ToDo or Project)
-        const type = node instanceof ToDo ? "ToDo" : "Project";
+        if (node instanceof ToDo) type = "ToDo";
+        if (node instanceof Project) type = "Project";
         console.log(`[DEV] navigateToNode() called on ${type} node:`, node);
-
+        
         // Extract reference from node (id if ToDo / name if Project)
-        const ref = type === "ToDo" ? node.id : node.name;
-
+        // check if node has children
         // get data object from storage 
-        const obj = type === "ToDo" ? ToDo.fromStorage(ref) : Project.fromStorage(ref);
-
         // build path object + adjust app.currentPath to the same
-        const path = obj.buildPathObject();
-        this.app.currentPath = path;
-
         // render path + update path view
+        
+        // const ref = type === "ToDo" ? node.id : node.name;
+        // const children = type === "ToDo" ? ToDo.getAllChildren(ref) : Project.getAllChildren(ref);
+        // const obj = type === "ToDo" ? ToDo.fromStorage(ref) : Project.fromStorage(ref);
+
+        switch(type) {
+            case "ToDo":
+                ref = node.id;
+                children = ToDo.getAllChildren(ref);
+                obj = ToDo.fromStorage(ref);
+                path = obj.buildPathObject();
+                break;
+
+            case "Project":
+                ref = node.name;
+                children = Project.getAllChildren(ref);
+                obj = Project.fromStorage(ref);
+                path = obj.buildPathObject();
+                break;
+
+            default:
+                console.log(`[DEV] Undefined object type detected: `, node);
+                console.log(`[DEV] Fall back to app.rootObject: `, this.app.rootObject);
+                children = this.app.loadAllToDos().filter(todo => todo.parentID === null); // root level todos only
+                obj = this.app.rootObject;
+                path = [];
+                break;
+        }
+
+        this.app.currentPath = path;
         this.renderPath(path, this.navigateToNode);
 
-        // check if node has children
-        const children = type === "ToDo" ? ToDo.getAllChildren(ref) : Project.getAllChildren(ref);
-        
         // if data object has children: display todo list of the children
-        if (children.length > 0) {
+        if (children.length > 0 || ((type !== "Todo") && (type !== "Project"))) {
             UI_Manager.renderToDoListView(
                 this.app, 
                 children);
@@ -433,6 +461,9 @@ export class UI_Manager {
                     break;
                 case "Project":
                     this.openProject(ref, { mode: "show" }, this.app);
+                    break;
+                default:
+                    UI_Manager.renderToDoListView(this.app, children);
                     break;
             }
             return 0;
@@ -476,7 +507,7 @@ export class UI_Manager {
                 UI_Manager.
                     renderToDoListView(
                         this.app, 
-                        todo.checklist.map(id => ToDo.fromStorage(id)).filter(Boolean));
+                        todo.checklist.map(id => ToDo.fromStorage(id))?.filter(Boolean));
             }, 
             onSave : () => {
                 // validate + save
@@ -525,8 +556,9 @@ export class UI_Manager {
 
         if (detailsView) main.removeChild(detailsView);
         this.app.currentPath = this.getParentDir(this.app.currentPath);
-        this.renderPath(this.app.currentPath);
-        UI_Manager.renderToDoListView(this.app, this.app.currentPath);
+        this.navigateToNode(this.app.currentPath.at(-1) ?? this.app.rootObject);
+        // this.renderPath(this.app.currentPath);
+        // UI_Manager.renderToDoListView(this.app, this.app.currentPath);
     }
 
     openProject(projectName, config = { mode: "show" }, app) {
@@ -607,6 +639,7 @@ export class UI_Manager {
             todo.setDeadline(dueDate);
             todo.categories = catsArr;
             todo.saveToStorage();
+            // possibly need to get up one directory at this point
             this.closeToDo();
             return 0; // success
         } else {
