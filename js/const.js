@@ -51,6 +51,14 @@ export const UI_CONST = {
         en: "Copy",
         de: "Kopie"
     },
+
+    // Localisation for the labels
+    LABELS: {
+        de: { title: "Aufgabe", notes: "Notizen", editDue : "Fälligkeitsdatum bearbeiten", created : "Erstellt:", due: "Fällig", checklist : "Checkliste bearbeiten", cats : "Kategorie hinzufügen", assign : "Mitarbeiter zuweisen", createTeamMember : "Mitarbeiter erstellen", save : "Speichern", abort : "Abbrechen", add: "Neu", changePrio: "Priorität ändern", open: "Öffnen", markComplete: "Als erledigt markieren", copy: "Kopieren", moveToTrash: "In den Papierkorb", asTemplate: "Als Vorlage speichern" },
+        en: { title: "Task", notes: "Notes", editDue : "Edit Due Date", created : "Created on:", due : "Due date:", checklist : "Edit checklist", cats : "Add category", assign : "Assign to Team Member", createTeamMember : "Add New Team Member", save : "Save", abort : "Abort", add: "Add", changePrio: "Change Priority", open: "Open", markComplete: "Mark As Completed", copy: "Copy", moveToTrash: "Move To Trash", asTemplate: "Save As Template" },
+    },
+
+
     
     MENU_ITEMS: [
         {

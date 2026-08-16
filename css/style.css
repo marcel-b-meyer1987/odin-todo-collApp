@@ -318,7 +318,7 @@ main {
 .main-add-btn {
     --size: max(calc(2rem + 0.1vw), 48px);
 
-    position: fixed;
+    position: absolute;
     bottom: var(--size);
     left: var(--size);
     z-index: 10;

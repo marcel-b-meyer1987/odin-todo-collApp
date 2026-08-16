@@ -34,7 +34,8 @@ export default class ToDoApp {
             this.UI_Manager.renderDashboard({ userID: currentUser.id });
         } else {
             console.log("Kein Benutzer angemeldet. Zeige Login- / Finde-Bildschirm.");
-            this.lang = APP_CONST.DEFAULT_SETTINGS.LANG;
+            this.lang = navigator.language.substring(0,2) ?? APP_CONST.DEFAULT_SETTINGS.LANG;
+            console.log(`App language set to: ${this.lang}`);
             // Redirect to Login Screen
         }
 
