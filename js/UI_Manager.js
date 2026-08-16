@@ -295,6 +295,10 @@ export class UI_Manager {
                 li.querySelector(".complete-btn").addEventListener("click", (e) => { 
                     e.stopPropagation(); 
                     todo.markAsCompleted(); 
+                    const list = document.querySelector(".todo-list");
+                    const completed = document.querySelector(`li[data-todo-id="${todo.id}"]`);
+                    list.removeChild(completed);
+                    
                 });
 
                 // Make a copy of the todo and open the copy for editing
@@ -708,6 +712,26 @@ export class UI_Manager {
         // TEMPORARY ONLY - MUST BE REPLACED FOR PRODUCTION
         console.warn("[DEV] UI_Manager.errors:");
         console.table(errors);
+    }
+
+
+    // ############################
+    // ### UI ANIMATION METHODS ###
+    // ############################
+    
+    static animate(element, animationType, duration = 1000, delay = 0) {
+        /**
+         ** @param {HTMLElement} element - the HTML element which should be animated
+         ** @param {String} animationType - custom type of animation which will determine the look and feel in the UI
+         ** @param {Number} duration - duration of the animation in ms, defaults to 1000ms 
+         ** @param {Number} delay - delay before animation in ms, defaults to 0
+         */
+        if (!element) return 1;
+        if (!animationType) return 1;
+
+        switch (animationType) {
+            
+        }
     }
 
 }
