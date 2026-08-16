@@ -1,4 +1,5 @@
 import { UI_CONST, SYMBOLS } from "../js/const.js";
+import { ToDo } from "../js/ToDo.js";
 
 export class ToDoCard {
     static create(todo, app) {

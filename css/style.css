@@ -603,6 +603,7 @@ input[type="text"] {
     line-height: var(--font-size-base);
     height: var(--font-size-base);
     align-self: center;
+    width: 100%;
 }
 
 input[type="text"]:focus {
@@ -635,15 +636,15 @@ option:nth-child(even) {
 
 .buttons-container {
     width: 100%;
-    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    padding: calc(0.5 * var(--spacing-unit)) 0;
     display: flex;
     justify-content: flex-start;
     gap: var(--spacing-unit);
 }
 
 .buttons-container > button {
-    font-weight: 500;
-    font-size: calc(var(--font-size-base) * 1.25);
+    font-weight: 600;
+    font-size: calc(var(--font-size-base) *1);
     font-family: inherit;
     line-height: normal;
     color: var(--text-color);
@@ -653,6 +654,9 @@ option:nth-child(even) {
     border-radius: calc(var(--font-size-base) * 0.25);
     cursor: pointer;
     padding: 0.5em var(--spacing-unit);
+    /* box-shadow: -0.01em -0.01em 0.05em 0.08em var(--text-color); */
+    box-shadow: 0.01em 0.01em 0.8em 0.01em var(--border-color);
+    width: max(10em,25%);
 }
 
 footer {
