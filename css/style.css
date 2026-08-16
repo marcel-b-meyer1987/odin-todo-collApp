@@ -166,7 +166,7 @@ main {
     border: 3px solid var(--border-color);
     outline: none;
     border-radius: var(--font-size-base);
-    padding: 0.5em calc(var(--spacing-unit) * 3) 0.5em var(--spacing-unit);
+    padding: var(--spacing-unit) calc(var(--spacing-unit) * 3) var(--spacing-unit) var(--spacing-unit);
     width: 100%;
 }
 
@@ -186,6 +186,7 @@ main {
     border: 3px solid var(--border-color);
     outline: none;
     border-radius: var(--font-size-base);
+    padding: 0 calc(0.25 * var(--spacing-unit));
     cursor: pointer;
 }
 
@@ -599,10 +600,21 @@ footer {
     grid-area: footer;
     
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-end;
+    gap: calc(0.5 * var(--spacing-unit));
 
-    padding: calc(0.5 * var(--spacing-unit)) (--spacing-unit);
+    padding: calc(1 * var(--spacing-unit)) calc(0.5 * var(--spacing-unit));
     border-top: 1px solid var(--border-color);
     z-index: 10;
+
+    box-shadow: 0 calc(-0.05 * var(--font-size-base)) calc(1 * var(--font-size-base)) 1px var(--border-color);
+}
+
+.app-footer p {
+    font-size: calc(0.95 * var(--font-size-base));
+    font-style: italic;
+    width: 100%;
+
 }

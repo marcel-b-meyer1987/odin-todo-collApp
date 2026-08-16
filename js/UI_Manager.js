@@ -3,6 +3,7 @@ import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { InputValidator } from "./InputValidator.js";
+import { QUOTES } from "../quotes.js";
 import ToDoApp from "./App.js";
 
 export class UI_Manager {
@@ -218,6 +219,21 @@ export class UI_Manager {
                 <h2>Welcome to ToDo CollApp -</h2>
                 <p>the simple app for organizing todos with your team mates.</p>
                 <p><strong>Click on the menu icon to see possible actions.</strong></p>
+            </div>
+        `;
+    }
+
+    renderQuote() {
+        const footer = document.querySelector(".app-footer");
+        const quotes = QUOTES[this.app.lang];
+        const quote = quotes[Math.floor(Math.random() * quotes.length)];
+        if (!quote) return 1;
+        footer.innerHTML = `
+            <div>
+                <p class="quote">"${quote.quote}"</p>
+            </div>
+            <div>
+                <p class="author">- ${quote.author}</p>
             </div>
         `;
     }
@@ -730,7 +746,7 @@ export class UI_Manager {
         if (!animationType) return 1;
 
         switch (animationType) {
-            
+
         }
     }
 
