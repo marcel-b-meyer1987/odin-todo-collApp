@@ -1,8 +1,14 @@
 /* Globale CSS Custom Properties (Light Mode / Standard) */
-:root {
+
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    /* ### FOR DEBUGGING LAYOUT AND SPACING ONLY: ### */
+    /* outline: 0.5px dotted red; */
+}
+
+:root {
 
     --primary-color: #ffffff;
     --secondary-color: #f5f5f5;
@@ -49,11 +55,12 @@ body {
     font-size: var(--font-size-base);
     background-color: var(--primary-color);
     color: var(--text-color);
-    margin: 0;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 
     height: 100dvh;
-    width: 100dvw;
+    width: 100vw;
+    max-width: 100%;
+    overflow: hidden;
 
     scrollbar-color: var(--secondary-color) var(--border-color);
 
@@ -61,7 +68,7 @@ body {
 
 #app-root {
     display: grid;
-    grid-template-columns: 1fr;
+    /* grid-template-columns: 1fr; */
     grid-template-rows: 
         auto 
         auto 
@@ -81,6 +88,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 10;
 }
 
 .app-logo {
@@ -120,7 +128,7 @@ header {
 }
 
 #top-row {
-    grid-area: top
+    grid-area: top;     
 }
 
 main {
@@ -130,8 +138,13 @@ main {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
-    overflow-y: scroll;
+
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
     overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--spacing-unit);
 }
 
 .search-filter-container {
@@ -211,11 +224,11 @@ main {
 
 .todo-item {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    padding: calc(var(--spacing-unit) * 0.5) 1em;
-    width: 90%;
+    padding: var(--spacing-unit) calc(var(--spacing-unit) * 2) var(--spacing-unit) 0; /* 1em 2em 1em 0 */
+    width: 100%;
     cursor:zoom-in;
 }
 
@@ -228,13 +241,32 @@ main {
 }
 
 .todo-item-main {
-    padding: calc(var(--spacing-unit) * 0.15) 1em;
+    padding: 0 1em;
     height: 100%;
     display: flex;
     align-items: center;
+    
+    text-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.todo-title {
+    text-wrap: nowrap;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: calc(0.5 * var(--spacing-unit));
+}
+
+.todo-card-actions {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
 }
 
 .todo-card-actions button {
+    flex-shrink: 0;
     cursor: pointer;
     background: none;
     border: none;
@@ -553,4 +585,8 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
+
+    padding: calc(0.5 * var(--spacing-unit)) (--spacing-unit);
+    border-top: 1px solid var(--border-color);
+    z-index: 10;
 }

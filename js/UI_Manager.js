@@ -250,7 +250,7 @@ export class UI_Manager {
 
         // render ToDos + append to list
         todosArray.forEach(todo => {
-            // exclude all todos which are not active
+            // exclude all todos which are not active (="PENDING")
             if (todo.status === TODO_STATUS.PENDING) {
                 const li = document.createElement("li");
                 li.setAttribute("data-todo-id", todo.id);
