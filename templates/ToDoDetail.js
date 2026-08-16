@@ -15,10 +15,7 @@ export class ToDoDetail {
         container.className = "todo-detail-container";
 
         // Localisation for the labels
-        const labels = {
-            de: { title: "Aufgabe", notes: "Notizen", editDue : "Fälligkeitsdatum bearbeiten", created : "Erstellt:", due: "Fällig", checklist : "Checkliste bearbeiten", cats : "Kategorie hinzufügen", assign : "Mitarbeiter zuweisen", createTeamMember : "Mitarbeiter erstellen", save : "Speichern", abort : "Abbrechen" },
-            en: { title: "Task", notes: "Notes", editDue : "Edit Due Date", created : "Created on:", due : "Due date:", checklist : "Edit checklist", cats : "Add category", assign : "Assign to Team Member", createTeamMember : "Add New Team Member", save : "Save", abort : "Abort" },
-        }[userLang] || labels[APP_CONST.DEFAULT_SETTINGS.LANG];
+        const labels = UI_CONST.LABELS[userLang] || UI_CONST.LABELS[APP_CONST.DEFAULT_SETTINGS.LANG];
 
         // helper variables
         const now = new Date();
@@ -55,7 +52,7 @@ export class ToDoDetail {
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
                 <input id="todo-title-input" type="text" class="todo-title" value="${todo.title ?? 'Neues Todo'}">
-                <span class="prio-label prio-${todo.prio}" data-todo-id="${todo.id}">!</span>
+                <span class="prio-label prio-${todo.prio}" data-todo-id="${todo.id}" title="${labels.changePrio} (Alt + P)">!</span>
             </div>
 
             <!-- Notes / Description -->
@@ -126,7 +123,7 @@ export class ToDoDetail {
         });
 
         // event listeners for keyboard shortcuts
-        container.addEventListener("keydown", (e) => {
+        window.addEventListener("keydown", (e) => {
             // only do anything special if the Alt key is held down
             if (e.altKey) {
                 switch (e.key) {
@@ -135,6 +132,9 @@ export class ToDoDetail {
                         break;
                     case "a":
                         callbacks.onAbort?.();
+                        break;
+                    case "p":
+                        callbacks.onPrioChange?.();
                         break;
                 }
             }
