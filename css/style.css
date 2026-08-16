@@ -659,6 +659,10 @@ option:nth-child(even) {
     width: max(10em,25%);
 }
 
+.buttons-container > button:focus {
+    color: var(--accent-color);
+}
+
 footer {
     grid-area: footer;
     

@@ -102,8 +102,8 @@ export class ToDoDetail {
 
             <!-- Save & Abort buttons-->
             <div class="buttons-container">
-                <button id="save-btn">${labels.save}</button>
-                <button id="abort-btn">${labels.abort}</button>
+                <button id="save-btn" title="${labels.save} (Alt + S)">${labels.save}</button>
+                <button id="abort-btn" title="${labels.abort} (Alt + A)">${labels.abort}</button>
             </div>
         `;
 
@@ -123,6 +123,21 @@ export class ToDoDetail {
 
         container.querySelector("#abort-btn").addEventListener("click", () => {
             callbacks.onAbort?.();
+        });
+
+        // event listeners for keyboard shortcuts
+        container.addEventListener("keydown", (e) => {
+            // only do anything special if the Alt key is held down
+            if (e.altKey) {
+                switch (e.key) {
+                    case "s":
+                        callbacks.onSave?.();
+                        break;
+                    case "a":
+                        callbacks.onAbort?.();
+                        break;
+                }
+            }
         });
 
         return container;
