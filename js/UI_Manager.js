@@ -149,13 +149,14 @@ export class UI_Manager {
          */
         const existingMenu = document.querySelector(".main-menu-overlay");
         if (existingMenu) {
-            UI_Manager.animate(existingMenu, [
+            const panel = existingMenu.querySelector(".menu-content-panel");
+            UI_Manager.animate(panel, [
             function() {
-                this.style.transition = "transform 0.6s ease-in";
+                this.style.transition = "transform 0.3s ease-out";
                 this.style.transform = "translateX(100%)";
-            }
-        ]);
-            setTimeout(existingMenu.remove(), 1000);
+            }], 0);
+            
+            setTimeout(() => { existingMenu.remove() }, 300);
         }
     }
 
