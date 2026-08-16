@@ -1,11 +1,13 @@
 import { APP_CONST, UI_CONST, SYMBOLS, TODO_STATUS } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
-import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { InputValidator } from "./InputValidator.js";
 import { QUOTES } from "../quotes.js";
 import ToDoApp from "./App.js";
 import { ToDoCard } from "../templates/ToDoCard.js";
+import { ToDoDetail } from "../templates/ToDoDetail.js";
+import { MainMenu } from "../templates/html/MainMenu.js";
+
 
 export class UI_Manager {
 
@@ -21,7 +23,7 @@ export class UI_Manager {
     // ### INITIAL SETUP + STANDARD RENDERING + MENU TOGGLING ###
     // ##########################################################
 
-    static initLayout() {
+    static initLayout(app) {
         /**
          ** Initialize base layout (Header + Main + Footer)
          */
@@ -47,8 +49,114 @@ export class UI_Manager {
 
         // bind event listener for the Hamburger menu
         document.getElementById("menu-btn").addEventListener("click", () => {
-            UI_Manager.toggleMenu();
+            UI_Manager.openMenu(app.lang, {
+                onMenuAction: (actionName) => {
+                    UI_Manager.handleMenuSelection(actionName)
+                },
+                onLogoutTriggered: () => {
+                    console.log("Benutzer abgemeldet. Zurück zum Login.");
+                    // Setzt die App zurück und zeigt wieder den Login-Bildschirm
+                    this.checkUserAuth(); 
+                }
+            });
         });
+    }
+
+    static handleMenuSelection(actionName){
+                    console.log(`[DEV] Action was called: ${actionName}`);
+                    
+                    // Routing based on the passed-in action
+                    switch(actionName) {
+                        case "todos":
+                            
+                            break;
+
+                        case "categories":
+                            
+                            break;
+
+                        case "projects":
+                            
+                            break;
+
+                        case "team":
+                            
+                            break;
+
+                        case "settings":
+                            
+                            break;
+
+                        case "about":
+                            
+                            break;
+
+                        case "doc":
+                            
+                            break;
+
+                        default:
+                            console.log(`[DEV] Action ${actionName} unknown.`);
+                            break;
+
+                    }
+    }
+
+    static openMenu(userLang, callbacks) {
+        /**
+         * Opens th data-driven main menu and animates slide-in
+         * @param {String} userLang - language of the current user
+         * @param {Object} callbacks - object containing the needed callback functions as methods
+         */
+
+        // In case a menu is already opened, close it to prevent duplicates
+        UI_Manager.closeMenu();
+
+        const menuNode = MainMenu.create(userLang, {
+            onAction: (actionName) => {
+                UI_Manager.closeMenu();
+                callbacks.onMenuAction?.(actionName);
+            },
+            onClose: () => {
+                UI_Manager.closeMenu();
+            },
+            onLogout: () => {
+                UI_Manager.closeMenu();
+                callbacks.onLogoutTriggered?.();
+            }
+        });
+
+        // Briefly hide the inner panel for animation 
+        const panel = menuNode.querySelector(".menu-content-panel");
+        panel.style.transform = "translateX(100%)";
+        panel.style.transition = "transform 0.3s ease-out";
+
+        document.body.appendChild(menuNode);
+
+        // Apply central animation logic 
+        // pass in an anonymous function which will be called on the panel
+        UI_Manager.animate(panel, [
+            function() {
+                this.style.transform = "translateX(0%)";
+            }
+        ], 10); // Minimal delay, so the browser can register the transition
+
+    }
+
+    static closeMenu() {
+        /**
+         * Close the main menu
+         */
+        const existingMenu = document.querySelector(".main-menu-overlay");
+        if (existingMenu) {
+            UI_Manager.animate(existingMenu, [
+            function() {
+                this.style.transition = "transform 0.6s ease-in";
+                this.style.transform = "translateX(100%)";
+            }
+        ]);
+            setTimeout(existingMenu.remove(), 1000);
+        }
     }
 
     static renderSearchBar(parentElementStr = "#header-middle-column") {
@@ -203,11 +311,6 @@ export class UI_Manager {
 
         return pathStr.trim();
     }
-
-    static toggleMenu() {
-        console.log("Hauptmenü geöffnet/geschlossen");
-        // Hier wird später das Hauptmenü eingeblendet
-    }
     
     static renderWelcomeView() {
         /**
@@ -265,7 +368,7 @@ export class UI_Manager {
         ul.setAttribute("id", "todo-list-ul");
         ul.className = "todo-list";
 
-        // render ToDos + append to list
+        // render ToDos using template + append to list
         todosArray.forEach(todo => {
             // exclude all todos which are not active (="PENDING")
             if (todo.status === TODO_STATUS.PENDING) {
@@ -279,63 +382,37 @@ export class UI_Manager {
         UI_Manager.renderMainAddButon(app, app.UI_Manager.addToDo);
     }
 
-    static toggleContextMenu(todoID) {
-        const menu = document.getElementById(`context-${todoID}`);
-        if (menu) {
-            menu.style.display = menu.style.display === "none" ? "block" : "none";
-        }
-    }
+    // static toggleContextMenu(todoID) {
+    //     const menu = document.getElementById(`context-${todoID}`);
+    //     if (menu) {
+    //         menu.style.display = menu.style.display === "none" ? "block" : "none";
+    //     }
+    // }
 
-    static renderMenu(menuItemsArray = UI_CONST.MENU_ITEMS, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
-        const menuOverlay = document.createElement("div");
-        menuOverlay.className = "menu-overlay";
+    // static renderContextMenu(dataObj, menuItemsArray, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
+    //     const menu = document.createElement("div");
+    //     const id = dataObj.id ?? dataObj.name; // use id as identifier for ToDos and TeamMembers, name for Projects
+    //     menu.setAttribute("id", `context-${id}`);
+    //     menu.classList.add("todo-context-menu");
+    //     menu.classList.add("context-menu-hidden");
         
-        const ul = document.createElement("ul");
+    //     menuItemsArray.forEach(item => {
+    //         // Get the correct display name from the multilingual menuItemsArray (e. g. disp_name.en)
+    //         const disp_name = item.disp_name[currentLang] || item.disp_name[APP_CONST.DEFAULT_SETTINGS.LANG];
+            
+    //         const btn = document.createElement("button");
+    //         btn.outerHTML = `<button class="ctx-btn ${item.name}" data-id="${dataObj.id}">${disp_name}</button>`;
+            
+            
+    //         btn.addEventListener("click", () => {
+    //             onActionTriggered(item.name); // calls the callbackFn onActionTriggered with "settings", "projects" etc.
+    //         });
+            
+    //         menu.appendChild(btn);
+    //     });
         
-        menuItemsArray.forEach(item => {
-            const li = document.createElement("li");
-            const btn = document.createElement("button");
-            
-            // Get the correct display name from the multilingual data object (e. g. disp_name.en)
-            btn.innerText = item.disp_name[currentLang] || item.disp_name[APP_CONST.DEFAULT_SETTINGS.LANG];
-            btn.className = `menu-item-btn action-${item.name}`;
-            
-            btn.addEventListener("click", () => {
-                onActionTriggered(item.name); // returns "settings", "projects" etc.
-            });
-            
-            li.appendChild(btn);
-            ul.appendChild(li);
-        });
-        
-        menuOverlay.appendChild(ul);
-        return menuOverlay;
-    }
-
-    static renderContextMenu(dataObj, menuItemsArray, currentLang = APP_CONST.DEFAULT_SETTINGS.LANG, onActionTriggered) {
-        const menu = document.createElement("div");
-        const id = dataObj.id ?? dataObj.name; // use id as identifier for ToDos and TeamMembers, name for Projects
-        menu.setAttribute("id", `context-${id}`);
-        menu.classList.add("todo-context-menu");
-        menu.classList.add("context-menu-hidden");
-        
-        menuItemsArray.forEach(item => {
-            // Get the correct display name from the multilingual menuItemsArray (e. g. disp_name.en)
-            const disp_name = item.disp_name[currentLang] || item.disp_name[APP_CONST.DEFAULT_SETTINGS.LANG];
-            
-            const btn = document.createElement("button");
-            btn.outerHTML = `<button class="ctx-btn ${item.name}" data-id="${dataObj.id}">${disp_name}</button>`;
-            
-            
-            btn.addEventListener("click", () => {
-                onActionTriggered(item.name); // calls the callbackFn onActionTriggered with "settings", "projects" etc.
-            });
-            
-            menu.appendChild(btn);
-        });
-        
-        return menu;
-    }
+    //     return menu;
+    // }
    
     static renderMainAddButon(app, callbackFn = app.UI_Manager.addToDo) {
 
@@ -659,19 +736,18 @@ export class UI_Manager {
     // ### UI ANIMATION METHODS ###
     // ############################
     
-    static animate(element, animationType, duration = 1000, delay = 0) {
+    static animate(element, animationsArr, delay = 0) {
         /**
          ** @param {HTMLElement} element - the HTML element which should be animated
-         ** @param {String} animationType - custom type of animation which will determine the look and feel in the UI
-         ** @param {Number} duration - duration of the animation in ms, defaults to 1000ms 
+         ** @param {Array} animationsArr - array of custom animation functions which will be called one after another on the element
          ** @param {Number} delay - delay before animation in ms, defaults to 0
          */
         if (!element) return 1;
-        if (!animationType) return 1;
+        if (!animationsArr || animationsArr.length < 1) return 1;
 
-        switch (animationType) {
-
-        }
+        setTimeout(() => {
+            animationsArr.forEach(animation => animation.call(element))
+        }, delay);
     }
 
 }

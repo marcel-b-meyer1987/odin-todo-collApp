@@ -41,6 +41,50 @@ export const APP_CONST = {
     }
 }
 
+export const SYMBOLS = {
+    COMPLETE: "✅",
+    TEMPLATE: "📐",
+    CATS: "🗃️",
+    DELETE: "🗑️",
+    PENDING: "⭕",
+    DATE: "📅",
+    CREATE: "📝",
+    ATTACH: "📎",
+    PIN: "📌",
+    FOLDER: "📂",
+    CHECKLIST: "📋",
+    NOTEPAD: "🗒️",
+    SUITCASE: "💼",
+    WRITE: "✏️",
+    BOOK: "📖",
+    DOCS: "📚",
+    DIARY: "📔",
+    CD: "💿",
+    FLOPPY: "💾",
+    TOOLS: "🛠️",
+    WRENCH: "🔧",
+    CONFIG: "⚙️",
+    LIGHTBULB: "💡",
+    SEARCH: "🔍",
+    TAG: "🏷️",
+    ID: "🪪",
+    BELL: "🔔",
+    SPEAKER: "📢",
+    PERSON: "👤",
+    TEAM: "👥",
+    SPEAK: "💬",
+    STRONG: "💪",
+    THUMB: "👍",
+    FIRE: "🔥",
+    STARS: "✨",
+    ROCKET: "🚀",
+    COOL: "😎",
+    HAPPY: "😊",
+    UP: "⬆️",
+    LOGOUT: "",
+
+}
+
 
 export const UI_CONST = {
     APP_LOGO: `<span class="app-logo" id="nav-home" style="font-style: italic;">T</span>`,
@@ -57,83 +101,55 @@ export const UI_CONST = {
         de: { title: "Aufgabe", notes: "Notizen", editDue : "Fälligkeitsdatum bearbeiten", created : "Erstellt:", due: "Fällig", checklist : "Checkliste bearbeiten", cats : "Kategorie hinzufügen", assign : "Mitarbeiter zuweisen", createTeamMember : "Mitarbeiter erstellen", save : "Speichern", abort : "Abbrechen", add: "Neu", changePrio: "Priorität ändern", open: "Öffnen", markComplete: "Als erledigt markieren", copy: "Kopieren", moveToTrash: "In den Papierkorb", asTemplate: "Als Vorlage speichern" },
         en: { title: "Task", notes: "Notes", editDue : "Edit Due Date", created : "Created on:", due : "Due date:", checklist : "Edit checklist", cats : "Add category", assign : "Assign to Team Member", createTeamMember : "Add New Team Member", save : "Save", abort : "Abort", add: "Add", changePrio: "Change Priority", open: "Open", markComplete: "Mark As Completed", copy: "Copy", moveToTrash: "Move To Trash", asTemplate: "Save As Template" },
     },
-
-
     
     MENU_ITEMS: [
         {
             name: "todos",
             disp_name: {
-                en: "ToDos",
-                de: "ToDos"
+                en: `${SYMBOLS.CHECKLIST} ToDos`,
+                de: `${SYMBOLS.CHECKLIST} ToDos`
             }
         },
         {
             name: "categories",
             disp_name: {
-                en: "Categories",
-                de: "Kategorien"
+                en: `${SYMBOLS.CATS} Categories`,
+                de: `${SYMBOLS.CATS} Kategorien`,
             }
         },
         {
             name: "projects",
             disp_name: {
-                en: "Projects",
-                de: "Projekte"
+                en: `${SYMBOLS.TOOLS} Projects`,
+                de: `${SYMBOLS.TOOLS} Projekte`,
             }
         },
         {
             name: "team",
             disp_name: {
-                en: "Team",
-                de: "Team"
+                en: `${SYMBOLS.TEAM} Team`,
+                de: `${SYMBOLS.TEAM} Team`,
             }
         },
         {
             name: "settings",
             disp_name: {
-                en: "Settings",
-                de: "Einstellungen"
+                en: `${SYMBOLS.CONFIG} Settings`,
+                de: `${SYMBOLS.CONFIG} Einstellungen`,
             }
         },
         {
             name: "about",
             disp_name: {
-                en: "About",
-                de: "About"
+                en: `${SYMBOLS.SPEAK} About`,
+                de: `${SYMBOLS.SPEAK} About`,
             }
         },
         {
             name: "doc",
             disp_name: {
-                en: "Documentation",
-                de: "Dokumentation"
-            }
-        },
-        {
-            name: "darkmode",
-            disp_name: {
-                0: {
-                    en: "Dark Mode",
-                    de: "Dark Mode"
-                },
-                1:  {
-                    en: "Light Mode",
-                    de: "Light Mode",
-                }
-            }
-        },
-        {
-            name: "lang",
-            disp_name: {
-                en: {
-                    en: "English",
-                    de: "Englisch"
-                },
-                de:  {
-                    en: "German",
-                    de: "Deutsch",
-                }
+                en: `${SYMBOLS.DOCS} Documentation`,
+                de: `${SYMBOLS.DOCS} Dokumentation`,
             }
         },
     ],
@@ -196,44 +212,3 @@ export const UI_CONST = {
     },
 }
 
-export const SYMBOLS = {
-    COMPLETE: "✅",
-    TEMPLATE: "📐",
-    CATEGORY: "🗃️",
-    DELETE: "🗑️",
-    PENDING: "⭕",
-    DATE: "📅",
-    CREATE: "📝",
-    ATTACH: "📎",
-    PIN: "📌",
-    FOLDER: "📂",
-    CHECKLIST: "📋",
-    NOTEPAD: "🗒️",
-    SUITCASE: "💼",
-    WRITE: "✏️",
-    BOOK: "📖",
-    DIARY: "📔",
-    CD: "💿",
-    FLOPPY: "💾",
-    TOOLS: "🛠️",
-    WRENCH: "🔧",
-    CONFIG: "⚙️",
-    LIGHTBULB: "💡",
-    SEARCH: "🔍",
-    TAG: "🏷️",
-    ID: "🪪",
-    BELL: "🔔",
-    SPEAKER: "📢",
-    PERSON: "👤",
-    TEAM: "👥",
-    SPEAK: "💬",
-    STRONG: "💪",
-    THUMB: "👍",
-    FIRE: "🔥",
-    STARS: "✨",
-    ROCKET: "🚀",
-    COOL: "😎",
-    HAPPY: "😊",
-    UP: "⬆️",
-
-}

@@ -19,8 +19,10 @@
     --success-color: #28a745;
     --warning-color: orange;
     --danger-color: #dc3545;
+    --danger-contrast-color: #ffffff;
     --font-size-base: 1rem;
     --spacing-unit: 1em; /* Relative Maßeinheiten laut Design.md */
+    --menu-btn-border-radius: 4px;
 }
 
 /* Automatischer Dark Mode über das Betriebssystem */
@@ -120,6 +122,63 @@ header {
     padding: 0.5em 1em;
     cursor: pointer;
 }
+
+.main-menu-overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100dvh;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent background */
+    z-index: 100;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.menu-content-panel {
+    width: 70%;
+    max-width: 300px;
+    height: 100%;
+    background-color: var(--secondary-color);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    padding: var(--spacing-unit);
+    display: flex;
+    flex-direction: column;
+    gap: calc(0.5 * var(--spacing-unit));
+}
+
+.menu-close-btn {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.menu-item-btn {
+    width: 100%;
+    padding: calc(0.75 * var(--spacing-unit));
+    font-size: var(--font-size-base);
+    text-align: left;
+    background: var(--primary-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--menu-btn-border-radius);
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.logout-btn {
+    margin-top: auto; /* Sends the button all the way down to the bottom */
+    width: 100%;
+    padding: calc(0.75 * var(--spacing-unit));
+    background: var(--danger-color);
+    color: var(--danger-contrast-color);
+    border: none;
+    border-radius: var(--menu-btn-border-radius);
+    cursor: pointer;
+}
+
 
 .bar {
     background-color: var(--text-muted);
