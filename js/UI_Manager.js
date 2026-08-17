@@ -7,6 +7,9 @@ import ToDoApp from "./App.js";
 import { ToDoCard } from "../templates/ToDoCard.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { MainMenu } from "../templates/html/MainMenu.js";
+import { createElement } from "react";
+import { InfoPage } from "../templates/InfoPage.js";
+import { about } from "../content/about.js";
 
 
 export class UI_Manager {
@@ -51,7 +54,7 @@ export class UI_Manager {
         document.getElementById("menu-btn").addEventListener("click", () => {
             UI_Manager.openMenu(app.lang, {
                 onMenuAction: (actionName) => {
-                    UI_Manager.handleMenuSelection(actionName)
+                    UI_Manager.handleMenuSelection(actionName, app);
                 },
                 onLogoutTriggered: () => {
                     console.log("Benutzer abgemeldet. Zurück zum Login.");
@@ -62,7 +65,7 @@ export class UI_Manager {
         });
     }
 
-    static handleMenuSelection(actionName){
+    static handleMenuSelection(actionName, app){
                     console.log(`[DEV] Action was called: ${actionName}`);
                     
                     // Routing based on the passed-in action
@@ -88,7 +91,7 @@ export class UI_Manager {
                             break;
 
                         case "about":
-                            
+                            UI_Manager.showInfoPage(about, app);                 
                             break;
 
                         case "doc":
@@ -733,6 +736,26 @@ export class UI_Manager {
     }
 
 
+    static showInfoPage(content, app) {
+        /**
+         ** @param {Object} content - an object for the content, divided into lang versions [en] etc.
+         ** @param {ToDoApp} app - instance of the app
+         ** @returns {Number} - 0 = success / 1 = error
+         */
+
+        if ((!content) || (!app)) return 1;
+
+        // Clear content of main section
+        const main = document.querySelector("#app-main");
+        main.innerHTML = "";
+
+        // Create a container for the info page and append it
+        const container = InfoPage.create(app, content);       
+        main.appendChild(container);
+        return 0; 
+    }
+
+
     // ############################
     // ### UI ANIMATION METHODS ###
     // ############################
@@ -752,5 +775,3 @@ export class UI_Manager {
     }
 
 }
-
-// DIETER
