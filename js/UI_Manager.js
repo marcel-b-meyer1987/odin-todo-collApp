@@ -358,13 +358,18 @@ export class UI_Manager {
         const detailsView = main.querySelector(".todo-detail-container");
         if (detailsView) main.removeChild(detailsView);
         
+        // check if old list in DOM - if yes, remove
+        const oldList = main.querySelector(".todo-list");
+        if (oldList) main.removeChild(oldList);
+
+        // close InfoPage, if any
+        const info = main.querySelector(".info-page-container");
+        if (info) main.removeChild(info);
+
         // Render search bar + path view
         UI_Manager.renderSearchBar();
         app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
 
-        // check if old list in DOM - if yes, remove
-        const oldList = main.querySelector(".todo-list");
-        if (oldList) main.removeChild(oldList);
 
         // create todo list
         // <ul class="todo-list" id="todo-list-ul"></ul>
@@ -483,17 +488,14 @@ export class UI_Manager {
         // establish which type of node was passed (ToDo or Project)
         if (node instanceof ToDo) type = "ToDo";
         if (node instanceof Project) type = "Project";
+        if (node instanceof String) type = "InfoPage";
         console.log(`[DEV] navigateToNode() called on ${type} node:`, node);
         
-        // Extract reference from node (id if ToDo / name if Project)
+        // Extract reference from node (id if ToDo / name if Project or InfoPage)
         // check if node has children
         // get data object from storage 
         // build path object + adjust app.currentPath to the same
         // render path + update path view
-        
-        // const ref = type === "ToDo" ? node.id : node.name;
-        // const children = type === "ToDo" ? ToDo.getAllChildren(ref) : Project.getAllChildren(ref);
-        // const obj = type === "ToDo" ? ToDo.fromStorage(ref) : Project.fromStorage(ref);
 
         switch(type) {
             case "ToDo":
@@ -510,6 +512,11 @@ export class UI_Manager {
                 path = obj.buildPathObject();
                 break;
 
+            case "InfoPage":
+                obj = this.app.rootObject;
+                path = [];
+                break;
+
             default:
                 console.log(`[DEV] Undefined object type detected: `, node);
                 console.log(`[DEV] Fall back to app.rootObject: `, this.app.rootObject);
@@ -523,7 +530,7 @@ export class UI_Manager {
         this.renderPath(path, this.navigateToNode);
 
         // if data object has children: display todo list of the children
-        if (children.length > 0 || ((type !== "Todo") && (type !== "Project"))) {
+        if (children && children.length > 0 || ((type !== "Todo") && (type !== "Project"))) {
             UI_Manager.renderToDoListView(
                 this.app, 
                 children);
@@ -531,7 +538,7 @@ export class UI_Manager {
         }
 
         // if data object has no children: open detail view of the object
-        if (children.length < 1) {
+        if (children && children.length < 1) {
             switch(type) {
                 case "ToDo":
                     this.openToDo(ref, { mode: "show" }, this.app);
@@ -602,15 +609,19 @@ export class UI_Manager {
         const detailsView = ToDoDetail.create(app, todo, this.app.lang, callbacks);
 
         
-        // Remove Add-Button + (if existing) ToDo list 
+        // Remove Add-Button 
+        // + (if existing) ToDo list 
+        // + (if existing) InfoPage 
         // and old detailView from DOM
         // add detailView instead
         const main = document.querySelector("#app-main");
         const todoList = main.querySelector("#todo-list-ul");
+        const info = main.querySelector(".info-page-container");
         const addBtn = main.querySelector(".main-add-btn");
         const oldView = main.querySelector(".todo-detail-container");
 
         if (todoList) main.removeChild(todoList);
+        if (info) main.removeChild(info);
         if (addBtn) main.removeChild(addBtn);
         if (oldView) main.removeChild(oldView);
         main.appendChild(detailsView);

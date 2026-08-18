@@ -1,6 +1,12 @@
 import  ToDoApp from "../js/App.js";
+import { APP_CONST } from "../js/const.js";
 
 export class InfoPage {
+
+    // constructor(app, content) {
+    //     this.outerHTML = InfoPage.create(app, content);
+    //     this.name = content[app.lang ?? APP_CONST.DEFAULT_SETTINGS.LANG].title;
+    // }
 
     static create(app, content) {
         /**
