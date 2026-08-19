@@ -91,6 +91,7 @@ export class UI_Manager {
                             break;
 
                         case "about":
+                            app.UI_Manager.navigateToNode({ name: "About" });
                             UI_Manager.showInfoPage(about, app);                 
                             break;
 
@@ -232,7 +233,7 @@ export class UI_Manager {
         pathContainer.appendChild(root);
             
         
-        // Loop over task hierarchy
+        // Loop over path hierarchy
         if (pathArr) {
             pathArr.forEach((node, index) => {
 
@@ -255,16 +256,18 @@ export class UI_Manager {
                     // span.style.fontStyle = "italic";
                 }
 
-                // Enable click navigation for each PARENT element of the path
-                // and open-on-click for the last element (=child)
-                if (span.classList.contains("parent-node")) {
-                    span.addEventListener("click", () => {
-                        onElementClick(node);
-                    });
-                } else {
-                    span.addEventListener("click", () => {
-                        this.openToDo(node.id, { mode: "show" }, this.app);
-                    });
+                if (node instanceof ToDo || node instanceof Project) {
+                    // Enable click navigation for each PARENT element of the path
+                    // and open-on-click for the last element (=child)
+                    if (span.classList.contains("parent-node")) {
+                        span.addEventListener("click", () => {
+                            onElementClick(node);
+                        });
+                    } else {
+                        span.addEventListener("click", () => {
+                            this.openToDo(node.id, { mode: "show" }, this.app);
+                        });
+                    }
                 }
 
                 pathContainer.appendChild(span);
@@ -488,7 +491,7 @@ export class UI_Manager {
         // establish which type of node was passed (ToDo or Project)
         if (node instanceof ToDo) type = "ToDo";
         if (node instanceof Project) type = "Project";
-        if (node instanceof String) type = "InfoPage";
+        if (node instanceof Object && (!Array.isArray(node))) type = "InfoPage";
         console.log(`[DEV] navigateToNode() called on ${type} node:`, node);
         
         // Extract reference from node (id if ToDo / name if Project or InfoPage)
@@ -499,22 +502,18 @@ export class UI_Manager {
 
         switch(type) {
             case "ToDo":
-                ref = node.id;
-                children = ToDo.getAllChildren(ref);
-                obj = ToDo.fromStorage(ref);
-                path = obj.buildPathObject();
+                children = ToDo.getAllChildren(node.id);
+                path = node.buildPathObject();
                 break;
 
             case "Project":
-                ref = node.name;
-                children = Project.getAllChildren(ref);
-                obj = Project.fromStorage(ref);
-                path = obj.buildPathObject();
+                children = Project.getAllChildren(node.name);
+                path = node.buildPathObject();
                 break;
 
             case "InfoPage":
                 obj = this.app.rootObject;
-                path = [];
+                path = [node];
                 break;
 
             default:
@@ -530,7 +529,7 @@ export class UI_Manager {
         this.renderPath(path, this.navigateToNode);
 
         // if data object has children: display todo list of the children
-        if (children && children.length > 0 || ((type !== "Todo") && (type !== "Project"))) {
+        if (children && children.length > 0) {
             UI_Manager.renderToDoListView(
                 this.app, 
                 children);
@@ -545,6 +544,9 @@ export class UI_Manager {
                     break;
                 case "Project":
                     this.openProject(ref, { mode: "show" }, this.app);
+                    break;
+                case "InfoPage":
+                    // UI_Manager.showInfoPage(about, this.app);
                     break;
                 default:
                     UI_Manager.renderToDoListView(this.app, children);
