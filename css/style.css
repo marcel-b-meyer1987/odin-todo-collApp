@@ -398,7 +398,7 @@ main {
 }
 
 .info-page-container {
-    width: 95%;
+    width: max(300px, 60%);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
