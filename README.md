@@ -1,8 +1,8 @@
 # ToDo CollApp #
-================
+
 
 ## The Path ##
---------------
+
 The App organizes everything in a structure of directories, sub-directories and files - very much as computers do.
 In the folder structure of your computer's file system, the visual description of a file's location is called a path.
 
@@ -19,8 +19,15 @@ You can imagine the path of this app just like that:
 This path system is what actually sets this app apart from other ToDo apps: By using the [checklist](#the-checklist) function of the ToDos, you can turn any ToDo into a directory containing further files (ToDos) which in turn can each contain their own checklist and so on.
 
 
+
+ 
+ 
+
+ 
+
+
 ## ToDos ##
------------
+
 
 Naturally, ToDos are the building blocks of the usage of the app. 
 Each ToDo has:
@@ -59,7 +66,7 @@ To return from the ToDo Details View to the List View
 To create a new ToDo, push the "+" button.
 This will create a new ToDo and directly open it in the Details View for editing and saving.
 
-! IMPORTANT NOTES !
+! **IMPORTANT NOTES** !
 * If you want to keep your new ToDo (with or without editing it), you need to save and close the Details View.
 * If you make up your mind and want to discard the new ToDo, just press the "Abort" button to close without saving.
 
@@ -100,6 +107,10 @@ This will set the status of the ToDo to "TRASH_BIN" and remove it from the List 
 THIS FEATURE IS NOT IMPLEMENTED YET.
 Its purpose will be to save an arbitrary ToDo as template, in order to create similar (or identical) ToDos more easily in the future.
 
+ 
+ 
+
+ 
 
 ## The Checklist ##
 
@@ -125,9 +136,21 @@ Or:
 "/ Promo Event / Event program / Speakers"
 
 
+ 
+ 
+
+ 
+
+
 ## Categories ##
 
 [...]
+
+
+ 
+ 
+
+ 
 
 
 ## Projects ##
@@ -135,9 +158,23 @@ Or:
 [...]
 
 
+
+ 
+ 
+
+ 
+
+
 ## Team ##
 
 [...]
+
+
+
+ 
+ 
+
+ 
 
 
 ## Settings ##
@@ -146,4 +183,9 @@ Or:
 
 
 
+
+ 
+ 
+
+ 
 

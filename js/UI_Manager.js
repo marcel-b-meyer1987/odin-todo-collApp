@@ -68,6 +68,11 @@ export class UI_Manager {
     static handleMenuSelection(actionName, app){
                     console.log(`[DEV] Action was called: ${actionName}`);
                     
+                    // NEEDS TO BE FIXED:
+                    // const menuObj = UI_CONST.MENU_ITEMS.reduce((accumulator, currentValue) => {
+                    //     accumulator[currentValue.name] = currentValue.disp_name;
+                    // }, {});
+
                     // Routing based on the passed-in action
                     switch(actionName) {
                         case "todos":
@@ -96,8 +101,9 @@ export class UI_Manager {
                             break;
 
                         case "doc":
-                            // Show README.md in a new browser tab
-                            window.open("README.md", "blank");
+                            // Show README.md, parsed as HTML
+                            app.UI_Manager.navigateToNode({ name: "Documentation" });
+                            UI_Manager.showInfoPage("README.md", app, true);
                             break;
 
                         default:
@@ -750,10 +756,11 @@ export class UI_Manager {
     }
 
 
-    static showInfoPage(content, app) {
+    static async showInfoPage(content, app, md = false) {
         /**
          ** @param {Object} content - an object for the content, divided into lang versions [en] etc.
          ** @param {ToDoApp} app - instance of the app
+         ** @param {Boolean} md - flag indicating of the content is read from a markdown file
          ** @returns {Number} - 0 = success / 1 = error
          */
 
@@ -764,7 +771,8 @@ export class UI_Manager {
         main.innerHTML = "";
 
         // Create a container for the info page and append it
-        const container = InfoPage.create(app, content);       
+        // if content is from .md file, use the method to pull it in
+        const container = md === false ? InfoPage.create(app, content) : await InfoPage.fromMarkdown(app, content);
         main.appendChild(container);
         return 0; 
     }

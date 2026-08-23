@@ -1,5 +1,6 @@
 import  ToDoApp from "../js/App.js";
 import { APP_CONST } from "../js/const.js";
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
 export class InfoPage {
 
@@ -12,6 +13,7 @@ export class InfoPage {
         /**
          ** @param {ToDoApp} app - instance of the app
          ** @param {Object} content  - content of the Info page
+         ** @returns {HTMLElement} container - a div element with the content inside
          */
         const container = document.createElement("div");
         container.className = "info-page-container";
@@ -49,6 +51,50 @@ export class InfoPage {
         });
 
         
+        return container;
+    }
+    
+    static async getMarkdown(URL) {
+        /**
+         ** @param {String} URL  - URL of the .md file
+         ** @returns {String} text - the text content of the .md file
+         */
+        try {
+            const response = await fetch(`${URL}`);
+            
+            if(!response.ok) throw new Error(`HTTP Error! Status: ${response.status}`);
+            return await response.text();
+            
+        } catch (err) {
+            console.error(`Error loading the readme file:`, err);
+        }
+    }
+
+    static async fromMarkdown(app, URL) {
+        /**
+         ** @param {ToDoApp} app - instance of the app
+         ** @param {String} URL  - URL of the .md file
+         ** @returns {HTMLElement} container - a div element with the content inside
+         */
+        
+        const readme = await InfoPage.getMarkdown(URL);
+        if (!readme) return 1; // error
+        
+        const markup = marked.parse(readme);
+        
+        const container = document.createElement("div");
+        container.className = "info-page-container";
+        
+        container.innerHTML = markup;
+
+        // add credits for marked.js at the end of the page
+        const credits = document.createElement("div");
+        credits.innerHTML = `
+            The parsing of the md file for this documentation is powered by 
+            <a href="https://marked.js.org/">marked.js</a>.
+        `;
+        container.appendChild(credits);
+
         return container;
     }
 
