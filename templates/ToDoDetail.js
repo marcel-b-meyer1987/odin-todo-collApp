@@ -78,7 +78,7 @@ export class ToDoDetail {
 
             <!-- Checklist -->
             <div class="two-col-details-container" id="checklist-container">
-                <span><strong>&#9745</strong></span>
+                <span><strong>${SYMBOLS.CHECKLIST}</strong></span>
                 <div>
                     <span class="todo-details-label checklist-link">${labels.checklist}</span>
                     <span class="todo-details-label checklist-counter">(${todo.checklist.length})</span>

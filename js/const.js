@@ -52,6 +52,7 @@ export const SYMBOLS = {
     ATTACH: "📎",
     PIN: "📌",
     FOLDER: "📂",
+    CHECK: "&#9745",
     CHECKLIST: "📋",
     NOTEPAD: "🗒️",
     SUITCASE: "💼",
@@ -212,3 +213,4 @@ export const UI_CONST = {
     },
 }
 
+// DIETER
