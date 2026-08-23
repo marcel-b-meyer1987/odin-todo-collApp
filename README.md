@@ -32,7 +32,7 @@ Each ToDo has:
 * A due date (defaults to 1 week from creation date, but can be changed to any future date by the user)
 * A [checklist](#the-checklist), which is empty by default, but can be filled with any number of additional ToDos as sub-tasks for the current ToDo. The link to open the checklist shows the number of checklist items in round brackets - (0) by default.
 * A list of categories, labeled with a hashtag/pound sign (#), defaulting to "uncategorized" - the standard category of any ToDo which has no custom category assigned by the user
-* A [team member](#Team-Members) assignment, represented by a dropdown list, allowing the user to document which team member this ToDo was assigned to (if any)
+* A [team member](#Team) assignment, represented by a dropdown list, allowing the user to document which team member this ToDo was assigned to (if any)
 
 
 ### List View vs. Details View ###
@@ -125,5 +125,25 @@ Or:
 "/ Promo Event / Event program / Speakers"
 
 
+## Categories ##
 
-## Team Members ##
+[...]
+
+
+## Projects ##
+
+[...]
+
+
+## Team ##
+
+[...]
+
+
+## Settings ##
+
+[...]
+
+
+
+
