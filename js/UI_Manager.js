@@ -71,23 +71,23 @@ export class UI_Manager {
                     // Routing based on the passed-in action
                     switch(actionName) {
                         case "todos":
-                            
+                            // Navigate to root node & display all root level objects
                             break;
 
                         case "categories":
-                            
+                            // Show an alphabetically sorted list of all categories
                             break;
 
                         case "projects":
-                            
+                            // Show a List View of all projects
                             break;
 
                         case "team":
-                            
+                            // Show a list view of all team members
                             break;
 
                         case "settings":
-                            
+                            // Show the settings dialog
                             break;
 
                         case "about":
@@ -96,7 +96,8 @@ export class UI_Manager {
                             break;
 
                         case "doc":
-                            
+                            // Show README.md in a new browser tab
+                            window.open("README.md", "blank");
                             break;
 
                         default:
