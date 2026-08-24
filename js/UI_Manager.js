@@ -77,6 +77,9 @@ export class UI_Manager {
                     switch(actionName) {
                         case "todos":
                             // Navigate to root node & display all root level objects
+                            app.currentPath = []; // root
+                            app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
+                            UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos().filter(todo => todo.parentID === null)); // ONLY display root level todos
                             break;
 
                         case "categories":
