@@ -123,23 +123,25 @@ export class ToDoDetail {
         });
 
         // event listeners for keyboard shortcuts
-        window.addEventListener("keydown", (e) => {
-            // only do anything special if the Alt key is held down
-            if (e.altKey) {
-                switch (e.key) {
-                    case "s":
-                        callbacks.onSave?.();
-                        break;
-                    case "a":
-                        callbacks.onAbort?.();
-                        break;
-                    case "p":
-                        callbacks.onPrioChange?.();
-                        break;
-                }
-            }
-        });
+        window.addEventListener("keydown", e => ToDoDetail.handleKeydown(e, callbacks));
 
         return container;
+    }
+
+    static handleKeydown(e, callbacks) {
+        // only do anything special if the Alt key is held down
+        if (e.altKey) {
+            switch (e.key) {
+                case "s":
+                    callbacks.onSave?.();
+                    break;
+                case "a":
+                    callbacks.onAbort?.();
+                    break;
+                case "p":
+                    callbacks.onPrioChange?.();
+                    break;
+            }
+        }
     }
 }
