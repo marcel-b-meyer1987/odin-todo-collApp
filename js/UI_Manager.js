@@ -454,6 +454,10 @@ export class UI_Manager {
         } 
 
         main.appendChild(btn);
+
+        // Add event listener for keydown
+        UI_Manager.registerKeydownHandler({ onNew: callbackFn }, { mode: "list" });
+        window.addEventListener("keydown", UI_Manager.activeKeydownHandler, { capture: false });
     }
 
 
@@ -658,7 +662,7 @@ export class UI_Manager {
         if (detailsView) main.removeChild(detailsView);
 
         // remove event listeners for keyboard shortcuts
-        window.removeEventListener("keydown", e => UI_Manager.handleKeydown(e, callbacks), { capture: false });
+        window.removeEventListener("keydown", UI_Manager.activeKeydownHandler, { capture: false });
 
         // change path to the parent dir + show the list view of its contents
         this.app.currentPath = this.getParentDir(this.app.currentPath);
@@ -808,10 +812,31 @@ export class UI_Manager {
     // ### EVENT HANDLERS ###
     // ######################
 
-    static handleKeydown(e, callbacks) {
+    static activeKeydownHandler = null;
+
+    static registerKeydownHandler(callbacks, config = { mode: "details" }) {
+        // If old handler exists, delete it
+        if (UI_Manager.activeKeydownHandler) window.removeEventListener("keydown", UI_Manager.activeKeydownHandler);
+
+        // store event handler function in variable reference
+        switch (config.mode) {
+            case "details":
+                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleToDoDetailsKeydown(e, callbacks);
+                break;
+            
+            case "list":
+                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleListViewKeydown(e, callbacks);
+                break;
+
+            default:
+                return 1; // error
+        }
+    }
+
+    static handleToDoDetailsKeydown = (e, callbacks) => {
         // only do anything special if the Alt key is held down
         if (e.altKey) {
-            switch (e.key) {
+            switch (e.key) {    
                 case "s":
                     callbacks.onSave?.();
                     break;
@@ -820,6 +845,17 @@ export class UI_Manager {
                     break;
                 case "p":
                     callbacks.onPrioChange?.();
+                    break;
+            }
+        }
+    }
+
+    static handleListViewKeydown = (e, callbacks) => {
+        // only do anything special if the Alt key is held down
+        if (e.altKey) {
+            switch (e.key) {    
+                case "n":
+                    callbacks.onNew?.();
                     break;
             }
         }
