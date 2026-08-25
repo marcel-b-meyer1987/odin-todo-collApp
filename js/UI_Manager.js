@@ -654,11 +654,15 @@ export class UI_Manager {
         const main = document.querySelector("#app-main");
         const detailsView = main.querySelector(".todo-detail-container");
 
+        // remove details view from DOM 
         if (detailsView) main.removeChild(detailsView);
+
+        // remove event listeners for keyboard shortcuts
+        window.removeEventListener("keydown", e => UI_Manager.handleKeydown(e, callbacks), { capture: false });
+
+        // change path to the parent dir + show the list view of its contents
         this.app.currentPath = this.getParentDir(this.app.currentPath);
         this.navigateToNode(this.app.currentPath.at(-1) ?? this.app.rootObject);
-        // this.renderPath(this.app.currentPath);
-        // UI_Manager.renderToDoListView(this.app, this.app.currentPath);
     }
 
     openProject(projectName, config = { mode: "show" }, app) {
@@ -797,6 +801,28 @@ export class UI_Manager {
         setTimeout(() => {
             animationsArr.forEach(animation => animation.call(element))
         }, delay);
+    }
+
+
+    // ######################
+    // ### EVENT HANDLERS ###
+    // ######################
+
+    static handleKeydown(e, callbacks) {
+        // only do anything special if the Alt key is held down
+        if (e.altKey) {
+            switch (e.key) {
+                case "s":
+                    callbacks.onSave?.();
+                    break;
+                case "a":
+                    callbacks.onAbort?.();
+                    break;
+                case "p":
+                    callbacks.onPrioChange?.();
+                    break;
+            }
+        }
     }
 
 }

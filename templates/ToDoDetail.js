@@ -1,5 +1,6 @@
 import { TODO_STATUS, TODO_PRIO, APP_CONST, UI_CONST, SYMBOLS } from "../js/const.js";
 import { DiaryEntry } from "../js//DiaryEntry.js";
+import { UI_Manager } from "../js/UI_Manager.js";
 
 export class ToDoDetail {
     
@@ -123,25 +124,10 @@ export class ToDoDetail {
         });
 
         // event listeners for keyboard shortcuts
-        window.addEventListener("keydown", e => ToDoDetail.handleKeydown(e, callbacks));
+        window.addEventListener("keydown", e => UI_Manager.handleKeydown(e, callbacks), { capture: false });
 
         return container;
     }
 
-    static handleKeydown(e, callbacks) {
-        // only do anything special if the Alt key is held down
-        if (e.altKey) {
-            switch (e.key) {
-                case "s":
-                    callbacks.onSave?.();
-                    break;
-                case "a":
-                    callbacks.onAbort?.();
-                    break;
-                case "p":
-                    callbacks.onPrioChange?.();
-                    break;
-            }
-        }
-    }
+    
 }
