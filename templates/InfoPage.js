@@ -91,7 +91,7 @@ export class InfoPage {
         const credits = document.createElement("div");
         credits.innerHTML = `
             The parsing of the md file for this documentation is powered by 
-            <a href="https://marked.js.org/">marked.js</a>.
+            <a href="https://marked.js.org/" target="_blank">marked.js</a>.
         `;
         container.appendChild(credits);
 
