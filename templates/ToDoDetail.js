@@ -20,8 +20,43 @@ export class ToDoDetail {
 
         // helper variables
         const now = new Date();
-        const catStr = todo.categories?.join(", ") || "";
+        let tempCats = todo.categories;
+        let catStr = "Uncategorized";
+        if (tempCats.length > 0) {
+            catStr = tempCats.length > 1 ? tempCats.join(", ") : tempCats[0];
+        }
         const team = app.teamMembers;
+
+        console.log(`[DEV] catStr: `, catStr);
+
+        const categories = {
+            activateEdit: () => {
+                // change the actual value of the categories-display to the placeholder
+                // append a comma and space + set the caret to the end
+                const input = container.querySelector("#categories-display");
+                console.log("[DEV] activate editing categories");
+                if (tempCats.length > 1) input.placeholder = tempCats.join(", ");
+                input.value = tempCats.length > 0 ? input.placeholder + ", " : "";
+                input.focus();
+            },
+
+            parseAndUpdate: () => {
+                // parse the value of the categories-display into an array of strings,
+                // separated by commas + trimmed
+                // store the array in the tempCats helper variable
+                // onSave: store the array (=the content of the tempCats helper variable) in the todo.categories property
+                console.log("[DEV] parse and update categories");
+                const input = container.querySelector("#categories-display");
+
+                // strip off trailing commas (if any)
+                if(input.value.substr(-1,1) === ",") input.value = input.value.substr(0,input.value.length-1);
+                if(input.value.substr(-2,1) === ",") input.value = input.value.substr(0,input.value.length-2);
+
+                tempCats = input.value !== "" ? input.value.split(",").map((s) => s.trim()) : ["Uncategorized"];
+                input.placeholder = input.value !== "" ? input.value.split(",").map((s) => s.trim()) : ["Uncategorized"];
+                console.log(`[DEV] Parsed categories:`, tempCats);
+            }
+        };
 
         // create team member dropdown + option tags for all team members + these generic ones:
         // <option value="">${labels.assign}</option>
@@ -89,7 +124,7 @@ export class ToDoDetail {
             <!-- Categories -->
             <div class="two-col-details-container" id="categories-container">
                 <span><strong>#</strong></span>
-                <input type="text" id="categories-display" placeholder="${todo.categories ? catStr : ''}">
+                <input type="text" id="categories-display" placeholder="${catStr}">
             </div>
 
             <!-- Assigned team member -->
@@ -115,6 +150,10 @@ export class ToDoDetail {
             callbacks.onViewChecklist?.()
         });
 
+        container.querySelector("#categories-display").addEventListener("focus", categories.activateEdit);
+
+        container.querySelector("#categories-display").addEventListener("blur", categories.parseAndUpdate);
+
         container.querySelector("#save-btn").addEventListener("click", () => {
             callbacks.onSave?.();
         });
@@ -129,6 +168,5 @@ export class ToDoDetail {
 
         return container;
     }
-
     
 }

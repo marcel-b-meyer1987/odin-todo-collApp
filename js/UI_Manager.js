@@ -707,7 +707,7 @@ export class UI_Manager {
         const title = document.querySelector(".todo-title");
         const notes = document.querySelector("#todo-notes");
         const dueDate = new Date(document.querySelector("#due-date").value);
-        let catsArr = document.querySelector("#categories-display").value.split(",").map(el => el.trim());
+        let catsArr = document.querySelector("#categories-display").value.split(", ").map(c => c.trim());
 
         // if the user hasn't changed the title, 
         // take the placeholder as title
