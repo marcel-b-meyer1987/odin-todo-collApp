@@ -643,7 +643,7 @@ input[type="text"] {
     background-color: var(--primary-color);
     border: 2px solid var(--border-color);
     border-radius: calc(var(--font-size-base) * 0.5);
-    color: var(--text-color);
+    color: var(--text-muted);
     padding: calc(0.9 * var(--spacing-unit)) var(--spacing-unit);
     font-size: var(--font-size-base);
     line-height: var(--font-size-base);
@@ -654,6 +654,7 @@ input[type="text"] {
 
 input[type="text"]:focus {
     outline: none;
+    color: var(--text-color);
 }
 
 select {

@@ -20,9 +20,15 @@ export class ToDoDetail {
 
         // helper variables
         const now = new Date();
-        let tempCats = todo.categories;
-        let catStr = "Uncategorized";
-        if (tempCats.length > 0) {
+        console.log(`[DEV] todo.categories: `, todo.categories);
+        let tempCats = todo.categories ?? [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
+        console.log(`[DEV] tempCats: `, tempCats);
+        let catStr = APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL; // "Uncategorized" as std placeholder
+
+        if (tempCats[0].toLowerCase() !== "uncategorized" &&
+            tempCats[0].toLowerCase() !== APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL.toLowerCase() &&
+            tempCats[0] !== "")
+        {
             catStr = tempCats.length > 1 ? tempCats.join(", ") : tempCats[0];
         }
         const team = app.teamMembers;
@@ -32,19 +38,25 @@ export class ToDoDetail {
         const categories = {
             activateEdit: () => {
                 // change the actual value of the categories-display to the placeholder
+                // (if the placeholder is not "Uncategorized"!) and
                 // append a comma and space + set the caret to the end
                 const input = container.querySelector("#categories-display");
                 console.log("[DEV] activate editing categories");
-                if (tempCats.length > 1) input.placeholder = tempCats.join(", ");
-                input.value = tempCats.length > 0 ? input.placeholder + ", " : "";
+
+                // if todo is not "uncategorized", pre-fill the input with catStr
+                // append ", " to the end, so the user can add tags seamlessly
+                // otherwise value will be empty (native standard behaviour)
+                if (tempCats[0].toLowerCase() !== "uncategorized" &&
+                    tempCats[0].toLowerCase() !== APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL.toLowerCase() &&
+                    tempCats[0] !== "")
+                {
+                    input.value = tempCats.join(", ") + ", ";
+                }
                 input.focus();
             },
 
             parseAndUpdate: () => {
-                // parse the value of the categories-display into an array of strings,
-                // separated by commas + trimmed
-                // store the array in the tempCats helper variable
-                // onSave: store the array (=the content of the tempCats helper variable) in the todo.categories property
+                
                 console.log("[DEV] parse and update categories");
                 const input = container.querySelector("#categories-display");
 
@@ -52,9 +64,19 @@ export class ToDoDetail {
                 if(input.value.substr(-1,1) === ",") input.value = input.value.substr(0,input.value.length-1);
                 if(input.value.substr(-2,1) === ",") input.value = input.value.substr(0,input.value.length-2);
 
-                tempCats = input.value !== "" ? input.value.split(",").map((s) => s.trim()) : ["Uncategorized"];
-                input.placeholder = input.value !== "" ? input.value.split(",").map((s) => s.trim()) : ["Uncategorized"];
+                // if trimmed value == "", return
+                if (input.value.trim() === "") {
+                    console.log(`[DEV] categories input value is left empty by user - no update`);
+                    return 1;
+                }
+
+                // otherwise parse the value into an array of strings, 
+                // split by comma and trimmed, and savev in tempCats variable
+                tempCats = input.value.split(",").map((c) => c.trim());
                 console.log(`[DEV] Parsed categories:`, tempCats);
+
+                // onSave: store the array 
+                // (=the content of the tempCats helper variable) in the todo.categories property
             }
         };
 

@@ -707,7 +707,7 @@ export class UI_Manager {
         const title = document.querySelector(".todo-title");
         const notes = document.querySelector("#todo-notes");
         const dueDate = new Date(document.querySelector("#due-date").value);
-        let catsArr = document.querySelector("#categories-display").value.split(", ").map(c => c.trim());
+        let catsArr = document.querySelector("#categories-display").value.split(",").map(c => c.trim());
 
         // if the user hasn't changed the title, 
         // take the placeholder as title
@@ -729,13 +729,15 @@ export class UI_Manager {
         // if several cats, remove "Uncategorized"
         if (catsArr.length > 1) {
             catsArr = catsArr.filter(cat => {
-                return (cat !== "uncategorized") && (cat !== "Uncategorized");
+                return (cat !== "uncategorized") 
+                    && (cat !== "Uncategorized") 
+                    && (cat !== APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL);
             });
         }
 
         // make sure "Uncategorized" is still in there, if nothing else
         if (catsArr.length < 1) {
-            catsArr.push("Uncategorized");
+            catsArr.push(APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL); // = "Uncategorized"
         }
         console.log("[DEV] catsArr:", catsArr);
 
