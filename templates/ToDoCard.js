@@ -1,4 +1,4 @@
-import { UI_CONST, SYMBOLS } from "../js/const.js";
+import { UI_CONST, SYMBOLS, TODO_STATUS } from "../js/const.js";
 import { ToDo } from "../js/ToDo.js";
 
 export class ToDoCard {
@@ -25,6 +25,15 @@ export class ToDoCard {
                 <button class="card-btn delete-btn" title="${ config.mode === "trashBin" ? UI_CONST.LABELS[app.lang].delete : UI_CONST.LABELS[app.lang].moveToTrash}">${SYMBOLS.DELETE}</button>
             </div>
         `;
+
+        // for the trash bin view only: add a recycle button
+        if (config.mode === "trashBin") {
+            const restoreBtn = document.createElement("button");
+            restoreBtn.className = "card-btn restore-btn";
+            restoreBtn.setAttribute("title", UI_CONST.LABELS[app.lang].restore);
+            restoreBtn.innerText = SYMBOLS.RECYCLE;
+            li.querySelector(".todo-card-actions").innerHTML += restoreBtn.outerHTML;
+        }
 
         // ### Bind event listeners ###
 
@@ -88,10 +97,29 @@ export class ToDoCard {
                 e.target.closest("li.todo-item").remove();
             } else {
                 todo.moveToTrash();
+                e.target.closest("li.todo-item").remove();
             }
             app.UI_Manager.navigateToNode(app.currentPath.at(-1) ?? app.rootObject);
             return 0; 
         }, true);
+
+        li.querySelector(".restore-btn")?.addEventListener("click", (e) => {
+            e.stopPropagation();
+            // Set todo.status back to pending
+            todo.restoreFromTrash();
+
+            // Re-attach it to its parent's checklist (if any)
+            if (todo.parentID) {
+                const parentTodo = todo.getParent();
+                if (parentTodo && !parentTodo.checklist.includes(todo.id)) {
+                    parentTodo.checklist.push(todo.id);
+                    parentTodo.saveToStorage();
+                }
+            }
+
+            // remove from trash bin ListView
+            e.target.closest("li.todo-item").remove();
+        })
 
         return li;
     }

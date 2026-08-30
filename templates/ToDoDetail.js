@@ -1,6 +1,7 @@
 import { TODO_STATUS, TODO_PRIO, APP_CONST, UI_CONST, SYMBOLS } from "../js/const.js";
 import { DiaryEntry } from "../js//DiaryEntry.js";
 import { UI_Manager } from "../js/UI_Manager.js";
+import { ToDo } from "../js/ToDo.js";
 
 export class ToDoDetail {
     
@@ -20,9 +21,9 @@ export class ToDoDetail {
 
         // helper variables
         const now = new Date();
-        console.log(`[DEV] todo.categories: `, todo.categories);
+        // console.log(`[DEV] todo.categories: `, todo.categories);
         let tempCats = todo.categories ?? [APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL];
-        console.log(`[DEV] tempCats: `, tempCats);
+        // console.log(`[DEV] tempCats: `, tempCats);
         let catStr = APP_CONST.DEFAULT_SETTINGS.NO_CAT_STD_LABEL; // "Uncategorized" as std placeholder
 
         if (tempCats[0].toLowerCase() !== "uncategorized" &&
@@ -33,7 +34,7 @@ export class ToDoDetail {
         }
         const team = app.teamMembers;
 
-        console.log(`[DEV] catStr: `, catStr);
+        // console.log(`[DEV] catStr: `, catStr);
 
         const categories = {
             activateEdit: () => {
@@ -41,7 +42,7 @@ export class ToDoDetail {
                 // (if the placeholder is not "Uncategorized"!) and
                 // append a comma and space + set the caret to the end
                 const input = container.querySelector("#categories-display");
-                console.log("[DEV] activate editing categories");
+                // console.log("[DEV] activate editing categories");
 
                 // if todo is not "uncategorized", pre-fill the input with catStr
                 // append ", " to the end, so the user can add tags seamlessly
@@ -59,15 +60,11 @@ export class ToDoDetail {
 
             parseAndUpdate: () => {
                 
-                console.log("[DEV] parse and update categories");
+                // console.log("[DEV] parse and update categories");
                 const input = container.querySelector("#categories-display");
 
                 // strip off all trailing commas and spaces (if any) by using RegEx
                 input.value = input.value.replace(/[\s,]+$/, "");
-
-                // deprecated version with substr():
-                // if(input.value.substr(-1,1) === ",") input.value = input.value.substr(0,input.value.length-1);
-                // if(input.value.substr(-2,1) === ",") input.value = input.value.substr(0,input.value.length-2);
 
                 // if trimmed value == "", return
                 if (input.value.trim() === "") {
@@ -81,10 +78,7 @@ export class ToDoDetail {
                 // update the input value on blur with the cleaned-up cats
                 tempCats = input.value.split(",").map((c) => c.trim()).filter(Boolean);
                 input.value = tempCats.join(", ");
-                console.log(`[DEV] Parsed categories:`, tempCats);
-
-                // onSave: store the array 
-                // (=the content of the tempCats helper variable) in the todo.categories property
+                // console.log(`[DEV] Parsed categories:`, tempCats);
             }
         };
 
@@ -147,7 +141,7 @@ export class ToDoDetail {
                 <span><strong>${SYMBOLS.CHECKLIST}</strong></span>
                 <div>
                     <span class="todo-details-label checklist-link">${labels.checklist}</span>
-                    <span class="todo-details-label checklist-counter">(${todo.checklist.length})</span>
+                    <span class="todo-details-label checklist-counter">(${todo.checklist.map((id) => ToDo.fromStorage(id)).filter((t) => t.status === TODO_STATUS.PENDING).length})</span>
                 </div>
             </div>
 

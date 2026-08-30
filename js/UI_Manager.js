@@ -519,9 +519,9 @@ export class UI_Manager {
         let children = null;
         
         // establish which type of node was passed (ToDo or Project)
+        if (node instanceof Object && (!Array.isArray(node))) type = "InfoPage";
         if (node instanceof ToDo) type = "ToDo";
         if (node instanceof Project) type = "Project";
-        if (node instanceof Object && (!Array.isArray(node))) type = "InfoPage";
         console.log(`[DEV] navigateToNode() called on ${type} node:`, node);
         
         // Extract reference from node (id if ToDo / name if Project or InfoPage)
@@ -623,7 +623,8 @@ export class UI_Manager {
                 UI_Manager.
                     renderToDoListView(
                         this.app, 
-                        todo.checklist.map(id => ToDo.fromStorage(id))?.filter(Boolean));
+                        todo.checklist.map(id => ToDo.fromStorage(id))?.filter(Boolean),
+                        { mode: "normal" });
             }, 
             onSave : () => {
                 // validate + save
