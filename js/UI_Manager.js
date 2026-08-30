@@ -649,12 +649,12 @@ export class UI_Manager {
         const main = document.querySelector("#app-main");
         const todoList = main.querySelector("#todo-list-ul");
         const info = main.querySelector(".info-page-container");
-        const addBtn = main.querySelector(".main-add-btn");
+        const addBtn = document.querySelector(".main-add-btn");
         const oldView = main.querySelector(".todo-detail-container");
 
         if (todoList) main.removeChild(todoList);
         if (info) main.removeChild(info);
-        if (addBtn) main.removeChild(addBtn);
+        if (addBtn) addBtn.remove();
         if (oldView) main.removeChild(oldView);
         main.appendChild(detailsView);
 
