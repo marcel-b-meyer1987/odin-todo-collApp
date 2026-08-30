@@ -86,8 +86,10 @@ export class UI_Manager {
                             // Show an alphabetically sorted list of all categories
                             break;
 
-                        case "projects":
-                            // Show a List View of all projects
+                        case "trashBin":
+                            // Show a List View of all items in the trash bin
+                            app.UI_Manager.navigateToNode({ name: "Trash Bin" });
+                            UI_Manager.renderToDoListView(app, app.loadAllToDos(), { mode: "trashBin" }); // ONLY display recycled todos
                             break;
 
                         case "team":
@@ -361,7 +363,7 @@ export class UI_Manager {
         `;
     }
 
-    static renderToDoListView(app, todosArray) {
+    static renderToDoListView(app, todosArray, config = { mode: "normal" }) {
         /**
          ** Renders the interactive ToDo list
          ** @param {ToDoApp} app - instance of the app
@@ -392,14 +394,26 @@ export class UI_Manager {
         ul.setAttribute("id", "todo-list-ul");
         ul.className = "todo-list";
 
+
         // render ToDos using template + append to list
-        todosArray.forEach(todo => {
-            // exclude all todos which are not active (="PENDING")
-            if (todo.status === TODO_STATUS.PENDING) {
-                const li = ToDoCard.create(todo, app);
-                ul.appendChild(li);
-            }
-        });
+        if (config.mode === "trashBin") {
+            todosArray.forEach(todo => {
+                // exclude all todos which are not in the trash bin
+                if (todo.status === TODO_STATUS.TRASH_BIN) {
+                    const li = ToDoCard.create(todo, app, config);
+                    ul.appendChild(li);
+                }
+            });    
+        } else {
+            todosArray.forEach(todo => {
+                // exclude all todos which are not active (="PENDING")
+                if (todo.status === TODO_STATUS.PENDING) {
+                    const li = ToDoCard.create(todo, app);
+                    ul.appendChild(li);
+                }
+            });
+        }
+
 
         // append todo list to main section of DOM
         main.appendChild(ul);

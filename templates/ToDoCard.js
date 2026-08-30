@@ -2,7 +2,7 @@ import { UI_CONST, SYMBOLS } from "../js/const.js";
 import { ToDo } from "../js/ToDo.js";
 
 export class ToDoCard {
-    static create(todo, app) {
+    static create(todo, app, config = { mode: "normal" }) {
         /**
          * Creates an isolated ToDoCard for the list of search results
          * @param {ToDo} todo - The ToDo data object
@@ -22,7 +22,7 @@ export class ToDoCard {
                 <button class="card-btn complete-btn" title="${UI_CONST.LABELS[app.lang].markComplete}">${SYMBOLS.COMPLETE}</button>
                 <button class="card-btn copy-btn" title="${UI_CONST.LABELS[app.lang].copy}">${SYMBOLS.CD}</button>
                 <!-- <button class="card-btn template-btn" title="${UI_CONST.LABELS[app.lang].asTemplate}">${SYMBOLS.TEMPLATE}</button> -->
-                <button class="card-btn delete-btn" title="${UI_CONST.LABELS[app.lang].moveToTrash}">${SYMBOLS.DELETE}</button>
+                <button class="card-btn delete-btn" title="${ config.mode === "trashBin" ? UI_CONST.LABELS[app.lang].delete : UI_CONST.LABELS[app.lang].moveToTrash}">${SYMBOLS.DELETE}</button>
             </div>
         `;
 
@@ -81,7 +81,14 @@ export class ToDoCard {
             //     todo.getParent()?.buildPathObject() ?? 
             //     Project.fromStorage(todo.project)?.buildPathObject() ??
             //     []; 
-            todo.moveToTrash();
+            if (config.mode === "trashBin") {
+                // if already in the trash bin, delete ToDo for good
+                ToDo.delete(todo.id);
+                // remove card from ToDoListView as visual feedback
+                e.target.closest("li.todo-item").remove();
+            } else {
+                todo.moveToTrash();
+            }
             app.UI_Manager.navigateToNode(app.currentPath.at(-1) ?? app.rootObject);
             return 0; 
         }, true);
