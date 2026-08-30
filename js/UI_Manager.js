@@ -178,6 +178,11 @@ export class UI_Manager {
         }
     }
 
+    renderMainView() {
+        this.app.currentPath = [];
+        this.navigateToNode("root");    
+    }
+
     static renderSearchBar(parentElementStr = "#header-middle-column") {
         /**
          ** @param parentElement - The query string for the DOM element to which the component should be attached
@@ -196,7 +201,7 @@ export class UI_Manager {
         searchBar.classList.add("search-filter-container");
 
         const input = document.createElement("input");
-        input.setAttribute("type", "text");
+        input.setAttribute("type", "search");
         input.setAttribute("id", "search-input");
         input.setAttribute("placeholder", placeholder);
         
@@ -472,7 +477,7 @@ export class UI_Manager {
         main.appendChild(btn);
 
         // Add event listener for keydown
-        UI_Manager.registerKeydownHandler({ onNew: callbackFn }, { mode: "list" });
+        UI_Manager.registerKeydownHandler(app, { onNew: callbackFn }, { mode: "list" });
         window.addEventListener("keydown", UI_Manager.activeKeydownHandler, { capture: false });
     }
 
@@ -836,18 +841,18 @@ export class UI_Manager {
 
     static activeKeydownHandler = null;
 
-    static registerKeydownHandler(callbacks, config = { mode: "details" }) {
+    static registerKeydownHandler(app, callbacks, config = { mode: "details" }) {
         // If old handler exists, delete it
         if (UI_Manager.activeKeydownHandler) window.removeEventListener("keydown", UI_Manager.activeKeydownHandler);
 
         // store event handler function in variable reference
         switch (config.mode) {
             case "details":
-                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleToDoDetailsKeydown(e, callbacks);
+                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleToDoDetailsKeydown(app, e, callbacks);
                 break;
             
             case "list":
-                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleListViewKeydown(e, callbacks);
+                UI_Manager.activeKeydownHandler = (e) => UI_Manager.handleListViewKeydown(app, e, callbacks);
                 break;
 
             default:
@@ -855,28 +860,51 @@ export class UI_Manager {
         }
     }
 
-    static handleToDoDetailsKeydown = (e, callbacks) => {
+    static handleToDoDetailsKeydown = (app, e, callbacks) => {
         // only do anything special if the Alt key is held down
         if (e.altKey) {
             switch (e.key) {    
-                case "s":
-                    callbacks.onSave?.();
-                    break;
                 case "a":
+                    // ABORT
+                    e.preventDefault();
                     callbacks.onAbort?.();
                     break;
+                case "f":
+                    // FIND - FOCUS ON SEARCH BAR
+                    e.preventDefault();
+                    document.querySelector("#search-input").focus();
+                    break;
+                case "h":
+                    // HOME - render main view - usually todos on the root level
+                    e.preventDefault();
+                    app.UI_Manager.renderMainView();
+                    break;
                 case "p":
+                    // PRIORITY
+                    e.preventDefault();
                     callbacks.onPrioChange?.();
+                    break;
+                case "s":
+                    // SAVE
+                    e.preventDefault();
+                    callbacks.onSave?.();
                     break;
             }
         }
     }
 
-    static handleListViewKeydown = (e, callbacks) => {
+    static handleListViewKeydown = (app, e, callbacks) => {
         // only do anything special if the Alt key is held down
         if (e.altKey) {
-            switch (e.key) {    
+            switch (e.key) {
+                case "f":
+                    // FIND - FOCUS ON SEARCH BAR
+                    e.preventDefault();
+                    document.querySelector("#search-input").focus();
+                    break;    
                 case "n":
+                    // NEW ITEM
+                    e.preventDefault();
                     callbacks.onNew?.();
                     break;
             }

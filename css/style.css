@@ -223,13 +223,14 @@ main:focus {
     font-weight: 500;
     font-size: var(--font-size-base);
     font-family: inherit;
-    line-height: normal;
     color: var(--text-color);
     background-color: var(--primary-color);
     border: 3px solid var(--border-color);
     outline: none;
     border-radius: var(--font-size-base);
-    padding: var(--spacing-unit) calc(var(--spacing-unit) * 3) var(--spacing-unit) var(--spacing-unit);
+    padding: calc(0.9 * var(--spacing-unit)) var(--spacing-unit);
+    line-height: var(--font-size-base);
+    height: var(--font-size-base);
     width: 100%;
 }
 
@@ -243,13 +244,13 @@ main:focus {
     font-weight: 500;
     font-size: calc(var(--font-size-base) * 1.5);
     font-family: inherit;
-    line-height: normal;
+    line-height: var(--font-size-base);
     color: var(--text-color);
     background-color: var(--primary-color);
     border: 3px solid var(--border-color);
     outline: none;
     border-radius: var(--font-size-base);
-    padding: 0 calc(0.25 * var(--spacing-unit));
+    padding: calc(0.25 * var(--spacing-unit)) calc(0.25 * var(--spacing-unit));
     cursor: pointer;
 }
 

@@ -187,7 +187,7 @@ export class ToDoDetail {
         });
 
         // event listeners for keyboard shortcuts
-        UI_Manager.registerKeydownHandler(callbacks, { mode: "details" });
+        UI_Manager.registerKeydownHandler(app, callbacks, { mode: "details" });
         window.addEventListener("keydown", UI_Manager.activeKeydownHandler, { capture: false });
 
         return container;
