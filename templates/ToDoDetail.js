@@ -53,6 +53,8 @@ export class ToDoDetail {
                     input.value = tempCats.join(", ") + ", ";
                 }
                 input.focus();
+                const len = input.value.length;
+                input.setSelectionRange(len,len);
             },
 
             parseAndUpdate: () => {
@@ -60,9 +62,12 @@ export class ToDoDetail {
                 console.log("[DEV] parse and update categories");
                 const input = container.querySelector("#categories-display");
 
-                // strip off trailing commas (if any)
-                if(input.value.substr(-1,1) === ",") input.value = input.value.substr(0,input.value.length-1);
-                if(input.value.substr(-2,1) === ",") input.value = input.value.substr(0,input.value.length-2);
+                // strip off all trailing commas and spaces (if any) by using RegEx
+                input.value = input.value.replace(/[\s,]+$/, "");
+
+                // deprecated version with substr():
+                // if(input.value.substr(-1,1) === ",") input.value = input.value.substr(0,input.value.length-1);
+                // if(input.value.substr(-2,1) === ",") input.value = input.value.substr(0,input.value.length-2);
 
                 // if trimmed value == "", return
                 if (input.value.trim() === "") {
@@ -71,8 +76,11 @@ export class ToDoDetail {
                 }
 
                 // otherwise parse the value into an array of strings, 
-                // split by comma and trimmed, and savev in tempCats variable
-                tempCats = input.value.split(",").map((c) => c.trim());
+                // split by comma and trimmed, and save in tempCats variable
+                // remove possible empty strings with .filter(Boolean)
+                // update the input value on blur with the cleaned-up cats
+                tempCats = input.value.split(",").map((c) => c.trim()).filter(Boolean);
+                input.value = tempCats.join(", ");
                 console.log(`[DEV] Parsed categories:`, tempCats);
 
                 // onSave: store the array 

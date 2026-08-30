@@ -100,13 +100,15 @@ export class UI_Manager {
 
                         case "about":
                             app.UI_Manager.navigateToNode({ name: "About" });
-                            UI_Manager.showInfoPage(about, app);                 
+                            UI_Manager.showInfoPage(about, app);
+                            document.querySelector("#app-main").focus();                
                             break;
 
                         case "doc":
                             // Show README.md, parsed as HTML
                             app.UI_Manager.navigateToNode({ name: "Documentation" });
                             UI_Manager.showInfoPage("README.md", app, true);
+                            document.querySelector("#app-main").focus();
                             break;
 
                         default:
@@ -707,7 +709,10 @@ export class UI_Manager {
         const title = document.querySelector(".todo-title");
         const notes = document.querySelector("#todo-notes");
         const dueDate = new Date(document.querySelector("#due-date").value);
-        let catsArr = document.querySelector("#categories-display").value.split(",").map(c => c.trim());
+        let catsArr = document.querySelector("#categories-display").value.split(",").map(c => c.trim()).filter(Boolean);
+
+        // make sure all input elements are blurred to fire sanitizing logic
+        document.activeElement?.blur();
 
         // if the user hasn't changed the title, 
         // take the placeholder as title

@@ -206,6 +206,10 @@ main {
     padding: var(--spacing-unit);
 }
 
+main:focus {
+    outline: none;
+}
+
 .search-filter-container {
     position: relative;
     display: flex;
