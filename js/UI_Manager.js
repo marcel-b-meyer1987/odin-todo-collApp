@@ -107,14 +107,12 @@ export class UI_Manager {
                         case "about":
                             app.UI_Manager.navigateToNode({ name: menuObj[actionName] });
                             UI_Manager.showInfoPage(about, app);
-                            document.querySelector("#app-main").focus(); // enables scrolling content with keyboard      
                             break;
 
                         case "doc":
                             // Show README.md, parsed as HTML
                             app.UI_Manager.navigateToNode({ name: menuObj[actionName] });
                             UI_Manager.showInfoPage("README.md", app, true);
-                            document.querySelector("#app-main").focus(); // enables scrolling content with keyboard
                             break;
 
                         default:
@@ -122,6 +120,9 @@ export class UI_Manager {
                             break;
 
                     }
+
+                // Enable scrolling content with keyboard
+                document.querySelector("#app-main").focus(); 
     }
 
     static openMenu(userLang, callbacks) {
@@ -187,7 +188,7 @@ export class UI_Manager {
         this.navigateToNode("root");    
     }
 
-    static renderSearchBar(parentElementStr = "#header-middle-column") {
+    static renderSearchBar(app, parentElementStr = "#header-middle-column") {
         /**
          ** @param parentElement - The query string for the DOM element to which the component should be attached
          **                         (defaults to the <main> element)
@@ -212,15 +213,23 @@ export class UI_Manager {
         const btn = document.createElement("button");
         btn.classList.add("filter-btn");
         btn.innerText = "ᯤ";
-        btn.addEventListener("click", UI_Manager.showFilterDialog);
+        btn.addEventListener("click", () => { UI_Manager.toggleFilterDialog(app) });
         
         searchBar.appendChild(input);
         searchBar.appendChild(btn);
         parent.appendChild(searchBar);
     }
 
-    static showFilterDialog() {
-        console.log(`[DEV] showFilterDialog() invoked`);
+    static toggleFilterDialog(app) {
+        console.log(`[DEV] toggleFilterDialog() invoked`);
+
+        // if FilterDialog already open, close it
+        const oldFd = document.querySelector("#filter-dialog");
+        if (oldFd) {
+            oldFd.remove();
+            app.UI_Manager.renderMainView();
+            return;
+        }
 
         // clear main section
         const main = document.querySelector("#app-main");
@@ -393,20 +402,25 @@ export class UI_Manager {
          */
         const main = document.getElementById("app-main");
 
-        // close ToDoDetails (if open)
-        const detailsView = main.querySelector(".todo-detail-container");
-        if (detailsView) main.removeChild(detailsView);
-        
-        // check if old list in DOM - if yes, remove
-        const oldList = main.querySelector(".todo-list");
-        if (oldList) main.removeChild(oldList);
+        // Clear main section
+        main.innerHTML = "";
 
-        // close InfoPage, if any
-        const info = main.querySelector(".info-page-container");
-        if (info) main.removeChild(info);
+        // ### DEPRECATED - WILL BE ERASED AFTER A TRIAL PERIOD: ###
+        // // close ToDoDetails (if open)
+        // const detailsView = main.querySelector(".todo-detail-container");
+        // if (detailsView) main.removeChild(detailsView);
+        
+        // // check if old list in DOM - if yes, remove
+        // const oldList = main.querySelector(".todo-list");
+        // if (oldList) main.removeChild(oldList);
+
+        // // close InfoPage, if any
+        // const info = main.querySelector(".info-page-container");
+        // if (info) main.removeChild(info);
+        // ##########################################################
 
         // Render search bar + path view
-        UI_Manager.renderSearchBar();
+        UI_Manager.renderSearchBar(app);
         app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
 
 
@@ -446,7 +460,7 @@ export class UI_Manager {
         } else {
             // if inside trash bin: remove the add button!
             const btn = document.querySelector(".main-add-btn");
-            btn.remove();
+            btn?.remove();
         }
     }
 
@@ -926,7 +940,12 @@ export class UI_Manager {
                     // FIND - FOCUS ON SEARCH BAR
                     e.preventDefault();
                     document.querySelector("#search-input").focus();
-                    break;    
+                    break;
+                case "h":
+                    // HOME - render main view - usually todos on the root level
+                    e.preventDefault();
+                    app.UI_Manager.renderMainView();
+                    break;
                 case "n":
                     // NEW ITEM
                     e.preventDefault();

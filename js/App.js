@@ -157,8 +157,8 @@ export default class ToDoApp {
 const app = new ToDoApp();
 
 UI_Manager.initLayout(app);
-UI_Manager.renderSearchBar();
-app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
+// UI_Manager.renderSearchBar(app);
+// app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
 UI_Manager.renderToDoListView(app, ToDo.getAllActiveToDos().filter(todo => todo.parentID === null)); // ONLY display root level todos
 app.UI_Manager.renderQuote();
 // UI_Manager.renderWelcomeView();

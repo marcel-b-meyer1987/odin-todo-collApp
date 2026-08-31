@@ -147,6 +147,10 @@ header {
     gap: calc(0.5 * var(--spacing-unit));
 }
 
+.menu-content-panel button:focus {
+    outline: 2px solid var(--accent-color);
+}
+
 .menu-close-btn {
     align-self: flex-end;
     background: none;
@@ -179,11 +183,14 @@ header {
     cursor: pointer;
 }
 
-
 .bar {
     background-color: var(--text-muted);
     width: 2.2em;
     height: 0.4em;
+}
+
+.menu-toggle:focus > .bar {
+    background-color: var(--accent-color);
 }
 
 #top-row {
