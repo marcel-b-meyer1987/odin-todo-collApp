@@ -158,6 +158,7 @@ header {
     font-size: 1.5rem;
     cursor: pointer;
     color: var(--text-color);
+    padding: 0 calc(0.25 * var(--spacing-unit));
 }
 
 .menu-item-btn {

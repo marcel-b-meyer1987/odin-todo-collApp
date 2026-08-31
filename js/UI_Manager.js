@@ -164,6 +164,9 @@ export class UI_Manager {
             }
         ], 10); // Minimal delay, so the browser can register the transition
 
+        // Add focus for keyboard navigation
+        menuNode.querySelector(".menu-close-btn").focus();
+
     }
 
     static closeMenu() {
