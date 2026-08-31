@@ -4,6 +4,7 @@ import { Project } from "./Project.js";
 import { InputValidator } from "./InputValidator.js";
 import { QUOTES } from "../quotes.js";
 import ToDoApp from "./App.js";
+import { FilterDialog } from "../templates/FilterDialog.js";
 import { ToDoCard } from "../templates/ToDoCard.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { MainMenu } from "../templates/html/MainMenu.js";
@@ -208,10 +209,23 @@ export class UI_Manager {
         const btn = document.createElement("button");
         btn.classList.add("filter-btn");
         btn.innerText = "ᯤ";
+        btn.addEventListener("click", UI_Manager.showFilterDialog);
         
         searchBar.appendChild(input);
         searchBar.appendChild(btn);
         parent.appendChild(searchBar);
+    }
+
+    static showFilterDialog() {
+        console.log(`[DEV] showFilterDialog() invoked`);
+
+        // clear main section
+        const main = document.querySelector("#app-main");
+        main.innerHTML = "";
+
+        // create FilterDialog and append to main section as child
+        const fd = FilterDialog.create();
+        main.appendChild(fd);
     }
 
     renderPath = (pathArr, onElementClick) => {
@@ -464,7 +478,7 @@ export class UI_Manager {
 
         // if no add button existing, add one
         const main = document.querySelector("#app-main");
-        let btn = document.querySelector("main-add-btn");
+        let btn = document.querySelector(".main-add-btn");
         if (!btn) {
             btn = document.createElement("button");
             btn.classList.add("main-add-btn");

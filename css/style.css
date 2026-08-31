@@ -254,6 +254,10 @@ main:focus {
     cursor: pointer;
 }
 
+.filter-btn:focus {
+    color: var(--accent-color);
+}
+
 #path-container {
     
     background-color: var(--secondary-color); 
