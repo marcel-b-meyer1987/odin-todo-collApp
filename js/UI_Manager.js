@@ -70,9 +70,12 @@ export class UI_Manager {
                     console.log(`[DEV] Action was called: ${actionName}`);
                     
                     // NEEDS TO BE FIXED:
-                    // const menuObj = UI_CONST.MENU_ITEMS.reduce((accumulator, currentValue) => {
-                    //     accumulator[currentValue.name] = currentValue.disp_name;
-                    // }, {});
+                    const menuObj = UI_CONST.MENU_ITEMS.reduce((accumulator, currentValue) => {
+                        accumulator[currentValue.name] = currentValue.disp_name[app.lang].slice(2).trim();
+                        return accumulator;
+                    }, {});
+
+                    console.log(`[DEV] menuObj for path display of InfoPages:`, menuObj);
 
                     // Routing based on the passed-in action
                     switch(actionName) {
@@ -89,7 +92,7 @@ export class UI_Manager {
 
                         case "trashBin":
                             // Show a List View of all items in the trash bin
-                            app.UI_Manager.navigateToNode({ name: "Trash Bin" });
+                            app.UI_Manager.navigateToNode({ name: menuObj[actionName] });
                             UI_Manager.renderToDoListView(app, app.loadAllToDos(), { mode: "trashBin" }); // ONLY display recycled todos
                             break;
 
@@ -102,16 +105,16 @@ export class UI_Manager {
                             break;
 
                         case "about":
-                            app.UI_Manager.navigateToNode({ name: "About" });
+                            app.UI_Manager.navigateToNode({ name: menuObj[actionName] });
                             UI_Manager.showInfoPage(about, app);
-                            document.querySelector("#app-main").focus();                
+                            document.querySelector("#app-main").focus(); // enables scrolling content with keyboard      
                             break;
 
                         case "doc":
                             // Show README.md, parsed as HTML
-                            app.UI_Manager.navigateToNode({ name: "Documentation" });
+                            app.UI_Manager.navigateToNode({ name: menuObj[actionName] });
                             UI_Manager.showInfoPage("README.md", app, true);
-                            document.querySelector("#app-main").focus();
+                            document.querySelector("#app-main").focus(); // enables scrolling content with keyboard
                             break;
 
                         default:
