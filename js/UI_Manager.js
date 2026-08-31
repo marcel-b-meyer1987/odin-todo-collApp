@@ -71,11 +71,11 @@ export class UI_Manager {
                     
                     // NEEDS TO BE FIXED:
                     const menuObj = UI_CONST.MENU_ITEMS.reduce((accumulator, currentValue) => {
-                        accumulator[currentValue.name] = currentValue.disp_name[app.lang].slice(2).trim();
+                        accumulator[currentValue.name] = currentValue.disp_name[app.lang ?? "en"].slice(2).trim();
                         return accumulator;
                     }, {});
 
-                    console.log(`[DEV] menuObj for path display of InfoPages:`, menuObj);
+                    // console.log(`[DEV] menuObj for path display of InfoPages:`, menuObj);
 
                     // Routing based on the passed-in action
                     switch(actionName) {
@@ -439,7 +439,15 @@ export class UI_Manager {
 
         // append todo list to main section of DOM
         main.appendChild(ul);
-        UI_Manager.renderMainAddButon(app, app.UI_Manager.addToDo);
+
+        // render MainAddButton (NOT inside trash bin!)
+        if (config.mode !== "trashBin") {
+            UI_Manager.renderMainAddButton(app, app.UI_Manager.addToDo);
+        } else {
+            // if inside trash bin: remove the add button!
+            const btn = document.querySelector(".main-add-btn");
+            btn.remove();
+        }
     }
 
     // static toggleContextMenu(todoID) {
@@ -474,7 +482,7 @@ export class UI_Manager {
     //     return menu;
     // }
    
-    static renderMainAddButon(app, callbackFn = app.UI_Manager.addToDo) {
+    static renderMainAddButton(app, callbackFn = app.UI_Manager.addToDo) {
 
         // <!-- Display Add-Button -->
         // <button class="main-add-btn">+</button>
