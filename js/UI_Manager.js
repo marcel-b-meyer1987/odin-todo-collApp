@@ -53,16 +53,20 @@ export class UI_Manager {
 
         // bind event listener for the Hamburger menu
         document.getElementById("menu-btn").addEventListener("click", () => {
-            UI_Manager.openMenu(app.lang, {
-                onMenuAction: (actionName) => {
-                    UI_Manager.handleMenuSelection(actionName, app);
-                },
-                onLogoutTriggered: () => {
-                    console.log("Benutzer abgemeldet. Zurück zum Login.");
-                    // Setzt die App zurück und zeigt wieder den Login-Bildschirm
-                    this.checkUserAuth(); 
-                }
-            });
+            UI_Manager.openStandardMenu(app);
+        });
+    }
+
+    static openStandardMenu(app) {
+        UI_Manager.openMenu(app.lang, {
+            onMenuAction: (actionName) => {
+                UI_Manager.handleMenuSelection(actionName, app);
+            },
+            onLogoutTriggered: () => {
+                console.log("Benutzer abgemeldet. Zurück zum Login.");
+                // Setzt die App zurück und zeigt wieder den Login-Bildschirm
+                this.checkUserAuth(); 
+            }
         });
     }
 
@@ -147,6 +151,11 @@ export class UI_Manager {
                 UI_Manager.closeMenu();
                 callbacks.onLogoutTriggered?.();
             }
+        });
+
+        menuNode.addEventListener("keydown", (e) => {
+            e.stopImmediatePropagation(); // prevents the menu from re-opening through event bubbling to the global window listener
+            if (e.key === "Escape") UI_Manager.closeMenu();
         });
 
         // Briefly hide the inner panel for animation 
@@ -903,6 +912,10 @@ export class UI_Manager {
     }
 
     static handleToDoDetailsKeydown = (app, e, callbacks) => {
+        
+        // ESC always toggles the menu
+        if (e.key === "Escape") UI_Manager.openStandardMenu(app);
+
         // only do anything special if the Alt key is held down
         if (e.altKey) {
             switch (e.key) {    
@@ -936,6 +949,10 @@ export class UI_Manager {
     }
 
     static handleListViewKeydown = (app, e, callbacks) => {
+
+        // ESC always toggles the menu
+        if (e.key === "Escape") UI_Manager.openStandardMenu(app);
+
         // only do anything special if the Alt key is held down
         if (e.altKey) {
             switch (e.key) {
