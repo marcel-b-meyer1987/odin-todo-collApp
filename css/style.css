@@ -212,6 +212,7 @@ main {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     padding: var(--spacing-unit);
+    scroll-behavior: smooth;
 }
 
 main:focus {
@@ -427,7 +428,6 @@ main:focus {
     padding: var(--spacing-unit) calc(1.5 * var(--spacing-unit));
     background-color: var(--secondary-color);
     border-radius: var(--spacing-unit);
-
 }
 
 .info-page-container p {

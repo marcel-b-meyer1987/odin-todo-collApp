@@ -2,6 +2,28 @@ import  ToDoApp from "../js/App.js";
 import { APP_CONST } from "../js/const.js";
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 
+// Helper function: Sanitizes HTML natively without external lib (replaces DOMPurify)
+function sanitizeHTML(html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    
+    // 1. Alle potenziell gefährlichen Script-Tags restlos entfernen
+    doc.querySelectorAll('script, iframe, object, embed').forEach(el => el.remove());
+    
+    // 2. Alle Event-Handler (wie onload, onerror) und JavaScript-Links säubern
+    doc.querySelectorAll('*').forEach(el => {
+        for (const attr of [...el.attributes]) {
+            if (attr.name.startsWith('on')) {
+                el.removeAttribute(attr.name);
+            }
+            if (attr.name === 'href' && attr.value.trim().toLowerCase().startsWith('javascript:')) {
+                el.removeAttribute(attr.name);
+            }
+        }
+    });
+    return doc.body.innerHTML;
+}
+
 export class InfoPage {
 
     // constructor(app, content) {
@@ -78,20 +100,60 @@ export class InfoPage {
          */
         
         const readme = await InfoPage.getMarkdown(URL);
-        if (!readme) return 1; // error
+        if (!readme) return null; // error
         
-        const markup = marked.parse(readme);
+        // Arrange for github-suiting heading IDs
+        marked.use({
+            walkTokens(token) {
+                if (token.type === 'heading') {
+                    // Erzeugt eine GitHub-typische ID: Kleinbuchstaben, Sonderzeichen weg, Leerzeichen zu Bindestrichen
+                    token.id = token.text
+                        .toLowerCase()
+                        .trim()
+                        .replace(/[^\w\s-]/g, '') // Entfernt Sonderzeichen
+                        .replace(/[\s_]+/g, '-')  // Ersetzt Leerzeichen und Unterstriche durch Bindestriche
+                        .replace(/^-+|-+$/g, ''); // Entfernt führende/endende Bindestriche
+                }
+            }
+        });
+
+        // Configure renderer
+        const renderer = new marked.Renderer();
+
+        renderer.heading = ({ text, depth, raw }) => {
+            // Wir holen uns die ID, die wir in walkTokens generiert haben (oder bauen sie zur Sicherheit)
+            const id = raw.toLowerCase().trim().replace(/[^\w\s-]/g, '').replace(/[\s_]+/g, '-').replace(/^-+|-+$/g, '');
+            return `<h${depth} id="${id}">${text}</h${depth}>`;
+        };
+
+        renderer.link = ({ href, title, text }) => {
+            const titleAttr = title ? ` title="${title}"` : "";
+
+            // If the link begins with "#", it's an internal anchor link
+            if (href.startsWith("#")) {
+                return `<a href="${href}"${titleAttr}>${text}</a>`;
+            }
+
+            // Otherwise, in case of external links, open in a new tab
+            return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
+        }
+
+        // Generate HTML
+        const rawMarkup = marked.parse(readme, { renderer });
+
+        // Clean up HTML - allows IDs for anchor reference
+        const cleanMarkup = sanitizeHTML(rawMarkup);
         
         const container = document.createElement("div");
         container.className = "info-page-container";
         
-        container.innerHTML = markup;
+        container.innerHTML = cleanMarkup;
 
         // add credits for marked.js at the end of the page
         const credits = document.createElement("div");
         credits.innerHTML = `
             The parsing of the md file for this documentation is powered by 
-            <a href="https://marked.js.org/" target="_blank">marked.js</a>.
+            <a href="https://marked.js.org/" target="_blank" rel="noopener noreferrer">marked.js</a>.
         `;
         container.appendChild(credits);
 
