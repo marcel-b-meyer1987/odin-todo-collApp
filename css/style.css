@@ -274,7 +274,7 @@ main:focus {
     background-color: inherit;
     color: inherit;
     margin: auto;
-    display: grid;
+    /* display: grid; */
     gap: calc(0.5 * var(--spacing-unit));
     border: 2px solid var(--border-color);
     border-radius: calc(0.5 * var(--spacing-unit));
@@ -300,6 +300,7 @@ main:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 @starting-style {
@@ -340,8 +341,12 @@ main:focus {
 .filter-dialog .date {
     display: grid;
     /* border: 2px solid var(--border-color); */
-    gap: var(--spacing-unit);
+    /* gap: var(--spacing-unit); */
     padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+}
+
+.filter-dialog .date > div {
+    column-gap: calc(1.5 * var(--spacing-unit));
 }
 
 .filter-dialog .date > div *:nth-child(2) {
@@ -362,8 +367,64 @@ main:focus {
     text-align: center;
 }
 
-.filter-dialog .date-container input[type="checkbox"] {
-    /* width: 64px; */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--border-color);
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--accent-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--accent-color);
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 
 .filter-dialog .date-container input[type="date"] {
@@ -377,6 +438,10 @@ main:focus {
     width: 100%;
     padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
     gap: calc(0.5 * var(--spacing-unit));
+}
+
+.range-toggle-container > span {
+    align-self: center;
 }
 
 .filter-dialog .date-container .date-range-toggle {
