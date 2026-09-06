@@ -13,7 +13,12 @@ export class FilterDialog {
 
     static template = `
         <div>
-            <h2>This is the template for the FilterDialog Element</h2>
+            <h2>Filter</h2>
+
+            <form class="filter-dialog">
+    
+            </form>
+
             <p>Here, you can filter by:</p>
                 <ul>
                     <li>Categories (Dropdown with multi-select)</li>

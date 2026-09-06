@@ -15,6 +15,7 @@
     --accent-color: #007acc;
     --text-color: #333333;
     --text-muted: #666666;
+    --light-text-color: #ffffff;
     --border-color: #dddddd;
     --success-color: #28a745;
     --warning-color: orange;
@@ -265,6 +266,127 @@ main:focus {
 
 .filter-btn:focus {
     color: var(--accent-color);
+}
+
+
+.filter-dialog {
+    width: max-content;
+    background-color: inherit;
+    color: inherit;
+    margin: auto;
+    display: grid;
+    gap: calc(0.5 * var(--spacing-unit));
+    border: 2px solid var(--border-color);
+    border-radius: calc(0.5 * var(--spacing-unit));
+    padding: var(--spacing-unit);
+    transition: 
+        transform 350ms ease-in-out,
+        opacity 350ms ease-in-out,
+        display 350ms allow-discrete,
+        overlay 350ms allow-discrete;
+
+    position: relative;
+}
+
+.filter-close-btn {
+    position: absolute;
+    top: var(--spacing-unit);
+    right: var(--spacing-unit);
+    border-radius: calc(0.25 * var(--spacing-unit));
+    padding: calc(0.5 * var(--spacing-unit)) calc(0.75 * var(--spacing-unit));
+    background-color: var(--danger-color);
+    color: var(--light-text-color);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@starting-style {
+    .filter-dialog:popover-open {
+        opacity: 0;
+        transform: translateY(-100%);
+    };
+}
+
+.filter-dialog::backdrop {
+    background-color: var(--border-color);
+    opacity: 0.75;
+    filter: blur(50%x);
+}
+
+.filter-dialog h2 {
+    padding: var(--spacing-unit) calc(0.5 * var(--spacing-unit));
+}
+
+.filter-dialog .dropdown-container {
+    width: 100%;
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--spacing-unit);
+
+}
+
+.filter-dialog .dropdown-container label {
+    align-self: center;
+}
+
+.filter-dialog .date-filters {
+    display: grid;
+    gap: calc(1.5 * var(--spacing-unit));
+}
+
+.filter-dialog .date {
+    display: grid;
+    /* border: 2px solid var(--border-color); */
+    gap: var(--spacing-unit);
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+}
+
+.filter-dialog .date > div *:nth-child(2) {
+    width: 64px;
+}
+
+.filter-dialog .date-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    width: 100%;
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    gap: calc(0.5 * var(--spacing-unit));
+}
+
+.filter-dialog .date-container span {
+    align-self: center;
+    justify-self: center;
+    text-align: center;
+}
+
+.filter-dialog .date-container input[type="checkbox"] {
+    /* width: 64px; */
+}
+
+.filter-dialog .date-container input[type="date"] {
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    
+}
+
+.range-toggle-container {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    width: 100%;
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    gap: calc(0.5 * var(--spacing-unit));
+}
+
+.filter-dialog .date-container .date-range-toggle {
+    display: none;
+}
+
+.filter-dialog .date-container .date-range-toggle::after {
+    background-color: var(--primary-color);
+    width: var(--spacing-unit);
+    height: var(--spacing-unit);
 }
 
 #path-container {
@@ -675,9 +797,6 @@ input[type="text"]:focus {
 }
 
 select {
-    /* width: 100%;
-    flex-grow: 1;
-    margin-right: 0; */
     appearance: base-select;
     background-color: var(--primary-color);
     border: 2px solid var(--border-color);
@@ -685,17 +804,33 @@ select {
     padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
     font-size: var(--font-size-base);
     line-height: calc(1.25* (--font-size-base));
+    display: flex;
+}
+
+select::picker {
+    appearance: base-select;
 }
 
 option {
     font-size: var(--font-size-base);
     line-height: calc(1.25* (--font-size-base));
-    padding: calc(0.5 * var(--spacing-unit)) 0;
+    padding: calc(0.5 * var(--spacing-unit)) 0 0 calc(0.5 * var(--spacing-unit));
     background: var(--primary-color);
 }
 
-option:nth-child(even) {
+option:last-child {
+    margin-bottom: calc(0.5 * var(--spacing-unit));
+}
+
+option:hover {
     background: var(--secondary-color);
+}
+
+option::checkmark {
+    padding: calc(0.25 * var(--spacing-unit));
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .buttons-container {

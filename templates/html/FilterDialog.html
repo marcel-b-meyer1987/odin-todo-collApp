@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/style.css">
+    <style>
+        #filter-btn {
+            padding: 12px 24px;
+            margin: 12px 0;
+        }
+    </style>
+</head>
+<body>
+    <button id="filter-btn" popovertarget="filter-form">Filter</button>
+
+    <form class="filter-dialog" id="filter-form" popover>
+        <button class="filter-close-btn" popovertarget="filter-form" popovertargetaction="hide">x</button>
+        <h2>Filter</h2>
+        <div class="dropdown-filters">
+            <div class="dropdown-container">
+                <label for="cats-dropdown">
+                    Categories:
+                </label>
+                    <select name="cats-dropdown" id="cats-dropdown" multiple size="1">
+                        <option value="Instandhaltung">Instandhaltung</option>
+                        <option value="Rückladungen">Rückladungen</option>
+                        <option value="Terminavisierung">Terminavisierung</option>
+                    </select>
+            </div>
+            <div class="dropdown-container">
+                <label for="assign-dropdown">
+                    Assigned To:
+                </label>
+                    <select class="custom-select" name="assign-dropdown" id="assign-dropdown" multiple size="1">
+                        <option value="Jürgen Agne">Jürgen Agne</option>
+                        <option value="Eric Weißgerber">Eric Weißgerber</option>
+                        <option value="Carina Brödel">Carina Brödel</option>
+                    </select>
+            </div>
+            <div class="dropdown-container">
+                <label for="prio-dropdown">
+                    Priority:
+                </label>
+                    <select class="custom-select" name="prio-dropdown" id="prio-dropdown" multiple size="1">
+                        <option value="Low">Low</option>
+                        <option value="Normal">Normal</option>
+                        <option value="High">High</option>
+                    </select>
+            </div>
+        </div>
+
+        <div class="date-filters">
+            <div class="date">
+                <label for="creation-date-form">Creation Date:</label>
+                <div class="range-toggle-container">
+                    <span>Exact Date:</span>
+                    <input type="checkbox" name="creation-range" id="creation-range" class="date-range-toggle">
+                    <span>Date Range:</span>
+                </div>
+                <div class="date-container" id="creation-date">
+                    <input type="date" name="creation-date-from" id="creation-date-from">
+                    <span>-</span>
+                    <input type="date" name="creation-date-to" id="creation-date-to">
+                </div>
+            </div>
+
+            <!--   DIETER  -->
+            
+            <div class="date">
+                <label for="due-date-form">Due Date:</label>
+                <div class="range-toggle-container">
+                    <span>Exact Date:</span>
+                    <input type="checkbox" name="due-range" id="due-range" class="date-range-toggle">
+                    <span>Date Range:</span>
+                </div>
+                <div class="date-container" id="due-date">
+                    <input type="date" name="due-date-from" id="due-date-from">
+                    <span>-</span>
+                    <input type="date" name="due-date-to" id="due-date-to">
+                </div>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
