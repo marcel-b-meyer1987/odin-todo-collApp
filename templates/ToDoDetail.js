@@ -111,7 +111,7 @@ export class ToDoDetail {
         container.innerHTML = `
             <!-- Title + Prio -->
             <div class="todo-detail-title-row">
-                <input id="todo-title-input" type="text" class="todo-title" value="${todo.title ?? 'Neues Todo'}">
+                <input id="todo-title-input" type="text" class="todo-title" placeholder="${todo.title ?? 'Neues Todo'}" value="${todo.title ?? ''}">
                 <span class="prio-label prio-${todo.prio}" data-todo-id="${todo.id}" title="${labels.changePrio} (Alt + P)">!</span>
             </div>
 

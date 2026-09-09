@@ -719,8 +719,12 @@ export class UI_Manager {
         this.app.currentPath = todo.buildPathObject();
         this.renderPath(this.app.currentPath, this.navigateToNode);
 
-        // if new ToDo, set focus to title
-        if (config.mode === "create") detailsView.querySelector("#todo-title-input").focus(); 
+        // if new ToDo, empty title input and set focus to title
+        if (config.mode === "create") {
+            const inp = detailsView.querySelector("#todo-title-input");
+            inp.value = "";
+            inp.focus();
+        } 
     }
 
     closeToDo() {
