@@ -288,6 +288,19 @@ main:focus {
     position: relative;
 }
 
+.date-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: var(--spacing-unit);
+    flex-wrap: wrap;
+}
+
+.date-top-row > select {
+    min-width: 60%;
+}
+
 .filter-close-btn {
     position: absolute;
     top: var(--spacing-unit);
@@ -336,6 +349,9 @@ main:focus {
 .filter-dialog .date-filters {
     display: grid;
     gap: calc(1.5 * var(--spacing-unit));
+    margin: var(--spacing-unit);
+    padding: var(--spacing-unit);
+    border: 1px solid var(--border-color);
 }
 
 .filter-dialog .date {
@@ -367,66 +383,6 @@ main:focus {
     text-align: center;
 }
 
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-.switch input { 
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--border-color);
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: var(--accent-color);
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--accent-color);
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
 .filter-dialog .date-container input[type="date"] {
     padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
     
@@ -444,14 +400,27 @@ input:checked + .slider:before {
     align-self: center;
 }
 
-.filter-dialog .date-container .date-range-toggle {
-    display: none;
+.filter-dialog-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.filter-dialog .date-container .date-range-toggle::after {
+#filter-reset-btn {
+    padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
+    width: 30%;
     background-color: var(--primary-color);
-    width: var(--spacing-unit);
-    height: var(--spacing-unit);
+    color: var(--text-color);
+    border-radius: calc(0.5 * var(--spacing-unit));
+    border: 2px solid var(--border-color);
+    text-transform: uppercase;
+}
+
+#filter-reset-btn:hover,
+#filter-rest-btn:active {
+    background-color: var(--accent-color);
+    color: white;
+    /* border: 2px solid white; */
 }
 
 #path-container {

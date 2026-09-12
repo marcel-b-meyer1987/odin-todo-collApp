@@ -53,15 +53,15 @@
 
         <div class="date-filters">
             <div class="date">
-                <label for="creation-date-form">Creation Date:</label>
-                <div class="range-toggle-container">
-                    <span>Exact Date</span>
-                    <label class="switch">
-                        <input type="checkbox" name="creation-range" id="creation-range">
-                        <span class="slider round"></span>
-                    </label>    
-                    <span>Date Range</span>
+                <div class="date-top-row">
+                    <label for="creation-date-form">Creation Date:</label>
+                    <select name="creation-date-type" id="creation-date-type">
+                        <option value="before">Before</option>
+                        <option value="after">After</option>
+                        <option value="between">Between</option>
+                    </select>
                 </div>
+                
                 <div class="date-container" id="creation-date">
                     <input type="date" name="creation-date-from" id="creation-date-from">
                     <span>-</span>
@@ -72,21 +72,25 @@
             <!--   DIETER  -->
             
             <div class="date">
-                <label for="due-date-form">Due Date:</label>
-                <div class="range-toggle-container">
-                    <span>Exact Date</span>
-                    <label class="switch">
-                        <input type="checkbox" name="due-range" id="due-range">
-                        <span class="slider round"></span>
-                    </label>
-                    <span>Date Range</span>
+                <div class="date-top-row">
+                    <label for="due-date-form">Due Date:</label>
+                    <select name="due-date-type" id="due-date-type">
+                        <option value="before">Before</option>
+                        <option value="after">After</option>
+                        <option value="between">Between</option>
+                    </select>
                 </div>
+                
                 <div class="date-container" id="due-date">
                     <input type="date" name="due-date-from" id="due-date-from">
                     <span>-</span>
                     <input type="date" name="due-date-to" id="due-date-to">
                 </div>
             </div>
+        </div>
+
+        <div class="filter-dialog-bottom-row">
+            <button id="filter-reset-btn">Reset</button>
         </div>
     </form>
 </body>
