@@ -8,6 +8,12 @@ export class FilterDialog {
         
         dialog.innerHTML = FilterDialog.template;
 
+        resetBtn = dialog.querySelector("#filter-reset-btn");
+        resetBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            app.UI_Manager.Filter.reset();
+        });
+
         return dialog;
     }
 
