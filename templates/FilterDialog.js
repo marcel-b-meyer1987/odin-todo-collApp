@@ -22,6 +22,7 @@ export class FilterDialog {
     }
 
     linkDOM() {
+        this.closeBtn = this.dialog.querySelector(".filter-close-btn");
         this.catsDropdown = this.dialog.querySelector("#cats-dropdown");
         this.assignDropdown = this.dialog.querySelector("#assign-dropdown");
         this.prioDropwdown = this.dialog.querySelector("#prio-dropdown");
@@ -46,7 +47,18 @@ export class FilterDialog {
     init() {
 
         // Populate the FilterDialog dropdown elements with options
-        // 1. 
+        // 1. Categories - this.catsDropdown
+        this.app.categories.forEach((cat) => {
+
+        });
+
+        // 2. AssignedTo - this.assignDropdown
+        this.app.teamMembers.forEach((member) => {
+            
+        })
+        
+        // 3. Prios - this.prioDropwdown
+        
 
         // Hide elements which are deactivated by default
         this.allSwitchables.forEach((e) => {
@@ -57,15 +69,58 @@ export class FilterDialog {
 
     setupEventListeners() {
 
+        // close Dialog on hitting the close button
+        this.closeBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.dialog.hidePopover();
+        });
+
         // Setting Filters on input changes
 
 
         // Toggling date ranges on and off
+        // 1. Creation Date
+        this.creationDateTypeDropdown.addEventListener("change", (e) => {
+            if (e.target.value === "between") {
+                this.createdSwitchables.forEach((el) => {
+                    el.classList.remove("hidden");
+                    el.removeAttribute("inert");
+                });
+            } else {
+                this.createdSwitchables.forEach((el) => {
+                    el.classList.add("hidden");
+                    el.setAttribute("inert","");
+                });     
+            }
+        });
 
+        // 2. Due Date
+        this.dueDateTypeDropdown.addEventListener("change", (e) => {
+            if (e.target.value === "between") {
+                this.dueSwitchables.forEach((el) => {
+                    el.classList.remove("hidden");
+                    el.removeAttribute("inert");
+                });
+            } else {
+                this.dueSwitchables.forEach((el) => {
+                    el.classList.add("hidden");
+                    el.setAttribute("inert","");
+                });     
+            }
+        });
+
+        // Apply filter functions once the FilterDialog is closed
+        this.dialog.addEventListener("toggle", (e) => {
+            // make sure the Dialog has been closed
+            if (e.oldState === "open" && e.newState === "closed") {
+                console.log(`[DEV] FilterDialog close triggered... this will call applying the filter functions in the future`);
+            }
+        });
 
         // Reset Button
         this.resetBtn.addEventListener("click", (e) => {
             e.preventDefault();
+            // this.app.UI_Manager.FilterDialog.dialog.hidePopover(); // hide the FilterDialog on reset - currently disabled
             app.UI_Manager.Filter.reset();
         });
     }
@@ -148,7 +203,7 @@ export class FilterDialog {
         </div>
 
         <div class="filter-dialog-bottom-row">
-            <button id="filter-reset-btn" onClick="resetFilters()">Reset</button>
+            <button id="filter-reset-btn">Reset</button>
         </div>
     
     `;
