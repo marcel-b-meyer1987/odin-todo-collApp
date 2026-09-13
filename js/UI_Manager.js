@@ -2,13 +2,13 @@ import { APP_CONST, UI_CONST, SYMBOLS, TODO_STATUS } from "./const.js";
 import { ToDo } from "./ToDo.js";
 import { Project } from "./Project.js";
 import { InputValidator } from "./InputValidator.js";
+import { Filter } from "./Filter.js";
+import { FilterDialog } from "../templates/FilterDialog.js";
 import { QUOTES } from "../quotes.js";
 import ToDoApp from "./App.js";
-import { FilterDialog } from "../templates/FilterDialog.js";
 import { ToDoCard } from "../templates/ToDoCard.js";
 import { ToDoDetail } from "../templates/ToDoDetail.js";
 import { MainMenu } from "../templates/html/MainMenu.js";
-import { createElement } from "react";
 import { InfoPage } from "../templates/InfoPage.js";
 import { about } from "../content/about.js";
 
@@ -19,6 +19,7 @@ export class UI_Manager {
 
     constructor(app) {
         this.app = app;
+        this.filter = new Filter(app);
         this.validate = new InputValidator();
         this.errors = [];
     }
@@ -417,20 +418,6 @@ export class UI_Manager {
         // Clear main section
         main.innerHTML = "";
 
-        // ### DEPRECATED - WILL BE ERASED AFTER A TRIAL PERIOD: ###
-        // // close ToDoDetails (if open)
-        // const detailsView = main.querySelector(".todo-detail-container");
-        // if (detailsView) main.removeChild(detailsView);
-        
-        // // check if old list in DOM - if yes, remove
-        // const oldList = main.querySelector(".todo-list");
-        // if (oldList) main.removeChild(oldList);
-
-        // // close InfoPage, if any
-        // const info = main.querySelector(".info-page-container");
-        // if (info) main.removeChild(info);
-        // ##########################################################
-
         // Render search bar + path view
         UI_Manager.renderSearchBar(app);
         app.UI_Manager.renderPath(app.currentPath, app.UI_Manager.navigateToNode);
@@ -442,10 +429,12 @@ export class UI_Manager {
         ul.setAttribute("id", "todo-list-ul");
         ul.className = "todo-list";
 
+        // make sure to apply filters (if any)
+        const filteredTodos = app.UI_Manager.filter.applyFilterFunctions(todosArray);
 
         // render ToDos using template + append to list
         if (config.mode === "trashBin") {
-            todosArray.forEach(todo => {
+            filteredTodos.forEach(todo => {
                 // exclude all todos which are not in the trash bin
                 if (todo.status === TODO_STATUS.TRASH_BIN) {
                     const li = ToDoCard.create(todo, app, config);
@@ -453,7 +442,7 @@ export class UI_Manager {
                 }
             });    
         } else {
-            todosArray.forEach(todo => {
+            filteredTodos.forEach(todo => {
                 // exclude all todos which are not active (="PENDING")
                 if (todo.status === TODO_STATUS.PENDING) {
                     const li = ToDoCard.create(todo, app);
