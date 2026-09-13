@@ -324,9 +324,9 @@ main:focus {
 }
 
 .filter-dialog::backdrop {
-    background-color: var(--border-color);
-    opacity: 0.75;
-    filter: blur(50%x);
+    background-color: var(--primary-color);
+    opacity: 1;
+    filter: blur(30%);
 }
 
 .filter-dialog h2 {
@@ -410,10 +410,11 @@ main:focus {
     padding: calc(0.5 * var(--spacing-unit)) var(--spacing-unit);
     width: 30%;
     background-color: var(--danger-color);
-    color: var(--text-color);
+    color: white;
     border-radius: calc(0.5 * var(--spacing-unit));
     border: 2px solid var(--border-color);
     text-transform: uppercase;
+    cursor: pointer;
 }
 
 #filter-reset-btn:hover,
@@ -915,4 +916,18 @@ footer {
     font-style: italic;
     width: 100%;
 
+}
+
+/* 
+    ######################
+    ### HELPER CLASSES ###
+    ######################
+*/
+
+.zero-opacity {
+    opacity: 0;
+}
+
+.hidde {
+    display: none;
 }

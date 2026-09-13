@@ -20,6 +20,7 @@ export class UI_Manager {
     constructor(app) {
         this.app = app;
         this.filter = new Filter(app);
+        this.filterDialog = new FilterDialog(app);
         this.validate = new InputValidator();
         this.errors = [];
     }
@@ -51,6 +52,11 @@ export class UI_Manager {
                 <p>--- The Footer comes here ---</p>
             </footer>
         `;
+
+        // create FilterDialog and append to header section as child
+        const header = document.querySelector("header");
+        const fd = app.UI_Manager.filterDialog.dialog;
+        header.appendChild(fd);
 
         // bind event listener for the Hamburger menu
         document.getElementById("menu-btn").addEventListener("click", () => {
@@ -226,7 +232,8 @@ export class UI_Manager {
         const btn = document.createElement("button");
         btn.classList.add("filter-btn");
         btn.innerText = "ᯤ";
-        btn.addEventListener("click", () => { UI_Manager.toggleFilterDialog(app) });
+        btn.setAttribute("popovertarget","filter-form");
+        // btn.addEventListener("click", () => { UI_Manager.toggleFilterDialog(app) });
         
         searchBar.appendChild(input);
         searchBar.appendChild(btn);
@@ -247,10 +254,6 @@ export class UI_Manager {
         // clear main section
         const main = document.querySelector("#app-main");
         main.innerHTML = "";
-
-        // create FilterDialog and append to main section as child
-        const fd = FilterDialog.create();
-        main.appendChild(fd);
     }
 
     renderPath = (pathArr, onElementClick) => {

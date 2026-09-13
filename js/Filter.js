@@ -85,6 +85,9 @@ export class Filter {
         // reset all filter functions
         this.functions = [];
 
+        // reset values in UI FilterDialog
+        this.app.UI_Manager.FilterDialog.reset();
+
         // apply filter
         // this.apply(); --- this should be called from outside, to pass the needed todos array as an argument
     }
